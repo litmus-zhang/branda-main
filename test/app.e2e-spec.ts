@@ -202,6 +202,20 @@ describe('Branda Server E2E testng', () => {
             .expectBodyContains('User profile updated successfully');
         });
       });
+      it('should refresh access token', async () => {
+        await pactum
+          .spec()
+          .post('/auth/refresh-token')
+          .withJson({ refresh_token: '$S{userRt}' })
+          .expectStatus(200)
+          .expectJsonLike({
+            message: 'Token refreshed successfully',
+            access_token: /.+/,
+            refresh_token: /.+/,
+          })
+          .stores('userAt', 'access_token')
+          .stores('userRt', 'refresh_token');
+      });
     });
   });
   describe('Brand Module', () => {
