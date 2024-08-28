@@ -1,26 +1,45 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-user.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import {
+  BadRequestException,
+  HttpStatus,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
+import { CreateUserDto } from './dto';
+import { UserModel } from 'src/database/entities';
+import { ModelClass } from 'objection';
+import { ResponseStatus } from 'utils/ResponseStatus';
+import * as argon from 'argon2';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: Cre) {
-    return 'This action adds a new auth';
-  }
+  constructor(@Inject('UserModel') private User: ModelClass<UserModel>) {}
 
-  findAll() {
-    return `This action returns all auth`;
-  }
+  async register(createAuthDto: CreateUserDto): Promise<ResponseStatus> {
+    try {
+      // check if the user already exists
+      const user = await this.User.query().findOne({
+        email: createAuthDto.email,
+      });
+      if (user) {
+        throw new BadRequestException('User already exists');
+      }
+      const hash = await argon.hash(createAuthDto.password);
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+      // if not, create the user
+      await this.User.query().insert({
+        password: hash,
+        email: createAuthDto.email,
+        firstname: createAuthDto.firstName,
+        lastname: createAuthDto.lastName,
+      });
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+      return {
+        status: HttpStatus.CREATED,
+        message: 'Registration successful',
+        data: user,
+      };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }

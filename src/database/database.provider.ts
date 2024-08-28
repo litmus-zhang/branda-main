@@ -2,6 +2,11 @@ import Knex from 'knex';
 import { knexSnakeCaseMappers, Model } from 'objection';
 import { UserModel, BrandModel } from './entities';
 
+import config from '../../knexfile';
+
+const environment = process.env.NODE_ENV || 'development';
+const knex_Config = config[environment];
+
 const models = [UserModel, BrandModel];
 
 const modelProviders = models.map((model) => {
@@ -17,9 +22,7 @@ export const providers = [
     provide: 'KnexConnection',
     useFactory: async () => {
       const knexConfig = Knex({
-        client: 'pg',
-        connection: process.env.DATABASE_URL,
-        debug: process.env.KNEX_DEBUG === 'true',
+        ...knex_Config,
         ...knexSnakeCaseMappers(),
       });
       Model.knex(knexConfig);

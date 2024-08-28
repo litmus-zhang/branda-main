@@ -34,6 +34,16 @@ describe('Branda Server E2E testng', () => {
     app.close();
   });
 
+  describe('Health Check', () => {
+    it('should return 200', async () => {
+      await pactum
+        .spec()
+        .get('/health')
+        .expectStatus(200)
+        .expectBodyContains('All systems are operational');
+    });
+  });
+
   describe('Authentication Module', () => {
     describe('Register', () => {
       describe('Email-Password Registration', () => {
@@ -76,9 +86,8 @@ describe('Branda Server E2E testng', () => {
             .post('/auth/register')
             .withJson(credentials)
             .expectStatus(201)
-            .expectJson({
-              message: 'Registration successful',
-            });
+            .expectBodyContains('Registration successful')
+            .inspect();
         });
       });
       describe('Social Registration', () => {});
