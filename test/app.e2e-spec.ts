@@ -187,9 +187,19 @@ describe('Branda Server E2E testng', () => {
         ])('%s', async (testName, testCredentials) => {
           await pactum
             .spec()
+            .withBearerToken('$S{userAt}')
             .patch('/user/update-profile')
             .withJson(testCredentials)
             .expectStatus(400);
+        });
+        it('successful profile update', async () => {
+          await pactum
+            .spec()
+            .withBearerToken('$S{userAt}')
+            .patch('/user/update-profile')
+            .withJson(credentials)
+            .expectStatus(206)
+            .expectBodyContains('User profile updated successfully');
         });
       });
     });
