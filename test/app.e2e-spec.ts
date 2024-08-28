@@ -187,10 +187,34 @@ describe('Branda Server E2E testng', () => {
         ])('%s', async (testName, testCredentials) => {
           await pactum
             .spec()
+            .withBearerToken('$S{userAt}')
             .patch('/user/update-profile')
             .withJson(testCredentials)
             .expectStatus(400);
         });
+        it('successful profile update', async () => {
+          await pactum
+            .spec()
+            .withBearerToken('$S{userAt}')
+            .patch('/user/update-profile')
+            .withJson(credentials)
+            .expectStatus(206)
+            .expectBodyContains('User profile updated successfully');
+        });
+      });
+      it('should refresh access token', async () => {
+        await pactum
+          .spec()
+          .post('/auth/refresh-token')
+          .withJson({ refresh_token: '$S{userRt}' })
+          .expectStatus(200)
+          .expectJsonLike({
+            message: 'Token refreshed successfully',
+            access_token: /.+/,
+            refresh_token: /.+/,
+          })
+          .stores('userAt', 'access_token')
+          .stores('userRt', 'refresh_token');
       });
     });
   });

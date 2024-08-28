@@ -100,8 +100,12 @@ export class AuthService {
       const payload = await this.jwt.verifyAsync(String(refresh_token), {
         secret: this.config.get('REFRESH_JWT_SECRET'),
       });
-      console.log({ payload });
-      return await this.signToken(payload.sub, payload.email);
+      const newToken = await this.signToken(payload.sub, payload.email);
+      return {
+        message: 'Token refreshed successfully',
+        access_token: newToken.access_token,
+        refresh_token: newToken.refresh_token,
+      };
     } catch (error) {
       throw new BadRequestException('Invalid refresh token');
     }

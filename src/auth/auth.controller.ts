@@ -17,4 +17,9 @@ export class AuthController {
   login(@Body() dto: LoginDto) {
     return this.authService.login(dto);
   }
+  @Post('refresh-token')
+  @HttpCode(HttpStatus.OK)
+  refreshToken(@Body() dto: { refresh_token: string }) {
+    return this.authService.refreshToken(dto);
+  }
 }
