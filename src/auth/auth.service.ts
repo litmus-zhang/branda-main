@@ -100,7 +100,6 @@ export class AuthService {
       const payload = await this.jwt.verifyAsync(String(refresh_token), {
         secret: this.config.get('REFRESH_JWT_SECRET'),
       });
-      console.log({ payload });
       const newToken = await this.signToken(payload.sub, payload.email);
       return {
         message: 'Token refreshed successfully',
