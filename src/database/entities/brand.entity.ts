@@ -3,7 +3,7 @@ import { UserModel } from './user.entity';
 import { BaseModel } from './base.model';
 
 export class BrandModel extends BaseModel {
-  static tableName = 'Brands';
+  static tableName = 'brands';
   name!: string;
   logo!: string;
   colorPallete!: Record<string, string>;
@@ -15,16 +15,16 @@ export class BrandModel extends BaseModel {
       relation: Model.HasManyRelation,
       modelClass: UserModel,
       join: {
-        from: 'Brands.id',
-        to: 'User.brandId',
+        from: 'brands.id',
+        to: 'users.brandId',
       },
     },
     creator: {
       relation: Model.BelongsToOneRelation,
       modelClass: UserModel,
       join: {
-        from: 'Brands.createdBy',
-        to: 'User.id',
+        from: 'brands.createdBy',
+        to: 'users.id',
       },
     },
   };

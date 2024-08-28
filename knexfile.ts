@@ -11,10 +11,9 @@ const config: { [key: string]: Knex.Config } = {
     connection: process.env.DEV_DATABASE_URL,
   },
   test: {
-    client: 'postgresql',
+    client: 'pg',
     connection: process.env.TEST_DATABASE_URL,
   },
-
   staging: {
     client: 'cockroachdb',
     connection: process.env.STAGING_DATABASE_URL,
@@ -40,4 +39,4 @@ const config: { [key: string]: Knex.Config } = {
   },
 };
 
-module.exports = config;
+export default config;
