@@ -1,34 +1,39 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Patch,
+  UseGuards,
+} from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { JwtGuard } from '../auth/guards';
+import { UserModel } from '../database/entities';
+import { GetUser } from '../auth/decorators';
+import { ResponseStatus } from '../../utils/ResponseStatus';
+import { CreateUserDto } from '../auth/dto';
 
+@UseGuards(JwtGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  @Get('profile')
+  @HttpCode(HttpStatus.OK)
+  async getMe(@GetUser() user: UserModel): Promise<ResponseStatus> {
+    return {
+      message: 'User profile fetched successfully',
+      data: user,
+      status: 200,
+    };
   }
-
-  @Get()
-  findAll() {
-    return this.userService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  @Patch('update-profile')
+  @HttpCode(HttpStatus.PARTIAL_CONTENT)
+  async updateProfile(
+    @GetUser('id') id: number,
+    @Body() dto: CreateUserDto,
+  ): Promise<ResponseStatus> {
+    return this.userService.updateProfile(id, dto);
   }
 }

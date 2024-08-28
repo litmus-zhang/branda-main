@@ -1,0 +1,11 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "driver": "PostgreSQL",
+            "connectString": "postgresql://branda:branda@localhost:8001/branda",
+            "name": "branda-main"
+        }
+    ]
+}

@@ -12,7 +12,7 @@ services:
       - POSTGRES_PASSWORD=branda
       - POSTGRES_DB=branda
     volumes:
-      - ./data:/var/lib/postgresql/data
+      - ./mainDB:/var/lib/postgresql/data
   brandaTestDB:
     image: postgres:15.0
     container_name: brandaTestDB
@@ -26,5 +26,5 @@ services:
         - ./testDB:/var/lib/postgresql/data
 
 volumes:
-  data:
+  mainDB:
   testDB:

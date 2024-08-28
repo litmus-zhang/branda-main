@@ -1,26 +1,22 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { Inject, Injectable } from '@nestjs/common';
+import { ModelClass } from 'objection';
+import { CreateUserDto } from 'src/auth/dto';
+import { UserModel } from 'src/database/entities';
+import { ResponseStatus } from 'utils/ResponseStatus';
 
 @Injectable()
 export class UserService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
-  }
-
-  findAll() {
-    return `This action returns all user`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  constructor(@Inject('UserModel') private User: ModelClass<UserModel>) {}
+  async updateProfile(id: number, dto: CreateUserDto): Promise<ResponseStatus> {
+    await this.User.query().patchAndFetchById(id, {
+      firstname: dto.firstName,
+      lastname: dto.lastName,
+      email: dto.email,
+      password: dto.password,
+    });
+    return {
+      message: 'User profile updated successfully',
+      status: 206,
+    };
   }
 }
