@@ -1,9 +1,6 @@
 import { Model, RelationMappings } from 'objection';
 import { BrandModel } from './brand.entity';
-
-export class BaseModel extends Model {
-  readonly id!: number;
-}
+import { BaseModel } from './base.model';
 
 export class UserModel extends BaseModel {
   static tableName = 'User';

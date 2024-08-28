@@ -4,9 +4,6 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 // Update with your config settings.
-console.log(
-  `${process.env.DEV_DATABASE_URL} \n, ${process.env.TEST_DATABASE_URL}`,
-);
 
 const config: { [key: string]: Knex.Config } = {
   development: {
