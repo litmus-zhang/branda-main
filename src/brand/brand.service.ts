@@ -1,26 +1,31 @@
 import { Injectable } from '@nestjs/common';
-import { CreateBrandDto } from './dto/create-brand.dto';
-import { UpdateBrandDto } from './dto/update-brand.dto';
+import { GetBrandDto } from './dto';
+import { ResponseStatus } from 'utils/ResponseStatus';
 
 @Injectable()
 export class BrandService {
-  create(createBrandDto: CreateBrandDto) {
-    return 'This action adds a new brand';
+  async createBrand(name: string): Promise<ResponseStatus> {
+    // get list of brands using the dto
+    // choose one of the brands
+    // create a new brand in the brand table
+    // return the sucess nessage and the brand ID
+    console.log(name);
+    return {
+      message: 'Brand `created` successfully',
+      data: {
+        brandID: 1,
+      },
+    };
   }
-
-  findAll() {
-    return `This action returns all brand`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} brand`;
-  }
-
-  update(id: number, updateBrandDto: UpdateBrandDto) {
-    return `This action updates a #${id} brand`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} brand`;
+  async getBrandName(dto: GetBrandDto): Promise<ResponseStatus> {
+    // get the brand name using the dto
+    // return the brand name
+    console.log(dto);
+    return {
+      message: 'Brand name retrieved successfully',
+      data: {
+        brandName: 'Brand 1',
+      },
+    };
   }
 }

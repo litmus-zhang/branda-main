@@ -195,7 +195,30 @@ describe('Branda Server E2E testng', () => {
     });
   });
   describe('Brand Module', () => {
-    describe('Create Brand', () => {});
+    describe('Create Brand', () => {
+      const brandDetails = {
+        niche: 'Defi',
+        industry: 'Finance',
+      };
+      it('should return list of brands names', async () => {
+        await pactum
+          .spec()
+          .get('/brand/name')
+          .withQueryParams(brandDetails)
+          .expectStatus(200)
+          .expectBodyContains('Brand fetched successfully').inspect();
+      });
+
+      it('should create a ', async () => {
+        await pactum
+          .spec()
+          .post('/brand/name')
+          .withBody(brandDetails.industry)
+          .expectStatus(201)
+          .expectBodyContains('Brand created successfully').inspect();
+      });
+    });
+
     describe('Update Brand', () => {});
     describe('Delete Brand', () => {});
   });
