@@ -224,25 +224,64 @@ describe('Branda Server E2E testng', () => {
         niche: 'Defi',
         industry: 'Finance',
       };
-      it('should return list of brands names', async () => {
-        await pactum
-          .spec()
-          .get('/brand/name')
-          .withQueryParams(brandDetails)
-          .expectStatus(200)
-          .expectBodyContains('Brand fetched successfully').inspect();
-      });
-
-      it('should create a ', async () => {
+      it('should return 401 if not authenticated', async () => {
         await pactum
           .spec()
           .post('/brand/name')
           .withBody(brandDetails.industry)
+          .expectStatus(401);
+      });
+      it('should return list of brands names', async () => {
+        await pactum
+          .spec()
+          .withBearerToken('$S{userAt}')
+          .get('/brand/name')
+          .withQueryParams(brandDetails)
+          .expectStatus(200)
+          .expectJsonLike({
+            message: 'Brand names fetched successfully',
+            data: [/.+/],
+          });
+      });
+
+      it('should create a brand', async () => {
+        await pactum
+          .spec()
+          .withBearerToken('$S{userAt}')
+          .post('/brand/name')
+          .withBody(brandDetails.industry)
           .expectStatus(201)
-          .expectBodyContains('Brand created successfully').inspect();
+          .expectBodyContains('Brand created successfully')
+          .expectJsonLike({
+            message: 'Brand created successfully',
+            data: {
+              brandID: /.+/,
+            },
+          });
       });
     });
-
+    describe('Get all Brands', () => {
+      it('should return 401 if not authenticated', async () => {
+        await pactum.spec().get('/brand/all').expectStatus(401);
+      });
+      it('should return list of brands with pagination', async () => {
+        await pactum
+          .spec()
+          .withBearerToken('$S{userAt}')
+          .get('/brand/all')
+          .expectStatus(200)
+          .expectBodyContains('Brands fetched successfully')
+          .expectJsonLike({
+            message: 'Brands fetched successfully',
+            data: {
+              results: [{ id: /.+/ }],
+              total: /.+/,
+              limit: /.+/,
+              page: /.+/,
+            },
+          });
+      });
+    });
     describe('Update Brand', () => {});
     describe('Delete Brand', () => {});
   });

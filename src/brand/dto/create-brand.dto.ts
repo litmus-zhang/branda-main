@@ -1,11 +1,29 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
-export class GetBrandDto {
-  @IsString()
-  @IsNotEmpty()
-  industry: string;
+export class Brand {
+  @IsOptional()
+  name: string;
+
+  @IsOptional()
+  color_pallette: string;
 
   @IsString()
-  @IsNotEmpty()
-  niche: string;
+  @IsOptional()
+  logo: string;
+
+  @IsString()
+  @IsOptional()
+  fonts: string;
+
+  @IsString()
+  @IsOptional()
+  photography: string;
+
+  @IsString()
+  @IsOptional()
+  illustration: string;
+
+  @IsString()
+  @IsOptional()
+  strategy: string;
 }

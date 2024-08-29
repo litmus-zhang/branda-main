@@ -18,7 +18,7 @@ export class UserModel extends BaseModel {
       relation: Model.BelongsToOneRelation,
       modelClass: BrandModel,
       join: {
-        from: 'users.brandId',
+        from: 'users.brand_id',
         to: 'brands.id',
       },
     },
@@ -27,7 +27,7 @@ export class UserModel extends BaseModel {
       modelClass: BrandModel,
       join: {
         from: 'users.id',
-        to: 'brands.createdBy',
+        to: 'brands.created_by',
       },
     },
   };

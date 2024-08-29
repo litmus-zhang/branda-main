@@ -16,14 +16,14 @@ export class BrandModel extends BaseModel {
       modelClass: UserModel,
       join: {
         from: 'brands.id',
-        to: 'users.brandId',
+        to: 'users.brand_id',
       },
     },
     creator: {
       relation: Model.BelongsToOneRelation,
       modelClass: UserModel,
       join: {
-        from: 'brands.createdBy',
+        from: 'brands.created_by',
         to: 'users.id',
       },
     },
