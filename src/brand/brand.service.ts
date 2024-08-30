@@ -81,7 +81,6 @@ export class BrandService {
         this.config.get('BRANDA_CORE_URL') + '/strategy',
         { params: dto },
       );
-      console.log(data);
 
       return {
         message: 'Brand strategies fetched successfully',
@@ -114,6 +113,24 @@ export class BrandService {
       const { data } = await axios.get(
         this.config.get('BRANDA_CORE_URL') + '/messaging',
         { params: dto },
+      );
+
+      return {
+        message: 'Brand messaging fetched successfully',
+        data,
+      };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+  async getBrandPhotography(industry: string): Promise<ResponseStatus> {
+    try {
+      // get the brand messaging using the dto from grpc/REST/message queue
+      // return the brand names
+
+      const { data } = await axios.get(
+        this.config.get('BRANDA_CORE_URL') + '/photography',
+        { params: { industry } },
       );
 
       return {
