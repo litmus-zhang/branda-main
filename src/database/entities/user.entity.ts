@@ -3,9 +3,9 @@ import { BrandModel } from './brand.entity';
 import { BaseModel } from './base.model';
 
 export class UserModel extends BaseModel {
-  static tableName = 'User';
+  static tableName = 'users';
   firstname!: string;
-  lastName!: string;
+  lastname!: string;
   email!: string;
   password!: string;
   createdAt!: Date;
@@ -18,16 +18,16 @@ export class UserModel extends BaseModel {
       relation: Model.BelongsToOneRelation,
       modelClass: BrandModel,
       join: {
-        from: 'User.brandId',
-        to: 'Brands.id',
+        from: 'users.brand_id',
+        to: 'brands.id',
       },
     },
     createdBrands: {
       relation: Model.HasManyRelation,
       modelClass: BrandModel,
       join: {
-        from: 'User.id',
-        to: 'Brands.createdBy',
+        from: 'users.id',
+        to: 'brands.created_by',
       },
     },
   };
