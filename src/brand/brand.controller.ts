@@ -37,6 +37,13 @@ export class BrandController {
   ) {
     return this.brandService.getBrandNames({ niche, industry });
   }
+  @Get('logo')
+  getBrandLogo(
+    @Query('niche') niche: string,
+    @Query('industry') industry: string,
+  ) {
+    return this.brandService.getBrandLogo({ niche, industry });
+  }
 
   @Get('patterns')
   getBrandPattern(@Query('industry') industry: string) {
@@ -82,62 +89,62 @@ export class BrandController {
   createPattern(
     @GetUser('id') id: number,
     @Param('id') brandId: string,
-    @Body() pattern: string,
+    @Body() dto: Brand,
   ) {
-    return this.brandService.createPattern(id, brandId, pattern);
+    return this.brandService.createPattern(id, brandId, dto.pattern);
   }
 
   @Post(':id/photography')
   createPhoto(
     @GetUser('id') id: number,
     @Param('id') brandId: string,
-    @Body() photography: string,
+    @Body() dto: Brand,
   ) {
-    return this.brandService.createPhotography(id, brandId, photography);
+    return this.brandService.createPhotography(id, brandId, dto.photography);
   }
 
   @Post(':id/strategy')
   createStrategy(
     @GetUser('id') id: number,
     @Param('id') brandId: string,
-    @Body() strategy: string,
+    @Body() dto: Brand,
   ) {
-    return this.brandService.createStrategy(id, brandId, strategy);
+    return this.brandService.createStrategy(id, brandId, dto.strategy);
   }
 
   @Post(':id/color')
   createColor(
     @GetUser('id') id: number,
     @Param('id') brandId: string,
-    @Body() color: string,
+    @Body() dto: Brand,
   ) {
-    return this.brandService.createColor(id, brandId, color);
+    return this.brandService.createColor(id, brandId, dto.color_pallette);
   }
 
   @Post(':id/font')
   createFont(
     @GetUser('id') id: number,
     @Param('id') brandId: string,
-    @Body() font: string,
+    @Body() dto: Brand,
   ) {
-    return this.brandService.createFont(id, brandId, font);
+    return this.brandService.createFont(id, brandId, dto.fonts);
   }
 
   @Post(':id/logo')
   createLogo(
     @GetUser('id') id: number,
     @Param('id') brandId: string,
-    @Body() logo_url: string,
+    @Body() dto: Brand,
   ) {
-    return this.brandService.createLogo(id, brandId, logo_url);
+    return this.brandService.createLogo(id, brandId, dto.logo);
   }
 
   @Post(':id/messaging')
   createMessaging(
     @GetUser('id') id: number,
     @Param('id') brandId: string,
-    @Body() messaging: string,
+    @Body() dto: Brand,
   ) {
-    return this.brandService.createMessaging(id, brandId, messaging);
+    return this.brandService.createMessaging(id, brandId, dto.messaging);
   }
 }

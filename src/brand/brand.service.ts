@@ -45,6 +45,21 @@ export class BrandService {
       throw new BadRequestException(error.message);
     }
   }
+  async getBrandLogo(dto: GetBrandDto): Promise<ResponseStatus> {
+    try {
+      const { data } = await axios.get(
+        this.config.get('BRANDA_CORE_URL') + '/logo',
+        { params: dto },
+      );
+
+      return {
+        message: 'Brand logos fetched successfully',
+        data,
+      };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
   async getBrandColor(dto: GetBrandDto): Promise<ResponseStatus> {
     try {
       const { data } = await axios.get(
@@ -111,7 +126,6 @@ export class BrandService {
   }
   async getBrandPattern(industry: string): Promise<ResponseStatus> {
     try {
-      console.log(industry);
       const { data } = await axios.get(
         this.config.get('BRANDA_CORE_URL') + '/pattern',
         {
@@ -121,7 +135,6 @@ export class BrandService {
         },
       );
 
-      console.log(data);
       return {
         message: 'Brand patterns fetched successfully',
         data,
@@ -167,6 +180,7 @@ export class BrandService {
     try {
       // create a new pattern in the brand table
       // return the success message
+      console.log(photography);
       await this.Brand.query()
         .findById(brandId)
         .patch({
