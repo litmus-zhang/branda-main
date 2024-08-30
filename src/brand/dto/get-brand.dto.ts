@@ -9,3 +9,9 @@ export class GetBrandDto {
   @IsNotEmpty()
   niche: string;
 }
+
+export class GetBrandStrategyDto extends GetBrandDto {
+  @IsString()
+  @IsNotEmpty()
+  country: string;
+}

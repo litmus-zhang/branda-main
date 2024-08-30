@@ -8,6 +8,11 @@ export class BrandModel extends BaseModel {
   logo!: string;
   colorPallete!: Record<string, string>;
   fonts!: Record<string, string>;
+  photography!: Record<string, string>;
+  illustration!: Record<string, string>;
+  strategy!: Record<string, string>;
+  messaging!: string;
+  pattern!: string;
   createdBy!: number;
 
   static relationMappings: RelationMappings = {
