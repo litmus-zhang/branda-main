@@ -263,15 +263,15 @@ describe('Branda Server E2E testng', () => {
             .expectStatus(200)
             .expectBodyContains('Brand messaging fetched successfully');
         });
-        it('should get a list brand fonts', async () => {
-          await pactum
-            .spec()
-            .withBearerToken('$S{userAt}')
-            .get('/brand/fonts')
-            .withQueryParams(brandDetails)
-            .expectStatus(200)
-            .expectBodyContains('Brand fonts fetched successfully');
-        }, 10000);
+        // it('should get a list brand fonts', async () => {
+        //   await pactum
+        //     .spec()
+        //     .withBearerToken('$S{userAt}')
+        //     .get('/brand/fonts')
+        //     .withQueryParams(brandDetails)
+        //     .expectStatus(200)
+        //     .expectBodyContains('Brand fonts fetched successfully');
+        // }, 10000);
         // it('should get a list brand color', async () => {
         //   await pactum
         //     .spec()

@@ -124,6 +124,24 @@ export class BrandService {
       throw new BadRequestException(error.message);
     }
   }
+  async getBrandPhotography(industry: string): Promise<ResponseStatus> {
+    try {
+      // get the brand messaging using the dto from grpc/REST/message queue
+      // return the brand names
+
+      const { data } = await axios.get(
+        this.config.get('BRANDA_CORE_URL') + '/messaging',
+        { params: { industry } },
+      );
+
+      return {
+        message: 'Brand messaging fetched successfully',
+        data,
+      };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
   async getBrandPattern(industry: string): Promise<ResponseStatus> {
     try {
       const { data } = await axios.get(
