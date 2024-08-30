@@ -1,4 +1,4 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional } from 'class-validator';
 
 export class Brand {
   @IsOptional()
@@ -7,23 +7,24 @@ export class Brand {
   @IsOptional()
   color_pallette: string;
 
-  @IsString()
   @IsOptional()
   logo: string;
 
-  @IsString()
   @IsOptional()
   fonts: string;
 
-  @IsString()
   @IsOptional()
   photography: string;
 
-  @IsString()
   @IsOptional()
   illustration: string;
 
-  @IsString()
   @IsOptional()
   strategy: string;
+
+  @IsOptional()
+  pattern: string;
+
+  @IsOptional()
+  messaging: string;
 }
