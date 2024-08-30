@@ -8,6 +8,11 @@ export class BrandModel extends BaseModel {
   logo!: string;
   colorPallete!: Record<string, string>;
   fonts!: Record<string, string>;
+  photography!: Record<string, string>;
+  illustration!: Record<string, string>;
+  strategy!: Record<string, string>;
+  messaging!: string;
+  pattern!: string;
   createdBy!: number;
 
   static relationMappings: RelationMappings = {
@@ -16,14 +21,14 @@ export class BrandModel extends BaseModel {
       modelClass: UserModel,
       join: {
         from: 'brands.id',
-        to: 'users.brandId',
+        to: 'users.brand_id',
       },
     },
     creator: {
       relation: Model.BelongsToOneRelation,
       modelClass: UserModel,
       join: {
-        from: 'brands.createdBy',
+        from: 'brands.created_by',
         to: 'users.id',
       },
     },

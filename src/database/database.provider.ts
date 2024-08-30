@@ -1,11 +1,13 @@
 import Knex from 'knex';
 import { knexSnakeCaseMappers, Model } from 'objection';
 import { UserModel, BrandModel } from './entities';
+import { attachPaginate } from 'knex-paginate';
 
 import config from '../../knexfile';
 
 const environment = process.env.NODE_ENV || 'development';
 const knex_Config = config[environment];
+attachPaginate();
 
 const models = [UserModel, BrandModel];
 
