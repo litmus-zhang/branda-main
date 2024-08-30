@@ -14,7 +14,7 @@ export class BrandController {
     @Query('niche') niche: string,
     @Query('industry') industry: string,
   ) {
-    return this.brandService.getBrandName({ niche, industry });
+    return this.brandService.getBrandNames({ niche, industry });
   }
   @Post('name')
   create(@GetUser('id') id: number, @Body() name: Brand) {

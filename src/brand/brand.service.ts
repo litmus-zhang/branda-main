@@ -3,9 +3,14 @@ import { GetBrandDto } from './dto';
 import { ResponseStatus } from 'utils/ResponseStatus';
 import { BrandModel } from 'src/database/entities';
 import { ModelClass } from 'objection';
+import axios from 'axios';
+import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class BrandService {
-  constructor(@Inject('BrandModel') private Brand: ModelClass<BrandModel>) {}
+  constructor(
+    @Inject('BrandModel') private Brand: ModelClass<BrandModel>,
+    private config: ConfigService,
+  ) {}
 
   async createBrand(userId: number, name: string): Promise<ResponseStatus> {
     try {
@@ -25,14 +30,23 @@ export class BrandService {
       throw new BadRequestException(error.message);
     }
   }
-  async getBrandName(dto: GetBrandDto): Promise<ResponseStatus> {
-    // get the brand name using the dto from grpc
-    // return the brand name
-    console.log(dto);
-    return {
-      message: 'Brand names fetched successfully',
-      data: ['Brand 1'],
-    };
+  async getBrandNames(dto: GetBrandDto): Promise<ResponseStatus> {
+    try {
+      // get the brand name using the dto from grpc/REST/message queue
+      // return the brand names
+
+      const { data } = await axios.get(
+        this.config.get('BRANDA_CORE_URL') + '/name',
+        { params: dto },
+      );
+
+      return {
+        message: 'Brand names fetched successfully',
+        data,
+      };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async getAllBrands(
