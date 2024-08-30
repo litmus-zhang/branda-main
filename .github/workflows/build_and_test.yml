@@ -2,22 +2,37 @@ name: Build and Test Branda-Server Project
 
 on:
   push:
-    branches: [main, develop, develop, testing]
+    branches: [main, develop, testing]
   pull_request:
     branches: [main, staging, develop, testing]
 
 jobs:
   build:
     runs-on: ubuntu-20.04
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          POSTGRES_DB: postgres
+          POSTGRES_USER: postgres
+        ports:
+          - 8000:5432
+
     steps:
       - uses: actions/checkout@v3
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18.x # Adjust to your desired Node.js version
+      - name: Install yarn
+        run: npm install -g yarn
       - name: Install dependencies
-        run: npm install
+        run: yarn
       - name: Run e2e tests
-        run: npm run test:e2e
+        env:
+          TEST_DATABASE_URL: postgres://postgres:${{ secrets.DATABASE_PASSWORD }}@localhost:8002/postgres
+        run: yarn test:e2e
       - name: Build the project
-        run: npm run build
+        run: yarn build

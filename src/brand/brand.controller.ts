@@ -44,7 +44,7 @@ export class BrandController {
   ) {
     return this.brandService.getBrandLogo({ niche, industry });
   }
-  @Get('logo')
+  @Get('photography')
   getBrandPhotography(@Query('industry') industry: string) {
     return this.brandService.getBrandPhotography(industry);
   }

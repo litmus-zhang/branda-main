@@ -81,7 +81,6 @@ export class BrandService {
         this.config.get('BRANDA_CORE_URL') + '/strategy',
         { params: dto },
       );
-      console.log(data);
 
       return {
         message: 'Brand strategies fetched successfully',
@@ -130,7 +129,7 @@ export class BrandService {
       // return the brand names
 
       const { data } = await axios.get(
-        this.config.get('BRANDA_CORE_URL') + '/messaging',
+        this.config.get('BRANDA_CORE_URL') + '/photography',
         { params: { industry } },
       );
 
