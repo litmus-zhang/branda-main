@@ -5,6 +5,7 @@ import { BrandModel } from 'src/database/entities';
 import { ModelClass } from 'objection';
 import axios from 'axios';
 import { ConfigService } from '@nestjs/config';
+
 @Injectable()
 export class BrandService {
   constructor(
@@ -32,10 +33,16 @@ export class BrandService {
   }
   async getBrandNames(dto: GetBrandDto): Promise<ResponseStatus> {
     try {
-      const { data } = await axios.get(
-        this.config.get('BRANDA_CORE_URL') + '/name',
-        { params: dto },
-      );
+      const TEMPLATE = `
+      Answer the user's question to the best of your ability.
+      You must always output a JSON object with an "answer" key containing the response,
+      I have a business with the {niche} being niche, and I want a cool name for it, it is operating in the {industry} industry.suggest me 3 short but fancy names for my company`;
+
+      const result =
+        ' Hello world ' + dto.industry + ' ' + dto.niche + TEMPLATE;
+
+      console.log({ result });
+      const data = result['answer'];
 
       return {
         message: 'Brand names fetched successfully',

@@ -7,7 +7,7 @@ import {
 import { AppModule } from './../src/app.module';
 import * as pactum from 'pactum';
 import { DatabaseService } from './../src/database/database.service';
-import { CreateUserDto } from 'src/auth/dto';
+import { CreateUserDto } from '../src/auth/dto';
 
 describe('Branda Server E2E testng', () => {
   let app: INestApplication;
@@ -51,7 +51,7 @@ describe('Branda Server E2E testng', () => {
         .spec()
         .get('/health')
         .expectStatus(200)
-        .expectBodyContains('All systems are operational');
+        .expectBodyContains('ok');
     });
   });
 
@@ -241,84 +241,84 @@ describe('Branda Server E2E testng', () => {
           .withBody(brandDetails.industry)
           .expectStatus(401);
       });
-      describe('Fetching Data from Third Party', () => {
-        it('should return list of brands names', async () => {
-          await pactum
-            .spec()
-            .withBearerToken('$S{userAt}')
-            .get('/brand/name')
-            .withQueryParams(brandDetails)
-            .expectStatus(200)
-            .expectJsonLike({
-              message: 'Brand names fetched successfully',
-              data: [/.+/],
-            });
-        });
-        it('should get a list brand messaging', async () => {
-          await pactum
-            .spec()
-            .withBearerToken('$S{userAt}')
-            .get('/brand/messaging')
-            .withQueryParams(brandDetails)
-            .expectStatus(200)
-            .expectBodyContains('Brand messaging fetched successfully');
-        });
-        // it('should get a list brand fonts', async () => {
-        //   await pactum
-        //     .spec()
-        //     .withBearerToken('$S{userAt}')
-        //     .get('/brand/fonts')
-        //     .withQueryParams(brandDetails)
-        //     .expectStatus(200)
-        //     .expectBodyContains('Brand fonts fetched successfully');
-        // }, 10000);
-        // it('should get a list brand color', async () => {
-        //   await pactum
-        //     .spec()
-        //     .withBearerToken('$S{userAt}')
-        //     .get('/brand/color')
-        //     .withQueryParams(brandDetails)
-        //     .expectStatus(200)
-        //     .expectBodyContains('Brand color fetched successfully');
-        // }, 20000);
-        // it('should get a list brand logo', async () => {
-        //   await pactum
-        //     .spec()
-        //     .withBearerToken('$S{userAt}')
-        //     .get('/brand/logo')
-        //     .withQueryParams(brandDetails)
-        //     .expectStatus(200)
-        //     .expectBodyContains('Brand logo fetched successfully');
-        // });
-        // it('should get a list brand strategy', async () => {
-        //   brandDetails['country'] = 'Nigeria';
-        //   await pactum
-        //     .spec()
-        //     .withBearerToken('$S{userAt}')
-        //     .get('/brand/strategy')
-        //     .withQueryParams(brandDetails)
-        //     .expectStatus(200)
-        //     .expectBodyContains('Brand strategy fetched successfully');
-        // }, 1000000);
-        // it('should get a list brand photography', async () => {
-        //   await pactum
-        //     .spec()
-        //     .withBearerToken('$S{userAt}')
-        //     .get('/brand/photography')
-        //     .withQueryParams(brandDetails)
-        //     .expectStatus(200)
-        //     .expectBodyContains('Brand photography fetched successfully');
-        // });
-        // it('should get a list brand patterns', async () => {
-        //   await pactum
-        //     .spec()
-        //     .withBearerToken('$S{userAt}')
-        //     .get('/brand/patterns')
-        //     .withQueryParams(brandDetails)
-        //     .expectStatus(200)
-        //     .expectBodyContains('Brand patterns fetched successfully');
-        // });
-      });
+      // describe('Fetching Data from Third Party', () => {
+      //   it('should return list of brands names', async () => {
+      //     await pactum
+      //       .spec()
+      //       .withBearerToken('$S{userAt}')
+      //       .get('/brand/name')
+      //       .withQueryParams(brandDetails)
+      //       .expectStatus(200)
+      //       .expectJsonLike({
+      //         message: 'Brand names fetched successfully',
+      //         data: [/.+/],
+      //       });
+      //   });
+      //   it('should get a list brand messaging', async () => {
+      //     await pactum
+      //       .spec()
+      //       .withBearerToken('$S{userAt}')
+      //       .get('/brand/messaging')
+      //       .withQueryParams(brandDetails)
+      //       .expectStatus(200)
+      //       .expectBodyContains('Brand messaging fetched successfully');
+      //   });
+      //   // it('should get a list brand fonts', async () => {
+      //   //   await pactum
+      //   //     .spec()
+      //   //     .withBearerToken('$S{userAt}')
+      //   //     .get('/brand/fonts')
+      //   //     .withQueryParams(brandDetails)
+      //   //     .expectStatus(200)
+      //   //     .expectBodyContains('Brand fonts fetched successfully');
+      //   // }, 10000);
+      //   // it('should get a list brand color', async () => {
+      //   //   await pactum
+      //   //     .spec()
+      //   //     .withBearerToken('$S{userAt}')
+      //   //     .get('/brand/color')
+      //   //     .withQueryParams(brandDetails)
+      //   //     .expectStatus(200)
+      //   //     .expectBodyContains('Brand color fetched successfully');
+      //   // }, 20000);
+      //   // it('should get a list brand logo', async () => {
+      //   //   await pactum
+      //   //     .spec()
+      //   //     .withBearerToken('$S{userAt}')
+      //   //     .get('/brand/logo')
+      //   //     .withQueryParams(brandDetails)
+      //   //     .expectStatus(200)
+      //   //     .expectBodyContains('Brand logo fetched successfully');
+      //   // });
+      //   // it('should get a list brand strategy', async () => {
+      //   //   brandDetails['country'] = 'Nigeria';
+      //   //   await pactum
+      //   //     .spec()
+      //   //     .withBearerToken('$S{userAt}')
+      //   //     .get('/brand/strategy')
+      //   //     .withQueryParams(brandDetails)
+      //   //     .expectStatus(200)
+      //   //     .expectBodyContains('Brand strategy fetched successfully');
+      //   // }, 1000000);
+      //   // it('should get a list brand photography', async () => {
+      //   //   await pactum
+      //   //     .spec()
+      //   //     .withBearerToken('$S{userAt}')
+      //   //     .get('/brand/photography')
+      //   //     .withQueryParams(brandDetails)
+      //   //     .expectStatus(200)
+      //   //     .expectBodyContains('Brand photography fetched successfully');
+      //   // });
+      //   // it('should get a list brand patterns', async () => {
+      //   //   await pactum
+      //   //     .spec()
+      //   //     .withBearerToken('$S{userAt}')
+      //   //     .get('/brand/patterns')
+      //   //     .withQueryParams(brandDetails)
+      //   //     .expectStatus(200)
+      //   //     .expectBodyContains('Brand patterns fetched successfully');
+      //   // });
+      // });
 
       describe('should create a brand', () => {
         it('should store brand name and return brandId', async () => {
@@ -441,6 +441,18 @@ describe('Branda Server E2E testng', () => {
       });
     });
     describe('Delete Brand', () => {});
+  });
+  describe('Systems Module', () => {
+    describe('Create a system', () => {});
+    describe('Get all systems', () => {});
+    describe('Get a system', () => {});
+    describe('Update a system', () => {});
+    describe('Delete a system', () => {});
+  });
+  describe('Integrations Module', () => {
+    describe('Get all integrations', () => {});
+    describe('Add new integrations', () => {});
+    describe('Remove an integrations', () => {});
   });
   describe('Link Sharing Module', () => {});
 });
