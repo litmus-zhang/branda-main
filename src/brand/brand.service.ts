@@ -174,7 +174,7 @@ export class BrandService {
   ): Promise<ResponseStatus> {
     const brands = await this.Brand.query()
       .where('createdBy', userId)
-      .page(page, limit)
+      .page(page - 1, limit)
       .orderBy('updated_at', 'desc');
     brands['limit'] = limit;
     brands['page'] = page;

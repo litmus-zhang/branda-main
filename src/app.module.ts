@@ -7,6 +7,7 @@ import { UserModule } from './user/user.module';
 import { BrandModule } from './brand/brand.module';
 import { TerminusModule } from '@nestjs/terminus';
 import { LlmModule } from './llm/llm.module';
+import { WorkspaceModule } from './workspace/workspace.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { LlmModule } from './llm/llm.module';
     BrandModule,
     TerminusModule,
     LlmModule,
+    WorkspaceModule,
   ],
   controllers: [AppController],
 })

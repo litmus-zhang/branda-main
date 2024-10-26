@@ -8,6 +8,7 @@ import { AppModule } from './../src/app.module';
 import * as pactum from 'pactum';
 import { DatabaseService } from './../src/database/database.service';
 import { CreateUserDto } from '../src/auth/dto';
+import { CreateWorkspaceDto } from 'src/workspace/dto/create-workspace.dto';
 
 describe('Branda Server E2E testng', () => {
   let app: INestApplication;
@@ -52,7 +53,7 @@ describe('Branda Server E2E testng', () => {
         .get('/health')
         .expectStatus(200)
         .expectBodyContains('ok');
-    });
+    }, 6000);
   });
 
   describe('Authentication Module', () => {
@@ -100,7 +101,50 @@ describe('Branda Server E2E testng', () => {
             .expectBodyContains('Registration successful');
         });
       });
-      describe('Social Registration', () => {});
+      describe('Social Registration', () => {
+        describe('Signup with Google', () => {
+          it('should return 501', async () => {
+            await pactum.spec().post('/auth/google').expectStatus(501);
+          });
+          it('should return profile data', async () => {
+            await pactum
+              .spec()
+              .post('/auth/google')
+              .withJson({
+                access_token: 'google',
+              })
+              .expectStatus(200);
+          });
+        });
+        describe('Signup with Linkedin', () => {
+          it('should return 501', async () => {
+            await pactum.spec().post('/auth/linkedin').expectStatus(501);
+          });
+          it('should return profile data', async () => {
+            await pactum
+              .spec()
+              .post('/auth/linkedin')
+              .withJson({
+                access_token: 'linkedin',
+              })
+              .expectStatus(200);
+          });
+        });
+        describe('Signup with X', () => {
+          it('should return 501', async () => {
+            await pactum.spec().post('/auth/x').expectStatus(501);
+          });
+          it('should return profile data', async () => {
+            await pactum
+              .spec()
+              .post('/auth/x')
+              .withJson({
+                access_token: 'x',
+              })
+              .expectStatus(200);
+          });
+        });
+      });
     });
     describe('Login', () => {
       describe('Email-Password Login', () => {
@@ -228,7 +272,55 @@ describe('Branda Server E2E testng', () => {
       });
     });
   });
-  describe('Brand Module', () => {
+  describe('Workspace Module', () => {
+    describe('Create a workspace', () => {
+      const workspaceDto: CreateWorkspaceDto = {
+        name: "Branda's Workspace",
+        description: 'Workspace for Branda',
+      };
+      it('should return 401 if not authenticated', async () => {
+        await pactum
+          .spec()
+          .post('/workspace/create')
+          .withBody(workspaceDto)
+          .expectStatus(401);
+      });
+      it('should create a workspace', async () => {
+        await pactum
+          .spec()
+          .withBearerToken('$S{userAt}')
+          .post('/workspace/create')
+          .withJson(workspaceDto)
+          .expectStatus(201)
+          .expectBodyContains('Workspace created successfully');
+      });
+    });
+    describe('Get all workspace', () => {
+      it('should return 401 if not authenticated', async () => {
+        await pactum.spec().get('/workspace/all').expectStatus(401);
+      });
+      it('should return list of workspaces', async () => {
+        await pactum
+          .spec()
+          .withBearerToken('$S{userAt}')
+          .get('/workspace/all')
+          .expectStatus(200)
+          .expectBodyContains('Workspaces fetched successfully')
+          .expectJsonLike({
+            message: 'Workspaces fetched successfully',
+            data: {
+              results: [{ id: /.+/ }],
+              total: /.+/,
+              limit: /.+/,
+              page: /.+/,
+            },
+          });
+      });
+    });
+    describe('Get a workspace', () => {});
+    describe('Delete a workspace', () => {});
+  });
+  describe('Brand Assets Module', () => {
     describe('Create Brand', () => {
       const brandDetails = {
         niche: 'Defi',
