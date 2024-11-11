@@ -13,6 +13,10 @@ const config: { [key: string]: Knex.Config } = {
   test: {
     client: 'pg',
     connection: process.env.TEST_DATABASE_URL,
+    pool: {
+      min: 2,
+      max: 10,
+    },
   },
   staging: {
     client: 'cockroachdb',

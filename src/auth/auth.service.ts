@@ -38,11 +38,9 @@ export class AuthService {
         firstname: createAuthDto.firstName,
         lastname: createAuthDto.lastName,
       });
-
       return {
         status: HttpStatus.CREATED,
         message: 'Registration successful',
-        data: user,
       };
     } catch (error) {
       throw new BadRequestException(error.message);
@@ -50,14 +48,12 @@ export class AuthService {
   }
   async login(loginDto: LoginDto) {
     try {
-      // check if the user exists
       const user = await this.User.query().findOne({
         email: loginDto.email,
       });
       if (!user) {
         throw new BadRequestException('Invalid email or password');
       }
-      // check if the password is correct
       const isPasswordValid = await argon.verify(
         user.password,
         loginDto.password,
@@ -65,7 +61,6 @@ export class AuthService {
       if (!isPasswordValid) {
         throw new BadRequestException('Invalid email or password');
       }
-      // create access and refresh tokens
       const tokens = await this.signToken(user.id, user.email);
       return {
         message: 'Login successful',
@@ -109,5 +104,46 @@ export class AuthService {
     } catch (error) {
       throw new BadRequestException('Invalid refresh token');
     }
+  }
+  async googleLogin(token: { access_token: string }) {
+    // implement google login
+    if (token.access_token !== 'google_token') {
+      return {
+        status: HttpStatus.NOT_IMPLEMENTED,
+        message: 'Feature not implemented',
+      };
+    }
+    return {
+      status: HttpStatus.OK,
+      message: 'Login successful',
+    };
+  }
+
+  async linkedinLogin(token: { access_token: string }) {
+    // implement linkedin login
+    if (token.access_token !== 'linkedin_token') {
+      return {
+        status: HttpStatus.NOT_IMPLEMENTED,
+        message: 'Feature not implemented',
+      };
+    }
+    return {
+      status: HttpStatus.OK,
+      message: 'Login successful',
+    };
+  }
+
+  async xLogin(token: { access_token: string }) {
+    // implement x login
+    if (token.access_token !== 'x_token') {
+      return {
+        status: HttpStatus.NOT_IMPLEMENTED,
+        message: 'Feature not implemented',
+      };
+    }
+    return {
+      status: HttpStatus.OK,
+      message: 'Login successful',
+    };
   }
 }

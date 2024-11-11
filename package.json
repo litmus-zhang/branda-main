@@ -30,6 +30,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json --watch --runInBand --detectOpenHandles"
   },
   "dependencies": {
+    "@langchain/community": "^0.2.33",
+    "@llm-tools/embedjs": "^0.0.96",
     "@nestjs/axios": "^3.0.3",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.2.3",
@@ -46,8 +48,8 @@
     "class-validator": "^0.14.1",
     "dotenv": "^16.4.5",
     "knex": "^3.1.0",
-    "knex-paginate": "^3.1.4",
     "objection": "^3.1.4",
+    "objection-paginator": "^0.7.1",
     "pactum": "^3.7.1",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
