@@ -14,16 +14,16 @@ jobs:
       postgres:
         image: postgres
         env:
-          POSTGRES_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          POSTGRES_PASSWORD: postgres
           POSTGRES_DB: postgres
           POSTGRES_USER: postgres
         ports:
           - 8000:5432
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v2
         with:
           node-version: 18.x # Adjust to your desired Node.js version
       - name: Install yarn
@@ -32,7 +32,7 @@ jobs:
         run: yarn
       - name: Run e2e tests
         env:
-          TEST_DATABASE_URL: postgres://postgres:${{ secrets.DATABASE_PASSWORD }}@localhost:8002/postgres
+          TEST_DATABASE_URL: postgres://postgres:$postgres@localhost:8000/postgres?sslmode=disable
         run: yarn test:e2e
       - name: Build the project
         run: yarn build
