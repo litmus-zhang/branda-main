@@ -38,20 +38,21 @@ export class WorkspaceController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.workspaceService.findOne(+id);
+  findOne(@GetUser('id') userId: number, @Param('id') id: string) {
+    return this.workspaceService.findOne(userId, +id);
   }
 
   @Patch(':id')
   update(
+    @GetUser('id') userId: number,
     @Param('id') id: string,
     @Body() updateWorkspaceDto: UpdateWorkspaceDto,
   ) {
-    return this.workspaceService.update(+id, updateWorkspaceDto);
+    return this.workspaceService.update(userId, +id, updateWorkspaceDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.workspaceService.remove(+id);
+  remove(@GetUser('id') userId: number, @Param('id') id: string) {
+    return this.workspaceService.remove(userId, +id);
   }
 }
