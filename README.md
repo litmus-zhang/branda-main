@@ -2,7 +2,7 @@
 
 This is the main branda server that is being exposed to the brand frontend team.
 # tldr 🚹:
-`Branda is a brand asset management software`
+`Branda is like your personal assistant, you focus on delivering value, Branda helps you manage all your business workflows (Branding, marketing, team management, Finance)`
 
 ## Contribution Guide
 - clone the repository
