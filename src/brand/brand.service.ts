@@ -1,9 +1,7 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { GetBrandDto, GetBrandStrategyDto } from './dto';
 import { ResponseStatus } from 'utils/ResponseStatus';
 import { BrandModel } from 'src/database/entities';
 import { ModelClass } from 'objection';
-import axios from 'axios';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -31,147 +29,14 @@ export class BrandService {
       throw new BadRequestException(error.message);
     }
   }
-  async getBrandNames(dto: GetBrandDto): Promise<ResponseStatus> {
-    try {
-      const TEMPLATE = `
-      Answer the user's question to the best of your ability.
-      You must always output a JSON object with an "answer" key containing the response,
-      I have a business with the {niche} being niche, and I want a cool name for it, it is operating in the {industry} industry.suggest me 3 short but fancy names for my company`;
-
-      const result =
-        ' Hello world ' + dto.industry + ' ' + dto.niche + TEMPLATE;
-
-      console.log({ result });
-      const data = result['answer'];
-
-      return {
-        message: 'Brand names fetched successfully',
-        data,
-      };
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-  async getBrandLogo(dto: GetBrandDto): Promise<ResponseStatus> {
-    try {
-      const { data } = await axios.get(
-        this.config.get('BRANDA_CORE_URL') + '/logo',
-        { params: dto },
-      );
-
-      return {
-        message: 'Brand logos fetched successfully',
-        data,
-      };
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-  async getBrandColor(dto: GetBrandDto): Promise<ResponseStatus> {
-    try {
-      const { data } = await axios.get(
-        this.config.get('BRANDA_CORE_URL') + '/color',
-        { params: dto },
-      );
-
-      return {
-        message: 'Brand names fetched successfully',
-        data,
-      };
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-  async getBrandStrategy(dto: GetBrandStrategyDto): Promise<ResponseStatus> {
-    try {
-      const { data } = await axios.get(
-        this.config.get('BRANDA_CORE_URL') + '/strategy',
-        { params: dto },
-      );
-
-      return {
-        message: 'Brand strategies fetched successfully',
-        data,
-      };
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-  async getBrandFont(): Promise<ResponseStatus> {
-    try {
-      const { data } = await axios.get(
-        this.config.get('BRANDA_CORE_URL') + '/font',
-      );
-
-      return {
-        message: 'Brand fonts fetched successfully',
-        data,
-      };
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-
-  async getBrandMessaging(dto: GetBrandDto): Promise<ResponseStatus> {
-    try {
-      // get the brand messaging using the dto from grpc/REST/message queue
-      // return the brand names
-
-      const { data } = await axios.get(
-        this.config.get('BRANDA_CORE_URL') + '/messaging',
-        { params: dto },
-      );
-
-      return {
-        message: 'Brand messaging fetched successfully',
-        data,
-      };
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-  async getBrandPhotography(industry: string): Promise<ResponseStatus> {
-    try {
-      // get the brand messaging using the dto from grpc/REST/message queue
-      // return the brand names
-
-      const { data } = await axios.get(
-        this.config.get('BRANDA_CORE_URL') + '/photography',
-        { params: { industry } },
-      );
-
-      return {
-        message: 'Brand messaging fetched successfully',
-        data,
-      };
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-  async getBrandPattern(industry: string): Promise<ResponseStatus> {
-    try {
-      const { data } = await axios.get(
-        this.config.get('BRANDA_CORE_URL') + '/pattern',
-        {
-          params: {
-            industry,
-          },
-        },
-      );
-
-      return {
-        message: 'Brand patterns fetched successfully',
-        data,
-      };
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
   async getAllBrands(
     userId,
     limit: number,
     page: number,
   ): Promise<ResponseStatus> {
+    if (page < 1) {
+      page = 1;
+    }
     const brands = await this.Brand.query()
       .where('createdBy', userId)
       .page(page - 1, limit)
@@ -196,151 +61,13 @@ export class BrandService {
       throw new BadRequestException(error.message);
     }
   }
-  async createPhotography(
-    userId: number,
-    brandId: string,
-    photography: string,
-  ): Promise<ResponseStatus> {
+  async deleteOneBrandById(userId, id: string): Promise<ResponseStatus> {
     try {
-      // create a new pattern in the brand table
-      // return the success message
-      console.log(photography);
-      await this.Brand.query()
-        .findById(brandId)
-        .patch({
-          photography: {
-            primary: photography,
-          },
-        });
-
-      return {
-        message: 'Brand photography created successfully',
-      };
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-  async createPattern(
-    userId: number,
-    brandId: string,
-    pattern: string,
-  ): Promise<ResponseStatus> {
-    try {
-      // create a new pattern in the brand table
-      // return the success message
-      await this.Brand.query().findById(brandId).patch({
-        pattern,
+      await this.Brand.query().deleteById(id).where({
+        createdBy: userId,
       });
-
       return {
-        message: 'Brand pattern created successfully',
-      };
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-  async createStrategy(
-    userId: number,
-    brandId: string,
-    strategy: string,
-  ): Promise<ResponseStatus> {
-    try {
-      // create a new pattern in the brand table
-      // return the success message
-      await this.Brand.query()
-        .findById(brandId)
-        .patch({
-          strategy: {
-            primary: strategy,
-          },
-        });
-
-      return {
-        message: 'Brand strategy created successfully',
-      };
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-  async createColor(
-    userId: number,
-    brandId: string,
-    color: string,
-  ): Promise<ResponseStatus> {
-    try {
-      // create a new pattern in the brand table
-      // return the success message
-      await this.Brand.query()
-        .findById(brandId)
-        .patch({
-          colorPallete: {
-            primary: color,
-          },
-        });
-
-      return {
-        message: 'Brand color created successfully',
-      };
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-  async createFont(
-    userId: number,
-    brandId: string,
-    font: string,
-  ): Promise<ResponseStatus> {
-    try {
-      // create a new pattern in the brand table
-      // return the success message
-      await this.Brand.query()
-        .findById(brandId)
-        .patch({
-          fonts: {
-            primary: font,
-          },
-        });
-
-      return {
-        message: 'Brand font created successfully',
-      };
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-  async createLogo(
-    userId: number,
-    brandId: string,
-    logo_url: string,
-  ): Promise<ResponseStatus> {
-    try {
-      // create a new pattern in the brand table
-      // return the success message
-      await this.Brand.query().findById(brandId).patch({
-        logo: logo_url,
-      });
-
-      return {
-        message: 'Brand logo created successfully',
-      };
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-  async createMessaging(
-    userId: number,
-    brandId: string,
-    messaging: string,
-  ): Promise<ResponseStatus> {
-    try {
-      // create a new pattern in the brand table
-      // return the success message
-      await this.Brand.query().findById(brandId).patch({
-        messaging,
-      });
-
-      return {
-        message: 'Brand messaging created successfully',
+        message: 'Brand deleted successfully',
       };
     } catch (error) {
       throw new BadRequestException(error.message);

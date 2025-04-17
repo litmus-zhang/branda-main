@@ -1,7 +1,7 @@
 import type { Knex } from 'knex';
 
 const tableName = 'User';
-const randomName = 'John Doe' + Math.floor(Math.random() * 100000);
+const randomName = 'John-Doe' + Math.floor(Math.random() * 100000);
 const randomProfilePicture = `https://robohash.org/${randomName}?size=100x100?set=set5`;
 
 export async function up(knex: Knex): Promise<void> {

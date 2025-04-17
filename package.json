@@ -27,7 +27,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "pretest:e2e": "NODE_ENV=test yarn db:test:restart",
-    "test:e2e": "jest --config ./test/jest-e2e.json --watch --runInBand --detectOpenHandles"
+    "test:e2e": "jest --config ./test/jest-e2e.json --watch --runInBand --detectOpenHandles",
+    "new-migration": "sh -c 'npx knex migrate:make \"$1_custom\"' --"
   },
   "dependencies": {
     "@langchain/community": "^0.2.33",

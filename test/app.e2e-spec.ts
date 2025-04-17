@@ -383,23 +383,22 @@ describe('Branda Server E2E testng', () => {
   describe('Brand Assets Module', () => {
     describe('Create Brand', () => {
       const brandDetails = {
-        niche: 'Defi',
-        industry: 'Finance',
+        name: 'Sample Brand',
       };
       it('should return 401 if not authenticated', async () => {
         await pactum
           .spec()
-          .post('/brand/name')
-          .withBody(brandDetails.industry)
+          .post('/brand/new')
+          .withBody(brandDetails.name)
           .expectStatus(401);
       });
-      describe('should create a brand', () => {
+      describe('should create a new brand', () => {
         it('should store brand name and return brandId', async () => {
           await pactum
             .spec()
             .withBearerToken('$S{userAt}')
-            .post('/brand/name')
-            .withBody(brandDetails.industry)
+            .post('/brand/new')
+            .withBody(brandDetails.name)
             .expectStatus(201)
             .expectBodyContains('Brand created successfully')
             .expectJsonLike({
@@ -410,76 +409,22 @@ describe('Branda Server E2E testng', () => {
             })
             .stores('brandId', 'data.brandID');
         });
-        it('should store brand messaging', async () => {
-          await pactum
-            .spec()
-            .withBearerToken('$S{userAt}')
-            .post('/brand/$S{brandId}/messaging')
-            .withBody(brandDetails.niche)
-            .expectStatus(201)
-            .expectBodyContains('Brand messaging created successfully');
-        });
-        it('should store brand logo', async () => {
-          await pactum
-            .spec()
-            .withBearerToken('$S{userAt}')
-            .post('/brand/$S{brandId}/logo')
-            .withBody(brandDetails.niche)
-            .expectStatus(201)
-            .expectBodyContains('Brand logo created successfully');
-        });
-        it('should store brand font', async () => {
-          await pactum
-            .spec()
-            .withBearerToken('$S{userAt}')
-            .post('/brand/$S{brandId}/font')
-            .withBody(brandDetails.niche)
-            .expectStatus(201)
-            .expectBodyContains('Brand font created successfully');
-        });
-        it('should store brand color', async () => {
-          await pactum
-            .spec()
-            .withBearerToken('$S{userAt}')
-            .post('/brand/$S{brandId}/color')
-            .withBody(brandDetails.niche)
-            .expectStatus(201)
-            .expectBodyContains('Brand color created successfully');
-        });
-        it('should store brand strategy', async () => {
-          await pactum
-            .spec()
-            .withBearerToken('$S{userAt}')
-            .post('/brand/$S{brandId}/strategy')
-            .withBody(brandDetails.niche)
-            .expectStatus(201)
-            .expectBodyContains('Brand strategy created successfully');
-        });
-        it('should store brand photography', async () => {
-          await pactum
-            .spec()
-            .withBearerToken('$S{userAt}')
-            .post('/brand/$S{brandId}/photography')
-            .withBody(brandDetails.niche)
-            .expectStatus(201)
-            .expectBodyContains('Brand photography created successfully');
-        });
-        it('should store brand patterns', async () => {
-          await pactum
-            .spec()
-            .withBearerToken('$S{userAt}')
-            .post('/brand/$S{brandId}/pattern')
-            .withBody(brandDetails.niche)
-            .expectStatus(201)
-            .expectBodyContains('Brand pattern created successfully');
-        });
       });
     });
     describe('Get all Brands', () => {
       it('should return 401 if not authenticated', async () => {
         await pactum.spec().get('/brand/all').expectStatus(401);
       });
-      it('should return list of brands with pagination', async () => {
+      it('should make pagination start from 1', async () => {
+        await pactum
+          .spec()
+          .withBearerToken('$S{userAt}')
+          .withQueryParams('page', '0')
+          .get('/brand/all')
+          .expectStatus(200)
+          .expectBodyContains('Brands fetched successfully');
+      });
+      it('should return list of brands with pagination props (limit, page, next and prev)', async () => {
         await pactum
           .spec()
           .withBearerToken('$S{userAt}')
@@ -513,7 +458,16 @@ describe('Branda Server E2E testng', () => {
           });
       });
     });
-    describe('Delete Brand', () => {});
+    describe('Delete Brand', () => {
+      it('should delete a single brand and return a successful messae', async () => {
+        await pactum
+          .spec()
+          .withBearerToken('$S{userAt}')
+          .delete('/brand/$S{brandId}')
+          .expectStatus(200)
+          .expectBodyContains('Brand deleted successfully');
+      });
+    });
   });
   describe('Systems Module', () => {
     describe('Create a system', () => {});
