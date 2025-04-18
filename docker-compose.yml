@@ -5,6 +5,9 @@ services:
       context: .
     ports:
       - '3000:3000'
+    environment:
+      - STAGING_DATABASE_URL=postgres://branda:branda@brandaMainDB/branda
+      - NODE_ENV=staging
     depends_on:
       brandaMainDB:
         condition: service_healthy
