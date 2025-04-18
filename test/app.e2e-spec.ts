@@ -17,17 +17,7 @@ describe('Branda Server E2E testng', () => {
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
-    })
-      // .overrideProvider(BrandService)
-      // .useValue({
-      //   getBrandNames: jest.fn(),
-      //   getBrandMessaging: jest.fn(),
-      //   getBrandPattern: jest.fn(),
-      //   getBrandFront: jest.fn(),
-      //   getBrandStrategy: jest.fn(),
-      //   // Add other methods if needed
-      // })
-      .compile();
+    }).compile();
 
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
@@ -43,7 +33,9 @@ describe('Branda Server E2E testng', () => {
     pactum.request.setBaseUrl('http://localhost:3001/api/v1');
   });
   afterAll(async () => {
-    app.close();
+    if (app) {
+      await app.close();
+    }
   });
 
   describe('Health Check', () => {
