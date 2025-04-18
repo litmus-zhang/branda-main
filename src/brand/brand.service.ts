@@ -3,7 +3,7 @@ import { ResponseStatus } from 'utils/ResponseStatus';
 import { BrandModel } from 'src/database/entities';
 import { ModelClass } from 'objection';
 import { ConfigService } from '@nestjs/config';
-import { paginate } from 'utils';
+import { paginate } from '../../utils/paginator';
 
 @Injectable()
 export class BrandService {
@@ -38,15 +38,14 @@ export class BrandService {
     if (page < 1) {
       page = 1;
     }
-    const brands = await paginate(
+    const data = await paginate(
       this.Brand.query().where('createdBy', userId),
       page,
       limit,
     );
-    console.log({ brands });
     return {
       message: 'Brands fetched successfully',
-      data: brands,
+      data,
     };
   }
   async getBrandById(userId, id: string): Promise<ResponseStatus> {

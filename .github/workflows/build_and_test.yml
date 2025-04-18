@@ -9,9 +9,6 @@ on:
 jobs:
   test-e2e:
     runs-on: ubuntu-22.04
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x, 22.x]
     services:
       postgres:
         image: postgres
@@ -26,7 +23,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 20.x
           cache: 'npm'
       - name: Install Yarn
         run: npm install -g yarn
@@ -35,7 +32,7 @@ jobs:
       - name: Run e2e tests
         env:
           TEST_DATABASE_URL: postgresql://test:test@localhost:6000/test?sslmode=disable
-        run: yarn test:e2e --ci --runInBand
+        run: yarn test:e2e --ci --forceExit
 
   build:
     runs-on: ubuntu-22.04

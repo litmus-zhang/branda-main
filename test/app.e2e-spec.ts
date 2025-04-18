@@ -434,10 +434,15 @@ describe('Branda Server E2E testng', () => {
           .expectJsonLike({
             message: 'Brands fetched successfully',
             data: {
-              results: [{ id: /.+/ }],
-              total: /.+/,
-              limit: /.+/,
-              page: /.+/,
+              data: [{ id: /.+/ }],
+              meta: {
+                total: /.+/,
+                lastPage: /.+/,
+                currentPage: /.+/,
+                perPage: /.+/,
+                prev: /.+/,
+                next: /.+/,
+              },
             },
           });
       });

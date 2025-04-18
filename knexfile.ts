@@ -9,12 +9,16 @@ const config: { [key: string]: Knex.Config } = {
   development: {
     client: 'pg',
     connection: process.env.DEV_DATABASE_URL,
+    pool: {
+      min: 5,
+      max: 10,
+    },
   },
   test: {
     client: 'pg',
     connection: process.env.TEST_DATABASE_URL,
     pool: {
-      min: 2,
+      min: 5,
       max: 10,
     },
   },

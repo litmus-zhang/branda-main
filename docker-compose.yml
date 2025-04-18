@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   app:
     container_name: branda-server
@@ -7,28 +5,36 @@ services:
       context: .
     ports:
       - '3000:3000'
+    depends_on:
+      brandaMainDB:
+        condition: service_healthy
   brandaMainDB:
     image: postgres:15.0
     container_name: brandaMainDB
     ports:
-    - "8001:5432"
+      - "8001:5432"
     environment:
       - POSTGRES_USER=branda
       - POSTGRES_PASSWORD=branda
       - POSTGRES_DB=branda
     volumes:
       - ./mainDB:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U branda"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   brandaTestDB:
     image: postgres:15.0
     container_name: brandaTestDB
     ports:
       - "8002:5432"
     environment:
-        - POSTGRES_USER=test
-        - POSTGRES_PASSWORD=test
-        - POSTGRES_DB=test
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_DB=test
     volumes:
-        - ./testDB:/var/lib/postgresql/data
+      - ./testDB:/var/lib/postgresql/data
 
 volumes:
   mainDB:
