@@ -7,9 +7,11 @@ on:
     branches: [main, staging, develop, testing]
 
 jobs:
-  build:
+  test-e2e:
     runs-on: ubuntu-22.04
-
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
     services:
       postgres:
         image: postgres
@@ -19,20 +21,38 @@ jobs:
           POSTGRES_USER: test
         ports:
           - 6000:5432
-
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Install Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
-          node-version: 18.x # Adjust to your desired Node.js version
-      - name: Install yarn
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - name: Install Yarn
         run: npm install -g yarn
       - name: Install dependencies
         run: yarn
       - name: Run e2e tests
         env:
           TEST_DATABASE_URL: postgresql://test:test@localhost:6000/test?sslmode=disable
-        run: yarn test:e2e
+        run: yarn test:e2e --ci --runInBand
+
+  build:
+    runs-on: ubuntu-22.04
+    needs: test-e2e
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - name: Install Yarn
+        run: npm install -g yarn
+      - name: Install dependencies
+        run: yarn
       - name: Build the project
         run: yarn build

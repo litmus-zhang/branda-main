@@ -1,32 +1,49 @@
 import { QueryBuilder, Model, Page as ObjectionPage } from 'objection';
 
-interface Page<T extends Model> extends ObjectionPage<T> {
-  results: T[];
-  currentPage: number;
-  totalPages: number;
-  nextPage: number | null;
-  prevPage: number | null;
+export interface PaginatedResult<T extends Model> {
+  data: T[];
+  meta: {
+    total: number;
+    lastPage: number;
+    currentPage: number;
+    perPage: number;
+    prev: number | null;
+    next: number | null;
+  };
 }
 
 export async function paginate<T extends Model>(
-  model: QueryBuilder<T, T>,
+  model: QueryBuilder<T, T[]>,
   page: number,
   limit: number,
-): Promise<Page<T>> {
-  const offset = (page - 1) * limit;
-  const [items, total] = await Promise.all([
-    model.offset(offset).limit(limit) as unknown as Promise<T[]>,
-    model.resultSize(),
-  ]);
-  const nextPage = page * limit < total ? page + 1 : null;
-  const prevPage = page > 1 ? page - 1 : null;
-  const totalPages = Math.ceil(total / limit);
-  return {
-    total,
-    currentPage: page,
-    totalPages,
-    nextPage,
-    prevPage,
-    results: items,
-  };
+): Promise<PaginatedResult<T>> {
+  // Get the knex instance from the model class.
+  const knexInstance = model.modelClass().knex();
+
+  return knexInstance.transaction(async (trx) => {
+    const offset = (page - 1) * limit;
+    const [items, total] = await Promise.all([
+      // Clone the model query to avoid mutations and attach the transaction.
+      (await model
+        .clone()
+        .transacting(trx)
+        .offset(offset)
+        .limit(limit)) as unknown as Promise<T[]>,
+      await model.clone().transacting(trx).resultSize(),
+    ]);
+    const nextPage = page * limit < total ? page + 1 : null;
+    const prevPage = page > 1 ? page - 1 : null;
+    const totalPages = Math.ceil(total / limit);
+    return {
+      data: items,
+      meta: {
+        total,
+        lastPage: totalPages,
+        currentPage: page,
+        perPage: limit,
+        prev: prevPage,
+        next: nextPage,
+      },
+    };
+  });
 }
