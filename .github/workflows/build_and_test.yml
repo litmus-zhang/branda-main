@@ -30,6 +30,9 @@ jobs:
       - name: Run e2e tests
         env:
           TEST_DATABASE_URL: postgresql://test:test@localhost:6000/test?sslmode=disable
+          NODE_ENV: test
+          ACCESS_JWT_SECRET: "some-secret"
+          REFRESH_JWT_SECRET: "some-refresh-secret"
         run: yarn test --ci --forceExit
 
   build:
