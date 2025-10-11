@@ -105,4 +105,4 @@ jobs:
       #     name: node-modules-artifact
 
       - name: Build the project
-        run: pnpm build
+        run: pnpm build:api
