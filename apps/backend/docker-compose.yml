@@ -7,7 +7,7 @@ services:
       - '3000:3000'
 
   brandaTestDB:
-    image: postgres:15.0
+    image: postgres:16
     container_name: brandaTestDB
     ports:
       - "8002:5432"
@@ -17,6 +17,12 @@ services:
       - POSTGRES_DB=test
     volumes:
       - ./testDB:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
+  mainDB:
   testDB:

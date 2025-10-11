@@ -22,7 +22,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -58,7 +58,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'pnpm'
 
       - name: Download dependencies
@@ -72,7 +72,7 @@ jobs:
           NODE_ENV: test
           ACCESS_JWT_SECRET: "some-secret"
           REFRESH_JWT_SECRET: "some-refresh-secret"
-        run: pnpm test --ci --forceExit
+        run: pnpm test:api --ci --forceExit
 
   build:
     runs-on: ubuntu-22.04
@@ -89,7 +89,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'pnpm'
 
       - name: Download dependencies
