@@ -27,6 +27,13 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
+
+      - name: Upload dependencies
+        uses: actions/upload-artifact@v4
+        with:
+          name: node-modules-artifact
+          path: node_modules
+
   test:
     runs-on: ubuntu-22.04
     needs: cache-and-install
@@ -40,14 +47,25 @@ jobs:
         ports:
           - 6000:5432
     steps:
-      # - uses: actions/checkout@v4
-      # - name: Install Node.js
-      #   uses: actions/setup-node@v4
-      #   with:
-      #     node-version: 20.x
-      #     cache: 'pnpm'
-      # - name: Install dependencies
-      #   run: pnpm
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Download dependencies
+        uses: actions/download-artifact@v4
+        with:
+          name: node-modules-artifact
+
       - name: Run e2e tests
         env:
           TEST_DATABASE_URL: postgresql://test:test@localhost:6000/test?sslmode=disable
@@ -60,13 +78,24 @@ jobs:
     runs-on: ubuntu-22.04
     needs: test
     steps:
-      # - uses: actions/checkout@v4
-      # - name: Install Node.js
-      #   uses: actions/setup-node@v4
-      #   with:
-      #     node-version: 20.x
-      #     cache: 'pnpm'
-      # - name: Install dependencies
-      #   run: pnpm 
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Download dependencies
+        uses: actions/download-artifact@v4
+        with:
+          name: node-modules-artifact
+
       - name: Build the project
         run: pnpm build
