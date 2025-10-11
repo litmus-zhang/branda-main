@@ -72,7 +72,7 @@ jobs:
           NODE_ENV: test
           ACCESS_JWT_SECRET: "some-secret"
           REFRESH_JWT_SECRET: "some-refresh-secret"
-        run: pnpm test:api --ci --forceExit
+        run: pnpm test:api
 
   build:
     runs-on: ubuntu-22.04
