@@ -24,16 +24,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-          cache: 'yarn'
+          cache: 'pnpm'
       - name: Install dependencies
-        run: yarn
+        run: pnpm
       - name: Run e2e tests
         env:
           TEST_DATABASE_URL: postgresql://test:test@localhost:6000/test?sslmode=disable
           NODE_ENV: test
           ACCESS_JWT_SECRET: "some-secret"
           REFRESH_JWT_SECRET: "some-refresh-secret"
-        run: yarn test --ci --forceExit
+        run: pnpm test --ci --forceExit
 
   build:
     runs-on: ubuntu-22.04
@@ -44,8 +44,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-          cache: 'yarn'
+          cache: 'pnpm'
       - name: Install dependencies
-        run: yarn
+        run: pnpm
       - name: Build the project
-        run: yarn build
+        run: pnpm build
