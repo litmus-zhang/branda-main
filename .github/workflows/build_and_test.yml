@@ -61,10 +61,12 @@ jobs:
           node-version: 22
           cache: 'pnpm'
 
-      - name: Download dependencies
-        uses: actions/download-artifact@v4
-        with:
-          name: node-modules-artifact
+      # - name: Download dependencies
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: node-modules-artifact
+      - name: Install dependencies
+        run: pnpm install
 
       - name: Run migrations
         env:
@@ -97,6 +99,9 @@ jobs:
         with:
           node-version: 22
           cache: 'pnpm'
+
+      # - name: Install dependencies
+      #   run: pnpm install
 
       - name: Download dependencies
         uses: actions/download-artifact@v4
