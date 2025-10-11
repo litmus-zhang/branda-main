@@ -100,13 +100,13 @@ jobs:
           node-version: 22
           cache: 'pnpm'
 
-      # - name: Install dependencies
-      #   run: pnpm install
+      - name: Install dependencies
+        run: pnpm install
 
-      - name: Download dependencies
-        uses: actions/download-artifact@v4
-        with:
-          name: node-modules-artifact
+      # - name: Download dependencies
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: node-modules-artifact
 
       - name: Build the project
         run: pnpm build
