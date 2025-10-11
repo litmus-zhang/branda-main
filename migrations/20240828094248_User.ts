@@ -1,6 +1,6 @@
 import type { Knex } from 'knex';
 
-const tableName = 'users';
+const tableName = 'User';
 const randomName = 'John Doe' + Math.floor(Math.random() * 100000);
 const randomProfilePicture = `https://robohash.org/${randomName}?size=100x100?set=set5`;
 

@@ -6,6 +6,16 @@
             "driver": "PostgreSQL",
             "connectString": "postgresql://branda:branda@localhost:8001/branda",
             "name": "branda-main"
+        },
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 8002,
+            "askForPassword": true,
+            "driver": "PostgreSQL",
+            "name": "Branda Test",
+            "database": "test",
+            "username": "test"
         }
     ]
 }

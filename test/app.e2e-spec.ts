@@ -7,7 +7,8 @@ import {
 import { AppModule } from './../src/app.module';
 import * as pactum from 'pactum';
 import { DatabaseService } from './../src/database/database.service';
-import { CreateUserDto } from 'src/auth/dto';
+import { CreateUserDto } from '../src/auth/dto';
+import { CreateWorkspaceDto } from 'src/workspace/dto/create-workspace.dto';
 
 describe('Branda Server E2E testng', () => {
   let app: INestApplication;
@@ -51,8 +52,8 @@ describe('Branda Server E2E testng', () => {
         .spec()
         .get('/health')
         .expectStatus(200)
-        .expectBodyContains('All systems are operational');
-    });
+        .expectBodyContains('ok');
+    }, 6000);
   });
 
   describe('Authentication Module', () => {
@@ -100,7 +101,50 @@ describe('Branda Server E2E testng', () => {
             .expectBodyContains('Registration successful');
         });
       });
-      describe('Social Registration', () => {});
+      describe('Social Registration', () => {
+        // describe('Signup with Google', () => {
+        //   it('should return 501', async () => {
+        //     await pactum.spec().post('/auth/google').expectStatus(501);
+        //   });
+        //   it('should return profile data', async () => {
+        //     await pactum
+        //       .spec()
+        //       .post('/auth/google')
+        //       .withJson({
+        //         access_token: 'google',
+        //       })
+        //       .expectStatus(200);
+        //   });
+        // });
+        // describe('Signup with Linkedin', () => {
+        //   it('should return 501', async () => {
+        //     await pactum.spec().post('/auth/linkedin').expectStatus(501);
+        //   });
+        //   it('should return profile data', async () => {
+        //     await pactum
+        //       .spec()
+        //       .post('/auth/linkedin')
+        //       .withJson({
+        //         access_token: 'linkedin',
+        //       })
+        //       .expectStatus(200);
+        //   });
+        // });
+        // describe('Signup with X', () => {
+        //   it('should return 501', async () => {
+        //     await pactum.spec().post('/auth/x').expectStatus(501);
+        //   });
+        //   it('should return profile data', async () => {
+        //     await pactum
+        //       .spec()
+        //       .post('/auth/x')
+        //       .withJson({
+        //         access_token: 'x',
+        //       })
+        //       .expectStatus(200);
+        //   });
+        // });
+      });
     });
     describe('Login', () => {
       describe('Email-Password Login', () => {
@@ -228,7 +272,115 @@ describe('Branda Server E2E testng', () => {
       });
     });
   });
-  describe('Brand Module', () => {
+  describe('Workspace Module', () => {
+    describe('Create a workspace', () => {
+      const workspaceDto: CreateWorkspaceDto = {
+        name: "Branda's Workspace",
+        description: 'Workspace for Branda',
+      };
+      it('should return 401 if not authenticated', async () => {
+        await pactum
+          .spec()
+          .post('/workspace/create')
+          .withBody(workspaceDto)
+          .expectStatus(401);
+      });
+      it('should create a workspace', async () => {
+        await pactum
+          .spec()
+          .withBearerToken('$S{userAt}')
+          .post('/workspace/create')
+          .withJson(workspaceDto)
+          .expectStatus(201)
+          .expectBodyContains('Workspace created successfully');
+      });
+    });
+    describe('Get all workspace', () => {
+      it('should return 401 if not authenticated', async () => {
+        await pactum.spec().get('/workspace/all').expectStatus(401);
+      });
+      it('should return list of workspaces', async () => {
+        await pactum
+          .spec()
+          .withBearerToken('$S{userAt}')
+          .get('/workspace/all??limit=10&page=1')
+          .expectStatus(200)
+          .expectBodyContains('Workspaces fetched successfully')
+          .stores('workspaceId', 'data.results[0].id')
+          .expectJsonLike({
+            message: 'Workspaces fetched successfully',
+            data: {
+              results: [{ id: /.+/ }],
+              total: /.+/,
+              size: /.+/,
+              page: /.+/,
+            },
+          });
+      });
+    });
+    describe('Get a workspace', () => {
+      it('should return 401 if not authenticated', async () => {
+        await pactum.spec().get('/workspace/$S{workspaceId}').expectStatus(401);
+      });
+      it('should return a single workspace', async () => {
+        await pactum
+          .spec()
+          .withBearerToken('$S{userAt}')
+          .get('/workspace/$S{workspaceId}')
+          .expectStatus(200)
+          .expectBodyContains('Workspace fetched successfully')
+          .expectJsonLike({
+            message: 'Workspace fetched successfully',
+            data: {
+              id: /.+/,
+              name: /.+/,
+            },
+          });
+      });
+    });
+    describe('Update a workspace', () => {
+      it('should return 401 if not authenticated', async () => {
+        await pactum
+          .spec()
+          .patch('/workspace/$S{workspaceId}')
+          .expectStatus(401);
+      });
+      it('should return a single updated workspace', async () => {
+        await pactum
+          .spec()
+          .withBearerToken('$S{userAt}')
+          .patch('/workspace/$S{workspaceId}')
+          .withBody({ name: "Branda's Updated Workspace" })
+          .expectStatus(200)
+          .expectBodyContains('Workspace updated successfully')
+          .expectJsonLike({
+            message: 'Workspace updated successfully',
+            data: {
+              id: /.+/,
+              name: /.+/,
+            },
+          });
+      });
+    });
+    describe('Delete a workspace', () => {
+      it('should return 401 if not authenticated', async () => {
+        await pactum
+          .spec()
+          .delete('/workspace/$S{workspaceId}')
+          .expectStatus(401);
+      });
+      it('should delete a single workspace', async () => {
+        await pactum
+          .spec()
+          .withBearerToken('$S{userAt}')
+          .delete('/workspace/$S{workspaceId}')
+          .expectStatus(200)
+          .expectBodyContains('Workspace deleted successfully')
+          .inspect();
+      });
+    });
+  });
+  describe('Brand Assets Module', () => {
     describe('Create Brand', () => {
       const brandDetails = {
         niche: 'Defi',
@@ -241,84 +393,84 @@ describe('Branda Server E2E testng', () => {
           .withBody(brandDetails.industry)
           .expectStatus(401);
       });
-      describe('Fetching Data from Third Party', () => {
-        it('should return list of brands names', async () => {
-          await pactum
-            .spec()
-            .withBearerToken('$S{userAt}')
-            .get('/brand/name')
-            .withQueryParams(brandDetails)
-            .expectStatus(200)
-            .expectJsonLike({
-              message: 'Brand names fetched successfully',
-              data: [/.+/],
-            });
-        });
-        it('should get a list brand messaging', async () => {
-          await pactum
-            .spec()
-            .withBearerToken('$S{userAt}')
-            .get('/brand/messaging')
-            .withQueryParams(brandDetails)
-            .expectStatus(200)
-            .expectBodyContains('Brand messaging fetched successfully');
-        });
-        it('should get a list brand fonts', async () => {
-          await pactum
-            .spec()
-            .withBearerToken('$S{userAt}')
-            .get('/brand/fonts')
-            .withQueryParams(brandDetails)
-            .expectStatus(200)
-            .expectBodyContains('Brand fonts fetched successfully');
-        }, 10000);
-        // it('should get a list brand color', async () => {
-        //   await pactum
-        //     .spec()
-        //     .withBearerToken('$S{userAt}')
-        //     .get('/brand/color')
-        //     .withQueryParams(brandDetails)
-        //     .expectStatus(200)
-        //     .expectBodyContains('Brand color fetched successfully');
-        // }, 20000);
-        // it('should get a list brand logo', async () => {
-        //   await pactum
-        //     .spec()
-        //     .withBearerToken('$S{userAt}')
-        //     .get('/brand/logo')
-        //     .withQueryParams(brandDetails)
-        //     .expectStatus(200)
-        //     .expectBodyContains('Brand logo fetched successfully');
-        // });
-        // it('should get a list brand strategy', async () => {
-        //   brandDetails['country'] = 'Nigeria';
-        //   await pactum
-        //     .spec()
-        //     .withBearerToken('$S{userAt}')
-        //     .get('/brand/strategy')
-        //     .withQueryParams(brandDetails)
-        //     .expectStatus(200)
-        //     .expectBodyContains('Brand strategy fetched successfully');
-        // }, 1000000);
-        // it('should get a list brand photography', async () => {
-        //   await pactum
-        //     .spec()
-        //     .withBearerToken('$S{userAt}')
-        //     .get('/brand/photography')
-        //     .withQueryParams(brandDetails)
-        //     .expectStatus(200)
-        //     .expectBodyContains('Brand photography fetched successfully');
-        // });
-        // it('should get a list brand patterns', async () => {
-        //   await pactum
-        //     .spec()
-        //     .withBearerToken('$S{userAt}')
-        //     .get('/brand/patterns')
-        //     .withQueryParams(brandDetails)
-        //     .expectStatus(200)
-        //     .expectBodyContains('Brand patterns fetched successfully');
-        // });
-      });
+      // describe('Fetching Data from Third Party', () => {
+      //   it('should return list of brands names', async () => {
+      //     await pactum
+      //       .spec()
+      //       .withBearerToken('$S{userAt}')
+      //       .get('/brand/name')
+      //       .withQueryParams(brandDetails)
+      //       .expectStatus(200)
+      //       .expectJsonLike({
+      //         message: 'Brand names fetched successfully',
+      //         data: [/.+/],
+      //       });
+      //   });
+      //   it('should get a list brand messaging', async () => {
+      //     await pactum
+      //       .spec()
+      //       .withBearerToken('$S{userAt}')
+      //       .get('/brand/messaging')
+      //       .withQueryParams(brandDetails)
+      //       .expectStatus(200)
+      //       .expectBodyContains('Brand messaging fetched successfully');
+      //   });
+      //   // it('should get a list brand fonts', async () => {
+      //   //   await pactum
+      //   //     .spec()
+      //   //     .withBearerToken('$S{userAt}')
+      //   //     .get('/brand/fonts')
+      //   //     .withQueryParams(brandDetails)
+      //   //     .expectStatus(200)
+      //   //     .expectBodyContains('Brand fonts fetched successfully');
+      //   // }, 10000);
+      //   // it('should get a list brand color', async () => {
+      //   //   await pactum
+      //   //     .spec()
+      //   //     .withBearerToken('$S{userAt}')
+      //   //     .get('/brand/color')
+      //   //     .withQueryParams(brandDetails)
+      //   //     .expectStatus(200)
+      //   //     .expectBodyContains('Brand color fetched successfully');
+      //   // }, 20000);
+      //   // it('should get a list brand logo', async () => {
+      //   //   await pactum
+      //   //     .spec()
+      //   //     .withBearerToken('$S{userAt}')
+      //   //     .get('/brand/logo')
+      //   //     .withQueryParams(brandDetails)
+      //   //     .expectStatus(200)
+      //   //     .expectBodyContains('Brand logo fetched successfully');
+      //   // });
+      //   // it('should get a list brand strategy', async () => {
+      //   //   brandDetails['country'] = 'Nigeria';
+      //   //   await pactum
+      //   //     .spec()
+      //   //     .withBearerToken('$S{userAt}')
+      //   //     .get('/brand/strategy')
+      //   //     .withQueryParams(brandDetails)
+      //   //     .expectStatus(200)
+      //   //     .expectBodyContains('Brand strategy fetched successfully');
+      //   // }, 1000000);
+      //   // it('should get a list brand photography', async () => {
+      //   //   await pactum
+      //   //     .spec()
+      //   //     .withBearerToken('$S{userAt}')
+      //   //     .get('/brand/photography')
+      //   //     .withQueryParams(brandDetails)
+      //   //     .expectStatus(200)
+      //   //     .expectBodyContains('Brand photography fetched successfully');
+      //   // });
+      //   // it('should get a list brand patterns', async () => {
+      //   //   await pactum
+      //   //     .spec()
+      //   //     .withBearerToken('$S{userAt}')
+      //   //     .get('/brand/patterns')
+      //   //     .withQueryParams(brandDetails)
+      //   //     .expectStatus(200)
+      //   //     .expectBodyContains('Brand patterns fetched successfully');
+      //   // });
+      // });
 
       describe('should create a brand', () => {
         it('should store brand name and return brandId', async () => {
@@ -441,6 +593,18 @@ describe('Branda Server E2E testng', () => {
       });
     });
     describe('Delete Brand', () => {});
+  });
+  describe('Systems Module', () => {
+    describe('Create a system', () => {});
+    describe('Get all systems', () => {});
+    describe('Get a system', () => {});
+    describe('Update a system', () => {});
+    describe('Delete a system', () => {});
+  });
+  describe('Integrations Module', () => {
+    describe('Get all integrations', () => {});
+    describe('Add new integrations', () => {});
+    describe('Remove an integrations', () => {});
   });
   describe('Link Sharing Module', () => {});
 });

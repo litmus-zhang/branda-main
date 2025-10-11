@@ -22,4 +22,17 @@ export class AuthController {
   refreshToken(@Body() dto: { refresh_token: string }) {
     return this.authService.refreshToken(dto);
   }
+
+  @Post('google')
+  google(@Body() dto: { access_token: string }) {
+    return this.authService.googleLogin(dto);
+  }
+  @Post('linkedin')
+  linkedin(@Body() dto: { access_token: string }) {
+    return this.authService.linkedinLogin(dto);
+  }
+  @Post('x')
+  x(@Body() dto: { access_token: string }) {
+    return this.authService.xLogin(dto);
+  }
 }

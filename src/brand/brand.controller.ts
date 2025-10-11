@@ -21,7 +21,7 @@ export class BrandController {
   getAllBrands(
     @GetUser('id') userId: number,
     @Query('limit') limit: string = '10',
-    @Query('page') page: string = '0',
+    @Query('page') page: string = '1',
   ) {
     return this.brandService.getAllBrands(
       userId,
@@ -43,6 +43,10 @@ export class BrandController {
     @Query('industry') industry: string,
   ) {
     return this.brandService.getBrandLogo({ niche, industry });
+  }
+  @Get('photography')
+  getBrandPhotography(@Query('industry') industry: string) {
+    return this.brandService.getBrandPhotography(industry);
   }
 
   @Get('patterns')

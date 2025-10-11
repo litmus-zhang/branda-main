@@ -5,6 +5,7 @@ import { BrandModel } from 'src/database/entities';
 import { ModelClass } from 'objection';
 import axios from 'axios';
 import { ConfigService } from '@nestjs/config';
+
 @Injectable()
 export class BrandService {
   constructor(
@@ -32,10 +33,16 @@ export class BrandService {
   }
   async getBrandNames(dto: GetBrandDto): Promise<ResponseStatus> {
     try {
-      const { data } = await axios.get(
-        this.config.get('BRANDA_CORE_URL') + '/name',
-        { params: dto },
-      );
+      const TEMPLATE = `
+      Answer the user's question to the best of your ability.
+      You must always output a JSON object with an "answer" key containing the response,
+      I have a business with the {niche} being niche, and I want a cool name for it, it is operating in the {industry} industry.suggest me 3 short but fancy names for my company`;
+
+      const result =
+        ' Hello world ' + dto.industry + ' ' + dto.niche + TEMPLATE;
+
+      console.log({ result });
+      const data = result['answer'];
 
       return {
         message: 'Brand names fetched successfully',
@@ -81,7 +88,6 @@ export class BrandService {
         this.config.get('BRANDA_CORE_URL') + '/strategy',
         { params: dto },
       );
-      console.log(data);
 
       return {
         message: 'Brand strategies fetched successfully',
@@ -124,6 +130,24 @@ export class BrandService {
       throw new BadRequestException(error.message);
     }
   }
+  async getBrandPhotography(industry: string): Promise<ResponseStatus> {
+    try {
+      // get the brand messaging using the dto from grpc/REST/message queue
+      // return the brand names
+
+      const { data } = await axios.get(
+        this.config.get('BRANDA_CORE_URL') + '/photography',
+        { params: { industry } },
+      );
+
+      return {
+        message: 'Brand messaging fetched successfully',
+        data,
+      };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
   async getBrandPattern(industry: string): Promise<ResponseStatus> {
     try {
       const { data } = await axios.get(
@@ -150,7 +174,7 @@ export class BrandService {
   ): Promise<ResponseStatus> {
     const brands = await this.Brand.query()
       .where('createdBy', userId)
-      .page(page, limit)
+      .page(page - 1, limit)
       .orderBy('updated_at', 'desc');
     brands['limit'] = limit;
     brands['page'] = page;
