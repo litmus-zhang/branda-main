@@ -66,13 +66,19 @@ jobs:
         with:
           name: node-modules-artifact
 
+      - name: Run migrations
+        env:
+          TEST_DATABASE_URL: postgresql://test:test@localhost:6000/test?sslmode=disable
+          NODE_ENV: test
+        run: pnpm --filter api run db:migrate
+
       - name: Run e2e tests
         env:
           TEST_DATABASE_URL: postgresql://test:test@localhost:6000/test?sslmode=disable
           NODE_ENV: test
           ACCESS_JWT_SECRET: "some-secret"
           REFRESH_JWT_SECRET: "some-refresh-secret"
-        run: pnpm test:api
+        run: pnpm test:api:ci
 
   build:
     runs-on: ubuntu-22.04

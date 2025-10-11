@@ -28,6 +28,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "pretest:e2e": "NODE_ENV=test pnpm db:test:restart",
     "test:e2e": "jest --config ./test/jest-e2e.json --detectOpenHandles --runInBand --watch",
+    "test:ci": "jest --config ./test/jest-e2e.json --detectOpenHandles --runInBand --forceExit",
     "new-migration": "sh -c 'pnpm exec knex migrate:make \"$1_custom\"' --"
   },
   "dependencies": {

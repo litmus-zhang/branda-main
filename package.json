@@ -34,6 +34,7 @@
     "build:client": "turbo run client#build --env-mode=loose",
 
     "test:api": "pnpm --filter api run test:e2e",
+    "test:api:ci": "pnpm --filter api run test:ci",
     "test:client": "pnpm --filter client run test:e2e",
 
     "format": "turbo run format",
