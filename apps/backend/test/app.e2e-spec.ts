@@ -26,11 +26,12 @@ describe('Branda Server E2E testng', () => {
       type: VersioningType.URI,
       defaultVersion: ['1', '2'],
     });
+    const port = 3002;
     await app.init();
-    await app.listen(3001);
+    await app.listen(port);
     db = app.get<DatabaseService>(DatabaseService);
     await db.cleanDB();
-    pactum.request.setBaseUrl('http://localhost:3001/api/v1');
+    pactum.request.setBaseUrl(`http://localhost:${port}/api/v1`);
   });
   afterAll(async () => {
     if (app) {

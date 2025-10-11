@@ -7,8 +7,36 @@ on:
     branches: [main, staging, develop, testing]
 
 jobs:
+  cache-and-install:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Upload dependencies
+        uses: actions/upload-artifact@v4
+        with:
+          name: node-modules-artifact
+          path: node_modules
+
   test:
     runs-on: ubuntu-22.04
+    needs: cache-and-install
     services:
       postgres:
         image: postgres
@@ -19,33 +47,62 @@ jobs:
         ports:
           - 6000:5432
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          run_install: false
+
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20.x
-          cache: 'yarn'
+          node-version: 22
+          cache: 'pnpm'
+
       - name: Install dependencies
-        run: yarn
+        run: pnpm install
+
+      - name: Run migrations
+        env:
+          TEST_DATABASE_URL: postgresql://test:test@localhost:6000/test?sslmode=disable
+          NODE_ENV: test
+        run: pnpm --filter api run db:migrate
+
       - name: Run e2e tests
         env:
           TEST_DATABASE_URL: postgresql://test:test@localhost:6000/test?sslmode=disable
           NODE_ENV: test
           ACCESS_JWT_SECRET: "some-secret"
           REFRESH_JWT_SECRET: "some-refresh-secret"
-        run: yarn test --ci --forceExit
+        run: pnpm test:api:ci
 
   build:
     runs-on: ubuntu-22.04
     needs: test
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          run_install: false
+
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20.x
-          cache: 'yarn'
+          node-version: 22
+          cache: 'pnpm'
+
       - name: Install dependencies
-        run: yarn
+        run: pnpm install
+
+      # - name: Download dependencies
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: node-modules-artifact
+
       - name: Build the project
-        run: yarn build
+        run: pnpm build:api
