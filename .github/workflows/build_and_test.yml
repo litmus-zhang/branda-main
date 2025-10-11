@@ -1,0 +1,51 @@
+name: Build and Test Branda-Server Project
+
+on:
+  push:
+    branches: [main, develop, testing]
+  pull_request:
+    branches: [main, staging, develop, testing]
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test
+          POSTGRES_USER: test
+        ports:
+          - 6000:5432
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'yarn'
+      - name: Install dependencies
+        run: yarn
+      - name: Run e2e tests
+        env:
+          TEST_DATABASE_URL: postgresql://test:test@localhost:6000/test?sslmode=disable
+          NODE_ENV: test
+          ACCESS_JWT_SECRET: "some-secret"
+          REFRESH_JWT_SECRET: "some-refresh-secret"
+        run: yarn test --ci --forceExit
+
+  build:
+    runs-on: ubuntu-22.04
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'yarn'
+      - name: Install dependencies
+        run: yarn
+      - name: Build the project
+        run: yarn build

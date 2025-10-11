@@ -1,0 +1,22 @@
+services:
+  app:
+    container_name: branda-server
+    build:
+      context: .
+    ports:
+      - '3000:3000'
+
+  brandaTestDB:
+    image: postgres:15.0
+    container_name: brandaTestDB
+    ports:
+      - "8002:5432"
+    environment:
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_DB=test
+    volumes:
+      - ./testDB:/var/lib/postgresql/data
+
+volumes:
+  testDB:
