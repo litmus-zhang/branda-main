@@ -7,32 +7,102 @@ on:
     branches: [main, staging, develop, testing]
 
 jobs:
-  build:
-    runs-on: ubuntu-20.04
+  cache-and-install:
+    runs-on: ubuntu-latest
 
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Upload dependencies
+        uses: actions/upload-artifact@v4
+        with:
+          name: node-modules-artifact
+          path: node_modules
+
+  test:
+    runs-on: ubuntu-22.04
+    needs: cache-and-install
     services:
       postgres:
         image: postgres
         env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: postgres
-          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test
+          POSTGRES_USER: test
         ports:
-          - 8000:5432
-
+          - 6000:5432
     steps:
-      - uses: actions/checkout@v2
-      - name: Install Node.js
-        uses: actions/setup-node@v2
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
         with:
-          node-version: 18.x # Adjust to your desired Node.js version
-      - name: Install yarn
-        run: npm install -g yarn
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
       - name: Install dependencies
-        run: yarn
+        run: pnpm install
+
+      - name: Run migrations
+        env:
+          TEST_DATABASE_URL: postgresql://test:test@localhost:6000/test?sslmode=disable
+          NODE_ENV: test
+        run: pnpm --filter api run db:migrate
+
       - name: Run e2e tests
         env:
-          TEST_DATABASE_URL: postgres://postgres:$postgres@localhost:8000/postgres?sslmode=disable
-        run: yarn test:e2e
+          TEST_DATABASE_URL: postgresql://test:test@localhost:6000/test?sslmode=disable
+          NODE_ENV: test
+          ACCESS_JWT_SECRET: "some-secret"
+          REFRESH_JWT_SECRET: "some-refresh-secret"
+        run: pnpm test:api:ci
+
+  build:
+    runs-on: ubuntu-22.04
+    needs: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      # - name: Download dependencies
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: node-modules-artifact
+
       - name: Build the project
-        run: yarn build
+        run: pnpm build:api
