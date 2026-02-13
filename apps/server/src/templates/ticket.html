@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <style>
+    body {
+      font-family: Inter, sans-serif;
+    }
+
+    .ticket {
+      width: 800px;
+      border: 2px dashed #333;
+      padding: 24px;
+    }
+
+    .qr {
+      width: 180px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="ticket">
+    <h1>{{event_name}}</h1>
+    <p>Attendee: {{user_name}}</p>
+    <p>Ticket ID: {{ticket_code}}</p>
+
+    <div class="qr">
+      {{qr_svg}}
+    </div>
+  </div>
+</body>
+
+</html>

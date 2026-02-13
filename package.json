@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "branda-app",
+  "name": "branda",
   "version": "0.1.0",
   "engines": {
     "node": ">=20",
