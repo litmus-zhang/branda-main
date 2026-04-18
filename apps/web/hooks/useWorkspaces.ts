@@ -1,9 +1,8 @@
-
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { api } from '../lib/api';
 import { queryClient } from '../lib/queryClient';
 import { Workspace } from '../types';
-import { useAuthStore } from '../stores/authStore';
+import { useAuth } from '@clerk/nextjs';
 
 // Query Keys
 export const workspaceKeys = {
@@ -13,56 +12,68 @@ export const workspaceKeys = {
 
 // Fetch all workspaces for user
 export const useWorkspaces = () => {
-  const { isAuthenticated } = useAuthStore();
-  
+  const { getToken, isSignedIn } = useAuth();
+
   return useQuery({
     queryKey: workspaceKeys.all,
     queryFn: async () => {
-       return api.get<Workspace[]>('/workspaces');
+      const token = await getToken();
+      const result = await api.get<{ data: Workspace[] }>('/workspaces', { token });
+      return result.data;
     },
-    enabled: isAuthenticated,
+    enabled: !!isSignedIn,
   });
 };
 
 // Create new workspace
 export const useCreateWorkspace = () => {
+  const { getToken } = useAuth();
   return useMutation({
-    mutationFn: (data: { name: string; country: string; niche: string }) => 
-      api.post<Workspace>('/workspaces', data),
+    mutationFn: async (data: Partial<Workspace>) => {
+      const token = await getToken();
+      const result = await api.post<{ data: Workspace }>('/workspaces/new', data, { token });
+      return result.data;
+    },
     onSuccess: (newWorkspace) => {
       queryClient.setQueryData(workspaceKeys.all, (old: Workspace[] = []) => [
-        ...old, 
+        ...old,
         newWorkspace
       ]);
     },
   });
 };
 
-// Update workspace (tier, name)
+// Update workspace
 export const useUpdateWorkspace = () => {
+  const { getToken } = useAuth();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<Workspace> }) => 
-      api.patch<Workspace>(`/workspaces/${id}`, data),
+    mutationFn: async ({ id, data }: { id: string; data: Partial<Workspace> }) => {
+      const token = await getToken();
+      const result = await api.put<{ data: Workspace }>(`/workspaces/${id}`, data, { token });
+      return result.data;
+    },
     onSuccess: (updatedWorkspace) => {
-      // Update list cache
-      queryClient.setQueryData(workspaceKeys.all, (old: Workspace[] = []) => 
+      queryClient.setQueryData(workspaceKeys.all, (old: Workspace[] = []) =>
         old.map((w) => w.id === updatedWorkspace.id ? updatedWorkspace : w)
       );
-      // Update detail cache if it exists
       queryClient.setQueryData(workspaceKeys.detail(updatedWorkspace.id), updatedWorkspace);
     },
   });
 };
 
-// Invite Member
-export const useInviteMember = () => {
+// Delete workspace
+export const useDeleteWorkspace = () => {
+  const { getToken } = useAuth();
   return useMutation({
-    mutationFn: ({ workspaceId, email, role }: { workspaceId: string; email: string; role: string }) =>
-      api.post(`/workspaces/${workspaceId}/members/invite`, { email, role }),
-    onSuccess: (_, variables) => {
-       queryClient.invalidateQueries({ queryKey: workspaceKeys.detail(variables.workspaceId) });
-       // Also invalidate list as member count/metadata might change
-       queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
-    }
+    mutationFn: async (id: string) => {
+      const token = await getToken();
+      return api.delete(`/workspaces/${id}`, { token });
+    },
+    onSuccess: (_, id) => {
+      queryClient.setQueryData(workspaceKeys.all, (old: Workspace[] = []) =>
+        old.filter((w) => w.id !== id)
+      );
+    },
   });
 };
+

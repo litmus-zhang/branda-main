@@ -1,0 +1,27 @@
+import { GoogleGenAI, Type } from "@google/genai";
+import { config } from "../../../config.js";
+import { AIProvider } from "../types.js";
+
+export class GeminiProvider implements AIProvider {
+  name = "gemini";
+  private ai: GoogleGenAI;
+
+  constructor() {
+    this.ai = new GoogleGenAI({ apiKey: config.GEMINI_API_KEY });
+  }
+
+  async generateContent(prompt: string, schema?: any): Promise<any> {
+    const result = await this.ai.models.generateContent({
+      model: "gemini-1.5-flash",
+      contents: [{ role: "user", parts: [{ text: prompt }] }],
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: schema
+      }
+    });
+
+    const text = result.text;
+    if (!text) throw new Error("No response from Gemini");
+    return JSON.parse(text);
+  }
+}

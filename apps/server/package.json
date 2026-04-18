@@ -21,8 +21,14 @@
     "@elysiajs/openapi": "^1.4.12",
     "@elysiajs/opentelemetry": "^1.4.10",
     "@elysiajs/server-timing": "^1.4.0",
+    "@anthropic-ai/sdk": "^0.36.0",
     "@faker-js/faker": "^10.1.0",
+    "@google/genai": "^1.41.0",
     "@paralleldrive/cuid2": "^3.0.4",
+    "@restatedev/restate-sdk": "^1.11.1",
+    "@restatedev/restate-sdk-clients": "^1.11.1",
+
+
     "@sinclair/typebox": "^0.34.0",
     "@types/qrcode": "^1.5.6",
     "@verrou/core": "^0.5.1",
@@ -39,6 +45,7 @@
     "env-var": "^7.5.0",
     "ioredis": "^5.8.2",
     "logestic": "^1.2.4",
+    "openai": "^4.85.1",
     "pg": "^8.16.3",
     "postgres": "^3.4.7",
     "posthog-node": "^5.11.2",

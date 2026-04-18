@@ -150,3 +150,13 @@ export async function getUserMedia(userId: string) {
     data,
   }
 }
+export async function getUserWorkspaces(userId: string) {
+  const data = await db.query.workspace.findMany({
+    where: eq(schema.workspace.ownerId, userId),
+    orderBy: [desc(schema.workspace.createdAt)],
+  })
+  return {
+    message: `Successfully retrieved all users workspaces`,
+    data,
+  }
+}

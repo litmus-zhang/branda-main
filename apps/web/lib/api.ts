@@ -1,6 +1,7 @@
 
 // Base URL for the Elysia API
-const API_BASE_URL = process.env.VITE_API_URL || 'http://localhost:3000/api';
+const API_BASE_URL = process.env.VITE_API_URL || 'http://localhost:4000/api';
+
 
 interface FetchOptions extends RequestInit {
   token?: string;
@@ -11,15 +12,15 @@ export const api = {
     return request<T>(endpoint, { ...options, method: 'GET' });
   },
   post: async <T>(endpoint: string, body: any, options: FetchOptions = {}): Promise<T> => {
-    return request<T>(endpoint, { 
-      ...options, 
+    return request<T>(endpoint, {
+      ...options,
       method: 'POST',
       body: JSON.stringify(body),
     });
   },
   patch: async <T>(endpoint: string, body: any, options: FetchOptions = {}): Promise<T> => {
-    return request<T>(endpoint, { 
-      ...options, 
+    return request<T>(endpoint, {
+      ...options,
       method: 'PATCH',
       body: JSON.stringify(body),
     });
@@ -31,7 +32,7 @@ export const api = {
 
 async function request<T>(endpoint: string, options: FetchOptions): Promise<T> {
   const { token, headers, ...rest } = options;
-  
+
   const config: RequestInit = {
     ...rest,
     headers: {

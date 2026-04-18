@@ -27,6 +27,7 @@ export const models = {
       }),
       files: table.files,
       tickets: table.ticket,
+      workspaces: table.workspace,
     },
     "insert",
   ),
@@ -41,6 +42,7 @@ export const models = {
       files: table.files,
       events: table.events,
       tickets: table.ticket,
+      workspaces: table.workspace,
 
     },
     "select",

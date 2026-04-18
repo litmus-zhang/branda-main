@@ -11,6 +11,8 @@ import { Logestic } from "logestic"
 import { auth, OpenAPI } from "./auth/auth.js"
 import { clearDb, seedDb } from "./db/index.ts"
 
+import { restateHandler } from "./restate-handler.js"
+
 export const app = new Elysia()
   .use(bearer())
   .use(cors())
@@ -21,18 +23,21 @@ export const app = new Elysia()
       prefix: "/health",
     }),
   )
+  .mount("/restate", restateHandler as any)
+
   .use(
-    await autoload({
+    autoload({
       dir: join(import.meta.dir, "routes"),
     }),
   )
+
   .use(
     openapi({
       documentation: {
         components: await OpenAPI.components,
         paths: await OpenAPI.getPaths(),
         info: {
-          title: "Coderina Event Management API",
+          title: "Branda API",
           version: "v1.0.0",
         },
         servers: [
@@ -41,7 +46,7 @@ export const app = new Elysia()
             description: "Local development server",
           },
           {
-            url: "https://api.coderina.org",
+            url: "https://api.branda.app",
             description: "Production server",
           },
         ],

@@ -27,4 +27,10 @@ export const config = {
     .split(","),
   RESEND_API_KEY: env.get("RESEND_API_KEY").required().asString(),
   GOTENBERG_ENDPOINT: env.get("GOTENBERG_ENDPOINT").default("http://localhost:3100").asString(),
+  GEMINI_API_KEY: env.get("GEMINI_API_KEY").required().asString(),
+  ANTHROPIC_API_KEY: env.get("ANTHROPIC_API_KEY").asString(),
+  OPENAI_API_KEY: env.get("OPENAI_API_KEY").asString(),
+  OPENROUTER_API_KEY: env.get("OPENROUTER_API_KEY").asString(),
+  RESTATE_URL: env.get("RESTATE_URL").default("http://localhost:8080").asString(),
 }
+

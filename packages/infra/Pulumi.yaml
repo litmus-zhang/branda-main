@@ -1,0 +1,5 @@
+name: infra
+runtime: nodejs
+description: A TypeScript Pulumi program for Branda infrastructure
+template:
+    description: A minimal TypeScript Pulumi program

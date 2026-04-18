@@ -281,6 +281,24 @@ export const ticket = pgTable("ticket", {
     .notNull(),
 })
 
+export const workspace = pgTable("workspace", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  plan: jsonb("plan").notNull(),
+  integrations: jsonb("integrations").default([]).notNull(),
+  collaborators: jsonb("collaborators").default([]).notNull(),
+  tier: text("tier").default("Free").notNull(),
+  ownerId: text("owner_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+})
+
+
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
@@ -291,6 +309,7 @@ export const userRelations = relations(user, ({ many }) => ({
   users_files: many(files),
   tickets: many(ticket),
   events: many(events),
+  workspaces: many(workspace),
 }))
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -380,6 +399,13 @@ export const eventRelations = relations(events, ({ many }) => ({
   tickets: many(ticket),
 }))
 
+export const workspaceRelations = relations(workspace, ({ one }) => ({
+  owner: one(user, {
+    fields: [workspace.ownerId],
+    references: [user.id],
+  }),
+}))
+
 
 
 
@@ -422,6 +448,8 @@ export const table = {
   teamRelations,
   credentials,
   files,
+  workspace,
+  workspaceRelations,
 } as const
 
 export type Table = typeof table
