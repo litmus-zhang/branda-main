@@ -1,5 +1,5 @@
 import React from 'react';
-import { Workspace } from '../types';
+import { Workspace } from '../lib/types';
 import { Sparkles, Plus, LogOut, ChevronRight, X } from 'lucide-react';
 
 interface SidebarProps {
@@ -12,10 +12,10 @@ interface SidebarProps {
   onClose?: () => void; // Optional for mobile closing
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ 
-  workspaces, 
-  currentWorkspaceId, 
-  onSwitchWorkspace, 
+export const Sidebar: React.FC<SidebarProps> = ({
+  workspaces,
+  currentWorkspaceId,
+  onSwitchWorkspace,
   onCreateWorkspace,
   onLogout,
   userName,
@@ -35,15 +35,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col h-full border-r border-slate-800 shrink-0 relative">
       <div className="p-6 flex items-center justify-between text-white">
         <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
+          <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
             <Sparkles className="w-5 h-5" />
-            </div>
-            <span className="font-bold text-xl tracking-wide">Branda</span>
+          </div>
+          <span className="font-bold text-xl tracking-wide">Branda</span>
         </div>
         {onClose && (
-            <button onClick={onClose} className="md:hidden text-slate-400 hover:text-white">
-                <X className="w-6 h-6" />
-            </button>
+          <button onClick={onClose} className="md:hidden text-slate-400 hover:text-white">
+            <X className="w-6 h-6" />
+          </button>
         )}
       </div>
 
@@ -54,11 +54,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <button
               key={ws.id}
               onClick={() => handleSwitch(ws.id)}
-              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg transition-colors text-sm ${
-                currentWorkspaceId === ws.id 
-                  ? 'bg-primary-600/10 text-primary-400 border border-primary-600/20' 
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg transition-colors text-sm ${currentWorkspaceId === ws.id
+                  ? 'bg-primary-600/10 text-primary-400 border border-primary-600/20'
                   : 'hover:bg-slate-800 text-slate-400 hover:text-white'
-              }`}
+                }`}
             >
               <div className="flex items-center truncate">
                 <div className={`w-2 h-2 rounded-full mr-3 ${currentWorkspaceId === ws.id ? 'bg-primary-400' : 'bg-slate-600'}`} />
@@ -67,14 +66,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
               {currentWorkspaceId === ws.id && <ChevronRight className="w-4 h-4" />}
             </button>
           ))}
-          
+
           <button
             onClick={handleCreate}
-            className={`w-full flex items-center px-3 py-2 rounded-lg text-sm transition-colors mt-2 ${
-                currentWorkspaceId === 'new'
+            className={`w-full flex items-center px-3 py-2 rounded-lg text-sm transition-colors mt-2 ${currentWorkspaceId === 'new'
                 ? 'bg-primary-600/10 text-primary-400 border border-primary-600/20'
                 : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-            }`}
+              }`}
           >
             <Plus className="w-4 h-4 mr-3" />
             Create Workspace
@@ -92,7 +90,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <p className="text-xs text-slate-500">Free Plan</p>
           </div>
         </div>
-        <button 
+        <button
           onClick={onLogout}
           className="w-full flex items-center px-2 py-2 text-sm text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
         >

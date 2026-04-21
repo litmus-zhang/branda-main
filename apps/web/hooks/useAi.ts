@@ -1,7 +1,7 @@
 
 import { useMutation } from '@tanstack/react-query';
 import { api } from '../lib/api';
-import { BusinessPlan } from '../types';
+import { BusinessPlan } from '../lib/types';
 
 export const useGeneratePlan = () => {
   return useMutation({

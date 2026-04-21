@@ -1,25 +1,25 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { LandingPage } from '@/pages/LandingPage';
-import { Dashboard } from '@/pages/Dashboard';
-import { Workspace } from '@/types';
-import { generateBusinessPlan } from '@/services/geminiService';
+import { LandingPage } from '@/components/pages/LandingPage';
+import { Dashboard } from '@/components/pages/Dashboard';
+import { Workspace } from '@/lib/types';
+import { generateBusinessPlan } from '@/lib/services/geminiService';
 import { Loader2 } from 'lucide-react';
-import { 
-  useUser,
-  useClerk
-} from '@clerk/nextjs';
-import { 
-  useWorkspaces, 
-  useCreateWorkspace, 
-  useUpdateWorkspace 
+import {
+  useWorkspaces,
+  useCreateWorkspace,
+  useUpdateWorkspace
 } from '@/hooks/useWorkspaces';
+import { useAuth, authClient } from '@/lib/auth-client';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
-  const { user, isLoaded: isUserLoaded } = useUser();
-  const { openSignIn } = useClerk();
-  
+  const { user, isPending: isAuthLoading } = useAuth();
+  const router = useRouter();
+
+
+
   // TanStack Query Hooks
   const { data: workspaces = [], isLoading: isLoadingWorkspaces } = useWorkspaces();
   const createWorkspaceMutation = useCreateWorkspace();
@@ -33,14 +33,14 @@ export default function Home() {
   // Set initial workspace
   useEffect(() => {
     if (workspaces.length > 0 && !currentWorkspaceId) {
-      setCurrentWorkspaceId(workspaces[0].id);
+      setCurrentWorkspaceId(workspaces[0]!.id);
     }
   }, [workspaces, currentWorkspaceId]);
 
   // Handle pending workspace when user signs in
   useEffect(() => {
     if (user && pendingWorkspace) {
-      const email = user.primaryEmailAddress?.emailAddress;
+      const email = user.email;
       const wsWithOwner = {
         ...pendingWorkspace,
         collaborators: [{
@@ -51,7 +51,7 @@ export default function Home() {
           invitedAt: new Date().toISOString()
         }]
       };
-      
+
       createWorkspaceMutation.mutate(wsWithOwner, {
         onSuccess: (createdWs) => {
           setCurrentWorkspaceId(createdWs.id);
@@ -59,14 +59,14 @@ export default function Home() {
         }
       });
     }
-  }, [user, pendingWorkspace]);
+  }, [user, pendingWorkspace, createWorkspaceMutation]);
 
   const handleGenerate = async (formData: { niche: string; businessName: string; details: string; country: string }) => {
     setIsGenerating(true);
     setGenerationError(null);
     try {
       const plan = await generateBusinessPlan(formData);
-      
+
       const newWorkspace: Partial<Workspace> = {
         id: crypto.randomUUID(),
         name: plan.brandIdentity.name || formData.businessName || 'New Brand',
@@ -79,7 +79,7 @@ export default function Home() {
 
       if (!user) {
         setPendingWorkspace(newWorkspace as Workspace);
-        openSignIn();
+        router.push('/auth/sign-in');
       } else {
         createWorkspaceMutation.mutate(newWorkspace, {
           onSuccess: (createdWs) => {
@@ -100,9 +100,9 @@ export default function Home() {
   };
 
   const handleUpdateWorkspace = (updatedWorkspace: Workspace) => {
-    updateWorkspaceMutation.mutate({ 
-      id: updatedWorkspace.id, 
-      data: updatedWorkspace 
+    updateWorkspaceMutation.mutate({
+      id: updatedWorkspace.id,
+      data: updatedWorkspace
     });
   };
 
@@ -120,7 +120,7 @@ export default function Home() {
     );
   }
 
-  if (!isUserLoaded || isLoadingWorkspaces) {
+  if (isAuthLoading || isLoadingWorkspaces) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
@@ -131,13 +131,16 @@ export default function Home() {
   if (user) {
     return (
       <Dashboard
-        user={{ name: user.fullName || '', email: user.primaryEmailAddress?.emailAddress || '' }}
+        user={{ name: user.name || '', email: user.email || '' }}
         workspaces={workspaces}
         currentWorkspaceId={currentWorkspaceId}
         onSwitchWorkspace={handleSwitchWorkspace}
         onCreateWorkspace={handleCreateNewWorkspace}
         onUpdateWorkspace={handleUpdateWorkspace}
-        onLogout={() => { }} 
+        onLogout={async () => {
+          await authClient.signOut();
+          router.refresh();
+        }}
         onGenerateNew={handleGenerate}
         isGenerating={isGenerating}
       />

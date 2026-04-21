@@ -1,8 +1,8 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { api } from '../lib/api';
 import { queryClient } from '../lib/queryClient';
-import { Workspace } from '../types';
-import { useAuth } from '@clerk/nextjs';
+import { Workspace } from '../lib/types';
+import { useAuth } from '@/lib/auth-client';
 
 // Query Keys
 export const workspaceKeys = {

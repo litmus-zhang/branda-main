@@ -13,39 +13,30 @@
     }
   },
   "devDependencies": {
-    "turbo": "^2.3.3",
-    "husky": "^8.0.0"
+    "husky": "^8.0.0",
+    "nx": "22.6.5"
   },
   "packageManager": "pnpm@10.8.0",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "postinstall": "npx patch-package",
-
-    "dev": "turbo run dev",
-    "build": "turbo run build",
-
-    "start:api": "turbo run api#start --env-mode=loose",
-    "start:client": "turbo run client#start --env-mode=loose",
-
-    "dev:api": "turbo run api#dev --env-mode=loose",
-    "dev:client": "turbo run client#dev --env-mode=loose",
-
-    "build:api": "turbo run api#build --env-mode=loose",
-    "build:client": "turbo run client#build --env-mode=loose",
-
+    "dev": "nx run-many -t dev ",
+    "dev:web": "nx run-many -t dev --exclude=server,transactional,infra",
+    "dev:api": "nx run-many -t dev --exclude=web,transactional,infra",
+    "dev:transactional": "nx run-many -t dev --exclude=web,server,infra",
+    "build": "nx run build",
+    "start:api": "nx run -t",
+    "start:client": "nx run client#start --env-mode=loose",
+    "build:api": "nx run api#build --env-mode=loose",
+    "build:client": "nx run client#build --env-mode=loose",
     "test:api": "pnpm --filter api run test:e2e",
     "test:api:ci": "pnpm --filter api run test:ci",
     "test:client": "pnpm --filter client run test:e2e",
-
-    "format": "turbo run format",
-    "lint": "turbo run lint",
-
+    "format": "nx run format",
+    "lint": "nx run lint",
     "client:check:types": "pnpm --filter client run check:types",
     "client:lint": "pnpm --filter client run lint",
     "client:validate": "pnpm run client:check:types && pnpm run client:lint",
-
-    "codegen": "turbo run codegen",
-    "generate:oas": "turbo run generate:oas",
     "prepare": "husky install"
   }
 }

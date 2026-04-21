@@ -1,4 +1,4 @@
-import { Integration } from './types';
+import { Integration } from './lib/types';
 
 // Mock list of available integrations
 export const MOCK_INTEGRATIONS: (Omit<Integration, 'status'> & { description: string, icon: string })[] = [
@@ -24,7 +24,7 @@ export const MOCK_INTEGRATIONS: (Omit<Integration, 'status'> & { description: st
         description: 'Business communication platform by Microsoft.',
         icon: 'T'
     },
-    
+
     // Finance
     {
         id: 'stripe',

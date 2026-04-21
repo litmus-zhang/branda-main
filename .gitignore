@@ -3,6 +3,7 @@ node_modules
 .pnp
 .pnp.js
 
+
 # Yarn 2+
 .yarn/*
 !.yarn/patches
@@ -36,6 +37,9 @@ yarn-error.log*
 
 # Turbo
 .turbo
+.next
+.env
+.env.*
 
 # vercel
 .vercel
@@ -46,3 +50,9 @@ yarn-error.log*
 
 # static assets
 **/backend/static
+
+
+
+
+.nx/cache
+.nx/workspace-data

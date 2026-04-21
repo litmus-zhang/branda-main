@@ -6,6 +6,9 @@
     "typescript": "^5.8.2"
   },
   "dependencies": {
-    "@pulumi/pulumi": "^3.113.0"
+    "@pulumi/pulumi": "^3.113.0",
+    "@pulumi/aws": "^6.0.0",
+    "@pulumi/awsx": "^2.0.0",
+    "@pulumi/docker-build": "^0.0.10"
   }
 }
