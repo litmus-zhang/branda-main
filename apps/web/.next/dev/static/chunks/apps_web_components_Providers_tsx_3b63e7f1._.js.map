@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///Users/mac/Downloads/devprojects/branda-app/apps/web/components/Providers.tsx"],"sourcesContent":["'use client';\n\nimport { QueryClient, QueryClientProvider } from '@tanstack/react-query';\nimport { ReactNode, useState } from 'react';\n\nexport default function Providers({ children }: { children: ReactNode }) {\n  const [queryClient] = useState(() => new QueryClient({\n    defaultOptions: {\n      queries: {\n        staleTime: 60 * 1000,\n      },\n    },\n  }));\n\n  return (\n    <QueryClientProvider client={queryClient}>\n      {children}\n    </QueryClientProvider>\n  );\n}\n"],"names":[],"mappings":";;;;;AAEA;AAAA;AACA;;;AAHA;;;AAKe,SAAS,UAAU,EAAE,QAAQ,EAA2B;;IACrE,MAAM,CAAC,YAAY,GAAG,IAAA,wXAAQ;8BAAC,IAAM,IAAI,yQAAW,CAAC;gBACnD,gBAAgB;oBACd,SAAS;wBACP,WAAW,KAAK;oBAClB;gBACF;YACF;;IAEA,qBACE,4YAAC,iTAAmB;QAAC,QAAQ;kBAC1B;;;;;;AAGP;GAdwB;KAAA"}}]
-}
