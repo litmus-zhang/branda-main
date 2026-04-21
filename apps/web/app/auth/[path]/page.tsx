@@ -11,6 +11,7 @@ export default async function AuthPage({
   }>
 }) {
   const { path } = await params
+  const url = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
 
   if (!Object.values(viewPaths.auth).includes(path)) {
     notFound()
@@ -18,7 +19,7 @@ export default async function AuthPage({
 
   return (
     <div className="flex justify-center my-auto p-4 md:p-6">
-      <Auth path={path} />
+      <Auth path={path} socialLayout={"auto"} />
     </div>
   )
 }

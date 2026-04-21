@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { Workspace, Collaborator } from '../../lib/types';
-import { Users, UserPlus, Mail, Shield, Check, Trash2, Info } from 'lucide-react';
+import { Users, UserPlus, Mail, Check, Trash2, Info } from 'lucide-react';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { cn } from "@branda/ui/lib/utils";
 
 interface TeamViewProps {
     workspace: Workspace;
@@ -8,26 +12,41 @@ interface TeamViewProps {
     currentUserEmail: string;
 }
 
+const inviteSchema = z.object({
+    email: z.string().email("Please enter a valid email address"),
+    role: z.enum(["admin", "editor", "viewer"]),
+});
+
+type InviteFormValues = z.infer<typeof inviteSchema>;
+
 export const TeamView: React.FC<TeamViewProps> = ({ workspace, onUpdateWorkspace, currentUserEmail }) => {
-    const [inviteEmail, setInviteEmail] = useState('');
-    const [inviteRole, setInviteRole] = useState<'admin' | 'editor' | 'viewer'>('editor');
     const [notification, setNotification] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
+
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors }
+    } = useForm<InviteFormValues>({
+        resolver: zodResolver(inviteSchema),
+        defaultValues: {
+            role: 'editor'
+        }
+    });
 
     const currentUserRole = workspace.collaborators.find(c => c.email === currentUserEmail)?.role || 'owner';
     const canInvite = currentUserRole === 'owner' || currentUserRole === 'admin';
 
-    const handleInvite = (e: React.FormEvent) => {
-        e.preventDefault();
-
-        if (workspace.collaborators.some(c => c.email === inviteEmail)) {
+    const onInviteSubmit = (data: InviteFormValues) => {
+        if (workspace.collaborators.some(c => c.email === data.email)) {
             setNotification({ message: 'User is already a collaborator.', type: 'error' });
             return;
         }
 
         const newCollaborator: Collaborator = {
             id: crypto.randomUUID(),
-            email: inviteEmail,
-            role: inviteRole,
+            email: data.email,
+            role: data.role,
             status: 'pending',
             invitedAt: new Date().toISOString()
         };
@@ -37,8 +56,8 @@ export const TeamView: React.FC<TeamViewProps> = ({ workspace, onUpdateWorkspace
             collaborators: [...workspace.collaborators, newCollaborator]
         });
 
-        setNotification({ message: `Invitation sent to ${inviteEmail}`, type: 'success' });
-        setInviteEmail('');
+        setNotification({ message: `Invitation sent to ${data.email}`, type: 'success' });
+        reset();
         setTimeout(() => setNotification(null), 3000);
     };
 
@@ -96,27 +115,27 @@ export const TeamView: React.FC<TeamViewProps> = ({ workspace, onUpdateWorkspace
                             <UserPlus className="w-5 h-5 mr-2 text-primary-600" />
                             Invite New Member
                         </h3>
-                        <form onSubmit={handleInvite} className="flex flex-col md:flex-row gap-4">
+                        <form onSubmit={handleSubmit(onInviteSubmit)} className="flex flex-col md:flex-row gap-4">
                             <div className="flex-1">
                                 <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Email Address</label>
                                 <div className="relative">
                                     <Mail className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
                                     <input
-                                        type="email"
-                                        required
-                                        className="w-full pl-9 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
+                                        {...register("email")}
+                                        className={cn(
+                                            "w-full pl-9 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none transition-all",
+                                            errors.email ? "border-red-500 bg-red-50" : "border-slate-300"
+                                        )}
                                         placeholder="colleague@example.com"
-                                        value={inviteEmail}
-                                        onChange={e => setInviteEmail(e.target.value)}
                                     />
                                 </div>
+                                {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>}
                             </div>
                             <div className="w-full md:w-48">
                                 <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Role</label>
                                 <select
+                                    {...register("role")}
                                     className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none bg-white"
-                                    value={inviteRole}
-                                    onChange={(e) => setInviteRole(e.target.value as any)}
                                 >
                                     <option value="admin">Admin</option>
                                     <option value="editor">Editor</option>

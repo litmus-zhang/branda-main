@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 import { config } from "../../../config.js";
-import { AIProvider } from "../types.js";
+import { AIProvider } from "../types.ts";
 
 export class OpenRouterProvider implements AIProvider {
   name = "openrouter";

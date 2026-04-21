@@ -1,6 +1,6 @@
 import * as restate from "@restatedev/restate-sdk";
 import { Type } from "@google/genai";
-import { AIPayload, AIProvider } from "./types.js";
+import { AIPayload, AIProvider } from "./types.ts";
 import { GeminiProvider } from "./providers/gemini.js";
 import { OpenAIProvider } from "./providers/openai.js";
 import { AnthropicProvider } from "./providers/anthropic.js";
@@ -155,10 +155,10 @@ export const aiService = restate.service({
   handlers: {
     async generateBusinessPlan(ctx: restate.Context, data: AIPayload) {
       const providers: AIProvider[] = [
+        new OpenRouterProvider(),
+        new AnthropicProvider(),
         new GeminiProvider(),
         new OpenAIProvider(),
-        new AnthropicProvider(),
-        new OpenRouterProvider()
       ];
 
       const prompt = `
@@ -178,9 +178,9 @@ export const aiService = restate.service({
       for (const provider of providers) {
         try {
           console.log(`Attempting generation with provider: ${provider.name}`);
-          
+
           // Use ctx.run to track the external call and provide durability
-          const result = await ctx.run(`call-${provider.name}`, () => 
+          const result = await ctx.run(`call-${provider.name}`, () =>
             provider.generateContent(prompt, businessPlanSchema)
           );
 

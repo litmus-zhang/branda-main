@@ -1,8 +1,8 @@
+"use client"
 import { useAuthenticate } from "@better-auth-ui/react";
 import { Logo } from "@branda/ui/components/logo";
 import { Bell, Calendar, MessageSquare } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from 'next/navigation';
 
 
 export default function AuthLayoutPage({
@@ -10,13 +10,12 @@ export default function AuthLayoutPage({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    const { data: session } = useAuthenticate()
-    const router = useRouter();
+    // const { data: session } = useAuthenticate()
+    // const router = useRouter();
 
-
-    if (!session) {
-        router.push("/")
-    }
+    // if (!session) {
+    //     router.push("/")
+    // }
 
     return (
         <div className="min-h-screen bg-slate-50 flex">

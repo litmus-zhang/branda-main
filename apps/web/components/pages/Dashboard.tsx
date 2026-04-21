@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Workspace, ViewType, BusinessPlan } from '../../lib/types';
+import { Workspace, ViewType, BusinessPlan } from '@/lib/types';
 import { Sidebar } from '../Sidebar';
 import { BrandView } from '../views/BrandView';
 import { MarketingView } from '../views/MarketingView';
@@ -16,6 +16,10 @@ import { Textarea } from "@branda/ui/components/textarea";
 
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@branda/ui/components/card";
 import { Badge } from "@branda/ui/components/badge";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { businessGenerateSchema, type BusinessGenerateValues } from "@/lib/schemas";
+import { cn } from "@branda/ui/lib/utils";
 
 
 interface DashboardProps {
@@ -79,18 +83,25 @@ export const Dashboard: React.FC<DashboardProps> = ({
     }
   };
 
-  // New Workspace Creation Form State
-  const [newWorkspaceFormData, setNewWorkspaceFormData] = useState({
-    niche: '',
-    businessName: '',
-    details: '',
-    country: ''
+  // New Workspace Creation Form
+  const {
+    register,
+    handleSubmit: handleFormSubmit,
+    reset,
+    formState: { errors }
+  } = useForm<BusinessGenerateValues>({
+    resolver: zodResolver(businessGenerateSchema),
+    defaultValues: {
+      niche: '',
+      businessName: '',
+      details: '',
+      country: ''
+    }
   });
 
-  const handleNewWorkspaceSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onGenerateNew(newWorkspaceFormData);
-    setNewWorkspaceFormData({ niche: '', businessName: '', details: '', country: '' });
+  const onSubmit = (data: BusinessGenerateValues) => {
+    onGenerateNew(data);
+    reset();
   };
 
   if (currentWorkspaceId === 'new') {
@@ -121,42 +132,41 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <form id="new-workspace-form" onSubmit={handleNewWorkspaceSubmit} className="space-y-4">
+                <form id="new-workspace-form" onSubmit={handleFormSubmit(onSubmit)} className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">Niche / Industry</label>
                     <Input
-                      required
+                      {...register("niche")}
                       placeholder="e.g. Digital Marketing Agency"
-                      value={newWorkspaceFormData.niche}
-                      onChange={e => setNewWorkspaceFormData({ ...newWorkspaceFormData, niche: e.target.value })}
+                      className={cn(errors.niche && "border-red-500 focus-visible:ring-red-500")}
                     />
+                    {errors.niche && <p className="text-xs text-red-500 mt-1">{errors.niche.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">Country</label>
                     <Input
-                      required
+                      {...register("country")}
                       placeholder="e.g. Canada"
-                      value={newWorkspaceFormData.country}
-                      onChange={e => setNewWorkspaceFormData({ ...newWorkspaceFormData, country: e.target.value })}
+                      className={cn(errors.country && "border-red-500 focus-visible:ring-red-500")}
                     />
+                    {errors.country && <p className="text-xs text-red-500 mt-1">{errors.country.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">Business Name (Optional)</label>
                     <Input
+                      {...register("businessName")}
                       placeholder="Enter a name or let AI decide"
-                      value={newWorkspaceFormData.businessName}
-                      onChange={e => setNewWorkspaceFormData({ ...newWorkspaceFormData, businessName: e.target.value })}
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">Details</label>
                     <Textarea
-                      required
+                      {...register("details")}
                       rows={4}
                       placeholder="What kind of business is this? Who are your customers?"
-                      value={newWorkspaceFormData.details}
-                      onChange={e => setNewWorkspaceFormData({ ...newWorkspaceFormData, details: e.target.value })}
+                      className={cn(errors.details && "border-red-500 focus-visible:ring-red-500")}
                     />
+                    {errors.details && <p className="text-xs text-red-500 mt-1">{errors.details.message}</p>}
                   </div>
                 </form>
               </CardContent>

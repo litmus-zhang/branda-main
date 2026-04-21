@@ -1,5 +1,5 @@
 import { Elysia, t } from "elysia";
-import { generateBusinessPlan } from "../../services/ai.js";
+import { generateBusinessPlan } from "../../services/ai/index.ts";
 
 export const aiRoutes = new Elysia()
 

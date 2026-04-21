@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, Briefcase, Globe, PenTool, Star, Check, Facebook, Twitter, Instagram, Linkedin, LogIn } from 'lucide-react';
-
+import { Sparkles, Briefcase, Globe, PenTool, Star, Check, LogIn } from 'lucide-react';
+import { Footer } from "@branda/ui/components/footer"
 import { Button } from "@branda/ui/components/button";
 import { Input } from "@branda/ui/components/input";
 import { Textarea } from "@branda/ui/components/textarea";
@@ -10,6 +10,10 @@ import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext
 import { cn } from "@branda/ui/lib/utils";
 import { Logo } from '@branda/ui/components/logo';
 import Link from 'next/link';
+import { PRICING_TIERS, TESTIMONIALS } from 'stores/consts';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { businessGenerateSchema, type BusinessGenerateValues } from "@/lib/schemas";
 
 
 interface LandingPageProps {
@@ -17,68 +21,28 @@ interface LandingPageProps {
   error: string | null;
 }
 
-const TESTIMONIALS = [
-  { name: "John B.", role: "Founder, EcoWear", text: "Branda saved me weeks of planning. I went from idea to full brand strategy in 2 minutes.", initials: "JB", color: "bg-indigo-100 text-indigo-600" },
-  { name: "Sarah L.", role: "CEO, TechFlow", text: "The marketing strategy generated was spot on. We launched our campaign the next day.", initials: "SL", color: "bg-emerald-100 text-emerald-600" },
-  { name: "Mike T.", role: "Owner, BrewHaven", text: "I didn't know where to start with SOPs. Branda built my entire operations manual.", initials: "MT", color: "bg-amber-100 text-amber-600" },
-  { name: "Elena R.", role: "Freelance Designer", text: "The logo concepts gave me a perfect starting point. Incredible AI tool.", initials: "ER", color: "bg-pink-100 text-pink-600" },
-  { name: "David K.", role: "Founder, RapidSaaS", text: "It's like having a co-founder who works 24/7. Highly recommended.", initials: "DK", color: "bg-blue-100 text-blue-600" },
-];
 
-const PRICING_TIERS = [
-  {
-    name: "Free",
-    price: "$0",
-    period: "forever",
-    description: "Perfect for testing your business idea.",
-    features: ["Brand Identity Generator", "Logo Concepts & SVG", "Social Media Assets", "Basic Brand Guide"],
-    buttonText: "Get Started",
-    highlight: false
-  },
-  {
-    name: "Starter",
-    price: "$11.99",
-    period: "per month",
-    description: "For solopreneurs ready to launch.",
-    features: ["Everything in Free", "Marketing Strategy", "Content Ideas", "Basic Systems & SOPs", "Email Support"],
-    buttonText: "Choose Starter",
-    highlight: false
-  },
-  {
-    name: "Growth",
-    price: "$24.99",
-    period: "per month",
-    description: "Scale your operations and sales.",
-    features: ["Everything in Starter", "Full CRM & Pipeline", "Advanced Systems", "Integrations", "Priority Support"],
-    buttonText: "Choose Growth",
-    highlight: true
-  },
-  {
-    name: "Enterprise",
-    price: "$59.99",
-    period: "per month",
-    description: "For agencies and large teams.",
-    features: ["Everything in Growth", "Unlimited Workspaces", "Team Collaboration", "White Labeling", "Dedicated Account Manager"],
-    buttonText: "Contact Sales",
-    highlight: false
-  }
-];
 
 export const LandingPage: React.FC<LandingPageProps> = ({ onGenerate, error }) => {
-  const [formData, setFormData] = useState({
-    niche: '',
-    businessName: '',
-    details: '',
-    country: ''
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<BusinessGenerateValues>({
+    resolver: zodResolver(businessGenerateSchema),
+    defaultValues: {
+      niche: '',
+      businessName: '',
+      details: '',
+      country: ''
+    }
   });
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onGenerate(formData);
+  const onSubmit = (data: BusinessGenerateValues) => {
+    onGenerate({
+      ...data,
+      businessName: data.businessName || ''
+    });
   };
 
   return (
@@ -124,46 +88,40 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGenerate, error }) =
                   {error}
                 </div>
               )}
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-sm font-medium text-slate-700">Business Niche</label>
+                    <label className="text-sm font-medium">Business Niche</label>
                     <div className="relative">
                       <Briefcase className="absolute left-3 top-2.5 w-4 h-4 text-slate-400 z-10" />
                       <Input
-                        required
-                        name="niche"
-                        value={formData.niche}
-                        onChange={handleChange}
+                        {...register("niche")}
                         placeholder="e.g. Coffee Shop, SaaS..."
-                        className="pl-9"
+                        className={cn("pl-9", errors.niche && "border-red-500 focus-visible:ring-red-500")}
                       />
                     </div>
+                    {errors.niche && <p className="text-xs text-red-500">{errors.niche.message}</p>}
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-sm font-medium text-slate-700">Country</label>
+                    <label className="text-sm font-medium ">Country</label>
                     <div className="relative">
                       <Globe className="absolute left-3 top-2.5 w-4 h-4 text-slate-400 z-10" />
                       <Input
-                        required
-                        name="country"
-                        value={formData.country}
-                        onChange={handleChange}
+                        {...register("country")}
                         placeholder="e.g. USA, UK..."
-                        className="pl-9"
+                        className={cn("pl-9", errors.country && "border-red-500 focus-visible:ring-red-500")}
                       />
                     </div>
+                    {errors.country && <p className="text-xs text-red-500">{errors.country.message}</p>}
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-sm font-medium text-slate-700">Business Name (Optional)</label>
+                  <label className="text-sm font-medium ">Business Name (Optional)</label>
                   <div className="relative">
                     <PenTool className="absolute left-3 top-2.5 w-4 h-4 text-slate-400 z-10" />
                     <Input
-                      name="businessName"
-                      value={formData.businessName}
-                      onChange={handleChange}
+                      {...register("businessName")}
                       placeholder="Have a name in mind?"
                       className="pl-9"
                     />
@@ -171,21 +129,21 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGenerate, error }) =
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-sm font-medium text-slate-700">Key Details</label>
+                  <label className="text-sm font-medium ">Key Details</label>
                   <Textarea
-                    required
-                    name="details"
-                    value={formData.details}
-                    onChange={handleChange}
+                    {...register("details")}
                     rows={3}
                     placeholder="Describe your unique value proposition, target audience, or specific requirements..."
+                    className={cn(errors.details && "border-red-500 focus-visible:ring-red-500")}
                   />
+                  {errors.details && <p className="text-xs text-red-500">{errors.details.message}</p>}
                 </div>
 
                 <Button
                   type="submit"
                   size="lg"
                   className="w-full"
+                // disabled={ }
                 >
                   <Sparkles className="w-5 h-5 mr-2" />
                   Generate My Business
@@ -305,55 +263,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGenerate, error }) =
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-900 text-white pt-16 pb-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-            <div className="col-span-1 md:col-span-1">
-              <Logo />
-              <p className="text-slate-400 text-sm leading-relaxed">
-                Empowering entrepreneurs to build, launch, and scale their dream businesses with the power of Artificial Intelligence.
-              </p>
-            </div>
-            <div>
-              <h4 className="text-sm font-bold uppercase tracking-wider text-slate-300 mb-4">Product</h4>
-              <ul className="space-y-3 text-sm text-slate-400">
-                <li><a href="#" className="hover:text-white transition-colors">Features</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Pricing</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Enterprise</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Case Studies</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-sm font-bold uppercase tracking-wider text-slate-300 mb-4">Company</h4>
-              <ul className="space-y-3 text-sm text-slate-400">
-                <li><a href="#" className="hover:text-white transition-colors">About Us</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-sm font-bold uppercase tracking-wider text-slate-300 mb-4">Legal</h4>
-              <ul className="space-y-3 text-sm text-slate-400">
-                <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Cookie Policy</a></li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-slate-500 text-sm mb-4 md:mb-0">
-              © {new Date().getFullYear()} Branda Inc. All rights reserved.
-            </p>
-            <div className="flex space-x-6">
-              <a href="#" className="text-slate-400 hover:text-white transition-colors"><Facebook className="w-5 h-5" /></a>
-              <a href="#" className="text-slate-400 hover:text-white transition-colors"><Twitter className="w-5 h-5" /></a>
-              <a href="#" className="text-slate-400 hover:text-white transition-colors"><Instagram className="w-5 h-5" /></a>
-              <a href="#" className="text-slate-400 hover:text-white transition-colors"><Linkedin className="w-5 h-5" /></a>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
+

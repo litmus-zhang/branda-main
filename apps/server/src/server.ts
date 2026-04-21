@@ -11,7 +11,7 @@ import { Logestic } from "logestic"
 import { auth, OpenAPI } from "./auth/auth.js"
 import { clearDb, seedDb } from "./db/index.ts"
 
-import { restateHandler } from "./restate-handler.js"
+import { restateHandler } from "./services/ai/index.ts"
 
 export const app = new Elysia()
   .use(bearer())
@@ -23,7 +23,7 @@ export const app = new Elysia()
       prefix: "/health",
     }),
   )
-  .mount("/restate", restateHandler as any)
+  .all("/restate/*", ({ request }) => restateHandler(request))
 
   .use(
     autoload({

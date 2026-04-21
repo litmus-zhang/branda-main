@@ -1,6 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { config } from "../../../config.js";
-import { AIProvider } from "../types.js";
+import { AIProvider } from "../types.ts";
 
 export class AnthropicProvider implements AIProvider {
   name = "claude";
@@ -23,7 +23,7 @@ export class AnthropicProvider implements AIProvider {
 
     const content = response.content[0];
     if (content!.type !== "text") throw new Error("Unexpected response type from Claude");
-    
+
     // Attempt to extract JSON if it's wrapped in markers
     const jsonStr = content!.text!.match(/\{[\s\S]*\}/)?.[0] || content!.text!;
     return JSON.parse(jsonStr);

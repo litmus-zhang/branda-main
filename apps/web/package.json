@@ -13,6 +13,7 @@
     "@better-auth/passkey": "^1.6.5",
     "@branda/ui": "workspace:*",
     "@google/genai": "^1.41.0",
+    "@hookform/resolvers": "^5.2.2",
     "@tanstack/react-pacer": "^0.22.0",
     "@tanstack/react-query": "^5.90.21",
     "better-auth": "^1.6.5",
@@ -24,8 +25,10 @@
     "radix-ui": "^1.4.3",
     "react": "19.0.0",
     "react-dom": "19.0.0",
+    "react-hook-form": "^7.71.1",
     "sonner": "^2.0.7",
     "tailwind-merge": "^2.5.4",
+    "zod": "^4.3.6",
     "zustand": "^5.0.11"
   },
   "devDependencies": {

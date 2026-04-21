@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { BusinessPlan } from '../../lib/types';
 import { Users, GitPullRequest, Mail, MoreHorizontal, Edit2, Check, X } from 'lucide-react';
+import { useForm, useFieldArray } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 
 interface CRMViewProps {
     plan: BusinessPlan;
@@ -8,18 +11,52 @@ interface CRMViewProps {
     isReadOnly?: boolean;
 }
 
+const crmSchema = z.object({
+    onboardingProcess: z.array(z.object({
+        step: z.string().min(1, "Step name is required"),
+        description: z.string().min(1, "Description is required"),
+    })),
+    mockCustomers: z.array(z.object({
+        name: z.string().min(1, "Name is required"),
+        email: z.string().email("Invalid email"),
+        status: z.string(),
+    })),
+});
+
+type CRMFormValues = z.infer<typeof crmSchema>;
+
 export const CRMView: React.FC<CRMViewProps> = ({ plan, onUpdate, isReadOnly }) => {
     const { crm } = plan;
     const [isEditing, setIsEditing] = useState(false);
-    const [editedCrm, setEditedCrm] = useState(crm);
 
-    const handleSave = () => {
-        onUpdate({ ...plan, crm: editedCrm });
+    const {
+        control,
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors }
+    } = useForm<CRMFormValues>({
+        resolver: zodResolver(crmSchema),
+        defaultValues: crm
+    });
+
+    const { fields: onboardingFields } = useFieldArray({
+        control,
+        name: "onboardingProcess"
+    });
+
+    const { fields: customerFields } = useFieldArray({
+        control,
+        name: "mockCustomers"
+    });
+
+    const onSave = (data: CRMFormValues) => {
+        onUpdate({ ...plan, crm: data as any });
         setIsEditing(false);
     };
 
     const handleCancel = () => {
-        setEditedCrm(crm);
+        reset(crm);
         setIsEditing(false);
     };
 
@@ -36,7 +73,7 @@ export const CRMView: React.FC<CRMViewProps> = ({ plan, onUpdate, isReadOnly }) 
                         <button onClick={handleCancel} className="flex items-center px-3 py-1.5 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 text-sm">
                             <X className="w-4 h-4 mr-2" /> Cancel
                         </button>
-                        <button onClick={handleSave} className="flex items-center px-3 py-1.5 rounded-lg bg-primary-600 text-white hover:bg-primary-700 text-sm">
+                        <button onClick={handleSubmit(onSave)} className="flex items-center px-3 py-1.5 rounded-lg bg-primary-600 text-white hover:bg-primary-700 text-sm">
                             <Check className="w-4 h-4 mr-2" /> Save Changes
                         </button>
                     </div>
@@ -52,36 +89,26 @@ export const CRMView: React.FC<CRMViewProps> = ({ plan, onUpdate, isReadOnly }) 
                 <div className="relative">
                     <div className="absolute top-0 bottom-0 left-4 w-0.5 bg-slate-200"></div>
                     <div className="space-y-8 relative">
-                        {editedCrm.onboardingProcess.map((step, idx) => (
-                            <div key={idx} className="flex items-start ml-4">
+                        {onboardingFields.map((field, idx) => (
+                            <div key={field.id} className="flex items-start ml-4">
                                 <div className="absolute -left-2 w-4 h-4 rounded-full bg-white border-2 border-primary-500 mt-1.5"></div>
                                 <div className="bg-slate-50 p-4 rounded-lg border border-slate-100 w-full ml-4">
                                     {isEditing ? (
                                         <>
                                             <input
+                                                {...register(`onboardingProcess.${idx}.step`)}
                                                 className="w-full font-bold text-slate-800 text-sm mb-1 bg-white border border-slate-300 rounded px-2 py-1"
-                                                value={step.step}
-                                                onChange={(e) => {
-                                                    const newProcess = [...editedCrm.onboardingProcess];
-                                                    newProcess[idx].step = e.target.value;
-                                                    setEditedCrm({ ...editedCrm, onboardingProcess: newProcess });
-                                                }}
                                             />
                                             <textarea
+                                                {...register(`onboardingProcess.${idx}.description`)}
                                                 className="w-full text-slate-600 text-sm bg-white border border-slate-300 rounded px-2 py-1 mt-1"
                                                 rows={2}
-                                                value={step.description}
-                                                onChange={(e) => {
-                                                    const newProcess = [...editedCrm.onboardingProcess];
-                                                    newProcess[idx].description = e.target.value;
-                                                    setEditedCrm({ ...editedCrm, onboardingProcess: newProcess });
-                                                }}
                                             />
                                         </>
                                     ) : (
                                         <>
-                                            <h4 className="font-bold text-slate-800 text-sm mb-1">{step.step}</h4>
-                                            <p className="text-slate-600 text-sm">{step.description}</p>
+                                            <h4 className="font-bold text-slate-800 text-sm mb-1">{field.step}</h4>
+                                            <p className="text-slate-600 text-sm">{field.description}</p>
                                         </>
                                     )}
                                 </div>
@@ -112,42 +139,32 @@ export const CRMView: React.FC<CRMViewProps> = ({ plan, onUpdate, isReadOnly }) 
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
-                            {editedCrm.mockCustomers.map((customer, idx) => (
-                                <tr key={idx} className="group hover:bg-slate-50">
+                            {customerFields.map((field, idx) => (
+                                <tr key={field.id} className="group hover:bg-slate-50">
                                     <td className="py-3 pl-2 text-sm font-medium text-slate-900">
                                         {isEditing ? (
                                             <input
+                                                {...register(`mockCustomers.${idx}.name`)}
                                                 className="w-full bg-white border border-slate-300 rounded px-2 py-1"
-                                                value={customer.name}
-                                                onChange={(e) => {
-                                                    const newCustomers = [...editedCrm.mockCustomers];
-                                                    newCustomers[idx].name = e.target.value;
-                                                    setEditedCrm({ ...editedCrm, mockCustomers: newCustomers });
-                                                }}
                                             />
-                                        ) : customer.name}
+                                        ) : field.name}
                                     </td>
                                     <td className="py-3">
                                         {isEditing ? (
                                             <select
+                                                {...register(`mockCustomers.${idx}.status`)}
                                                 className="bg-white border border-slate-300 rounded px-2 py-1 text-xs"
-                                                value={customer.status}
-                                                onChange={(e) => {
-                                                    const newCustomers = [...editedCrm.mockCustomers];
-                                                    newCustomers[idx].status = e.target.value as any;
-                                                    setEditedCrm({ ...editedCrm, mockCustomers: newCustomers });
-                                                }}
                                             >
                                                 <option value="Active">Active</option>
                                                 <option value="Lead">Lead</option>
                                                 <option value="Churned">Churned</option>
                                             </select>
                                         ) : (
-                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${customer.status === 'Active' ? 'bg-green-100 text-green-800' :
-                                                customer.status === 'Lead' ? 'bg-blue-100 text-blue-800' :
+                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${field.status === 'Active' ? 'bg-green-100 text-green-800' :
+                                                field.status === 'Lead' ? 'bg-blue-100 text-blue-800' :
                                                     'bg-slate-100 text-slate-800'
                                                 }`}>
-                                                {customer.status}
+                                                {field.status}
                                             </span>
                                         )}
                                     </td>
@@ -155,15 +172,10 @@ export const CRMView: React.FC<CRMViewProps> = ({ plan, onUpdate, isReadOnly }) 
                                         <Mail className="w-3 h-3 mr-1.5 text-slate-400" />
                                         {isEditing ? (
                                             <input
+                                                {...register(`mockCustomers.${idx}.email`)}
                                                 className="w-full bg-white border border-slate-300 rounded px-2 py-1"
-                                                value={customer.email}
-                                                onChange={(e) => {
-                                                    const newCustomers = [...editedCrm.mockCustomers];
-                                                    newCustomers[idx].email = e.target.value;
-                                                    setEditedCrm({ ...editedCrm, mockCustomers: newCustomers });
-                                                }}
                                             />
-                                        ) : customer.email}
+                                        ) : field.email}
                                     </td>
                                     <td className="py-3 text-right pr-2">
                                         <button className="text-slate-400 hover:text-slate-600">

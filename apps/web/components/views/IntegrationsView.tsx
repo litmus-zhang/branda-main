@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { Integration } from '../../lib/types';
 import { Plug, Plus, Search, CheckCircle2, XCircle, Filter, Webhook, Server, Code, Save, X, Cpu } from 'lucide-react';
 import { MOCK_INTEGRATIONS } from '../../constants';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { cn } from "@branda/ui/lib/utils";
 
 interface IntegrationsViewProps {
     workspaceId: string;
@@ -13,22 +17,53 @@ const CATEGORIES = ['All', 'Productivity', 'Communication', 'Finance', 'HR', 'Ma
 
 type CustomToolType = 'api' | 'webhook' | 'mcp';
 
+const customToolSchema = z.discriminatedUnion("type", [
+    z.object({
+        type: z.literal("api"),
+        name: z.string().min(1, "Name is required"),
+        description: z.string().optional(),
+        baseUrl: z.string().url("Must be a valid URL"),
+        apiKey: z.string().optional(),
+    }),
+    z.object({
+        type: z.literal("webhook"),
+        name: z.string().min(1, "Name is required"),
+        description: z.string().optional(),
+        webhookUrl: z.string().url("Must be a valid URL"),
+        webhookSecret: z.string().optional(),
+    }),
+    z.object({
+        type: z.literal("mcp"),
+        name: z.string().min(1, "Name is required"),
+        description: z.string().optional(),
+        mcpServerUrl: z.string().url("Must be a valid URL"),
+    }),
+]);
+
+type CustomToolFormValues = z.infer<typeof customToolSchema>;
+
 export const IntegrationsView: React.FC<IntegrationsViewProps> = ({ workspaceId, integrations: savedIntegrations, isReadOnly }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [activeCategory, setActiveCategory] = useState('All');
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    // Custom Tool Form State
-    const [customType, setCustomType] = useState<CustomToolType>('api');
-    const [customForm, setCustomForm] = useState({
-        name: '',
-        description: '',
-        baseUrl: '',
-        apiKey: '',
-        webhookUrl: '',
-        webhookSecret: '',
-        mcpServerUrl: ''
+    const {
+        register,
+        handleSubmit,
+        reset,
+        watch,
+        setValue,
+        formState: { errors }
+    } = useForm<CustomToolFormValues>({
+        resolver: zodResolver(customToolSchema),
+        defaultValues: {
+            type: 'api',
+            name: '',
+            description: '',
+        } as any
     });
+
+    const customType = watch("type") as CustomToolType;
 
     // Simulating local state for demo purposes as we don't have a real backend to update the workspace object deeply immediately
     const [localIntegrations, setLocalIntegrations] = useState<Integration[]>(savedIntegrations);
@@ -48,29 +83,27 @@ export const IntegrationsView: React.FC<IntegrationsViewProps> = ({ workspaceId,
         }
     };
 
-    const handleAddCustomTool = (e: React.FormEvent) => {
-        e.preventDefault();
-
+    const onAddCustomTool = (data: CustomToolFormValues) => {
         const newTool: Integration = {
             id: `custom-${Date.now()}`,
-            name: customForm.name,
+            name: data.name,
             category: 'Custom',
             status: 'connected',
-            description: customForm.description || `${customType.toUpperCase()} Integration`,
-            type: customType,
-            iconUrl: '', // Will handle icon rendering based on type
+            description: data.description || `${data.type.toUpperCase()} Integration`,
+            type: data.type,
+            iconUrl: '',
             config: {
-                baseUrl: customType === 'api' ? customForm.baseUrl : undefined,
-                apiKey: customType === 'api' ? customForm.apiKey : undefined,
-                webhookUrl: customType === 'webhook' ? customForm.webhookUrl : undefined,
-                webhookSecret: customType === 'webhook' ? customForm.webhookSecret : undefined,
-                mcpServerUrl: customType === 'mcp' ? customForm.mcpServerUrl : undefined,
+                baseUrl: data.type === 'api' ? data.baseUrl : undefined,
+                apiKey: data.type === 'api' ? data.apiKey : undefined,
+                webhookUrl: data.type === 'webhook' ? data.webhookUrl : undefined,
+                webhookSecret: data.type === 'webhook' ? data.webhookSecret : undefined,
+                mcpServerUrl: data.type === 'mcp' ? data.mcpServerUrl : undefined,
             }
         };
 
         setLocalIntegrations([...localIntegrations, newTool]);
         setIsModalOpen(false);
-        setCustomForm({ name: '', description: '', baseUrl: '', apiKey: '', webhookUrl: '', webhookSecret: '', mcpServerUrl: '' });
+        reset();
         setActiveCategory('Custom');
     };
 
@@ -217,44 +250,45 @@ export const IntegrationsView: React.FC<IntegrationsViewProps> = ({ workspaceId,
                         <div className="p-6 overflow-y-auto">
                             <div className="grid grid-cols-3 gap-2 mb-6 p-1 bg-slate-100 rounded-lg">
                                 <button
-                                    onClick={() => setCustomType('api')}
+                                    type="button"
+                                    onClick={() => setValue("type", "api")}
                                     className={`flex items-center justify-center py-2 text-sm font-medium rounded-md transition-all ${customType === 'api' ? 'bg-white text-primary-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                                 >
                                     <Code className="w-4 h-4 mr-2" /> API
                                 </button>
                                 <button
-                                    onClick={() => setCustomType('webhook')}
+                                    type="button"
+                                    onClick={() => setValue("type", "webhook")}
                                     className={`flex items-center justify-center py-2 text-sm font-medium rounded-md transition-all ${customType === 'webhook' ? 'bg-white text-primary-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                                 >
                                     <Webhook className="w-4 h-4 mr-2" /> Webhook
                                 </button>
                                 <button
-                                    onClick={() => setCustomType('mcp')}
+                                    type="button"
+                                    onClick={() => setValue("type", "mcp")}
                                     className={`flex items-center justify-center py-2 text-sm font-medium rounded-md transition-all ${customType === 'mcp' ? 'bg-white text-primary-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                                 >
                                     <Cpu className="w-4 h-4 mr-2" /> MCP
                                 </button>
                             </div>
 
-                            <form id="custom-tool-form" onSubmit={handleAddCustomTool} className="space-y-4">
+                            <form id="custom-tool-form" onSubmit={handleSubmit(onAddCustomTool)} className="space-y-4">
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-1">Integration Name</label>
                                     <input
-                                        required
-                                        className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
+                                        {...register("name")}
+                                        className={cn("w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none", errors.name && "border-red-500 bg-red-50")}
                                         placeholder="e.g. My Internal Service"
-                                        value={customForm.name}
-                                        onChange={e => setCustomForm({ ...customForm, name: e.target.value })}
                                     />
+                                    {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>}
                                 </div>
 
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
                                     <input
+                                        {...register("description")}
                                         className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
                                         placeholder="Optional description"
-                                        value={customForm.description}
-                                        onChange={e => setCustomForm({ ...customForm, description: e.target.value })}
                                     />
                                 </div>
 
@@ -264,22 +298,19 @@ export const IntegrationsView: React.FC<IntegrationsViewProps> = ({ workspaceId,
                                         <div>
                                             <label className="block text-sm font-medium text-slate-700 mb-1">Base URL</label>
                                             <input
-                                                required
-                                                type="url"
-                                                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none font-mono text-sm"
+                                                {...register("baseUrl")}
+                                                className={cn("w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none font-mono text-sm", (errors as any).baseUrl && "border-red-500 bg-red-50")}
                                                 placeholder="https://api.example.com/v1"
-                                                value={customForm.baseUrl}
-                                                onChange={e => setCustomForm({ ...customForm, baseUrl: e.target.value })}
                                             />
+                                            {(errors as any).baseUrl && <p className="text-xs text-red-500 mt-1">{(errors as any).baseUrl.message}</p>}
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-slate-700 mb-1">API Key / Token</label>
                                             <input
+                                                {...register("apiKey")}
                                                 type="password"
                                                 className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none font-mono text-sm"
                                                 placeholder="sk_..."
-                                                value={customForm.apiKey}
-                                                onChange={e => setCustomForm({ ...customForm, apiKey: e.target.value })}
                                             />
                                         </div>
                                     </>
@@ -291,22 +322,19 @@ export const IntegrationsView: React.FC<IntegrationsViewProps> = ({ workspaceId,
                                         <div>
                                             <label className="block text-sm font-medium text-slate-700 mb-1">Webhook URL</label>
                                             <input
-                                                required
-                                                type="url"
-                                                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none font-mono text-sm"
+                                                {...register("webhookUrl")}
+                                                className={cn("w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none font-mono text-sm", (errors as any).webhookUrl && "border-red-500 bg-red-50")}
                                                 placeholder="https://your-app.com/webhooks/incoming"
-                                                value={customForm.webhookUrl}
-                                                onChange={e => setCustomForm({ ...customForm, webhookUrl: e.target.value })}
                                             />
+                                            {(errors as any).webhookUrl && <p className="text-xs text-red-500 mt-1">{(errors as any).webhookUrl.message}</p>}
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-slate-700 mb-1">Signing Secret (Optional)</label>
                                             <input
+                                                {...register("webhookSecret")}
                                                 type="password"
                                                 className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none font-mono text-sm"
                                                 placeholder="whsec_..."
-                                                value={customForm.webhookSecret}
-                                                onChange={e => setCustomForm({ ...customForm, webhookSecret: e.target.value })}
                                             />
                                         </div>
                                     </>
@@ -323,13 +351,11 @@ export const IntegrationsView: React.FC<IntegrationsViewProps> = ({ workspaceId,
                                         <div>
                                             <label className="block text-sm font-medium text-slate-700 mb-1">MCP Server URL</label>
                                             <input
-                                                required
-                                                type="url"
-                                                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none font-mono text-sm"
+                                                {...register("mcpServerUrl")}
+                                                className={cn("w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none font-mono text-sm", (errors as any).mcpServerUrl && "border-red-500 bg-red-50")}
                                                 placeholder="wss://mcp.your-server.com"
-                                                value={customForm.mcpServerUrl}
-                                                onChange={e => setCustomForm({ ...customForm, mcpServerUrl: e.target.value })}
                                             />
+                                            {(errors as any).mcpServerUrl && <p className="text-xs text-red-500 mt-1">{(errors as any).mcpServerUrl.message}</p>}
                                         </div>
                                     </>
                                 )}
