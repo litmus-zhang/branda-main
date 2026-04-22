@@ -21,6 +21,7 @@ export default function Providers({ children }: { children: ReactNode }) {
       },
     },
   }));
+  const url = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -38,13 +39,14 @@ export default function Providers({ children }: { children: ReactNode }) {
           magicLink
           multiSession
           redirectTo="/dashboard"
-          socialProviders={["google", "github"]}
+          queryClient={queryClient}
+          baseURL={url}
+          socialProviders={["google"]}
           navigate={({ to, replace }) =>
             replace ? router.replace(to) : router.push(to)
           }
+          // passkey={true}
           Link={Link}
-          // localizeErrors={false}
-          emailVerification={true}
         >
           {children}
         </AuthProvider>

@@ -13,7 +13,7 @@ import {
   UsersRound
 } from "lucide-react"
 
-import { Button } from "@branda/components/ui/button"
+import { Button } from "@branda/ui/components/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,8 +23,8 @@ import {
   DropdownMenuSub,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger
-} from "@branda/components/ui/dropdown-menu"
-import { Tabs, TabsList, TabsTrigger } from "@branda/components/ui/tabs"
+} from "@branda/ui/components/dropdown-menu"
+import { Tabs, TabsList, TabsTrigger } from "@branda/ui/components/tabs"
 import { cn } from "@branda/ui/lib/utils"
 import { SwitchAccountMenu } from "./switch-account-menu"
 import { UserAvatar } from "./user-avatar"

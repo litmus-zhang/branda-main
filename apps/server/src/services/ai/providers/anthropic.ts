@@ -7,24 +7,27 @@ export class AnthropicProvider implements AIProvider {
   private client: Anthropic | null = null;
 
   constructor() {
-    if (config.ANTHROPIC_API_KEY) {
-      this.client = new Anthropic({ apiKey: config.ANTHROPIC_API_KEY });
+    if (config.OPENROUTER_API_KEY) {
+      this.client = new Anthropic({ apiKey: config.OPENROUTER_API_KEY, baseURL: "https://openrouter.ai/api/v1" });
     }
   }
 
-  async generateContent(prompt: string): Promise<any> {
-    if (!this.client) throw new Error("Anthropic API key not configured");
+  async generateContent(prompt: string, schema?: any): Promise<any> {
+    if (!this.client) throw new Error("OPENROUTER_API_KEY not configured");
+
+    const schemaInstruction = schema
+      ? `\n\nYour output MUST be a valid JSON object strictly following this structure: ${JSON.stringify(schema)}`
+      : "\n\nOutput only a valid JSON object.";
 
     const response = await this.client.messages.create({
       model: "claude-3-5-sonnet-20240620",
       max_tokens: 4096,
-      messages: [{ role: "user", content: prompt + "\n\nOutput only a valid JSON object." }],
+      messages: [{ role: "user", content: prompt + schemaInstruction }],
     });
 
     const content = response.content[0];
     if (content!.type !== "text") throw new Error("Unexpected response type from Claude");
 
-    // Attempt to extract JSON if it's wrapped in markers
     const jsonStr = content!.text!.match(/\{[\s\S]*\}/)?.[0] || content!.text!;
     return JSON.parse(jsonStr);
   }

@@ -1,6 +1,7 @@
 import { Logo } from "@branda/ui/components/logo";
 import { Bell, Calendar, MessageSquare } from "lucide-react";
 import Image from "next/image";
+// import BackgroundBoxesDemo from "@branda/ui/components/ui/boxes"
 
 export default function AuthLayoutPage({
   children,
@@ -23,8 +24,8 @@ export default function AuthLayoutPage({
       {/* <div className="bg-muted relative hidden lg:block overflow-hidden">
         <BackgroundBoxesDemo />
       </div> */}
-      <div className="hidden lg:flex w-1/2 bg-black-900 relative">
-        <div className="absolute inset-0 bg-black/20 z-10"></div>
+      <div className="hidden lg:flex w-1/2 bg-primary relative">
+        <div className="absolute inset-0 bg-primary/20 z-10"></div>
         <Image
           alt="Community"
           className="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-60 z-0"

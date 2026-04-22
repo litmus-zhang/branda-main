@@ -52,11 +52,33 @@ export const useUpdateWorkspace = () => {
       const result = await api.put<{ data: Workspace }>(`/workspaces/${id}`, data, { token });
       return result.data;
     },
-    onSuccess: (updatedWorkspace) => {
+    onMutate: async (updatedWorkspace) => {
+      // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+      await queryClient.cancelQueries({ queryKey: workspaceKeys.all });
+
+      // Snapshot the previous value
+      const previousWorkspaces = queryClient.getQueryData<Workspace[]>(workspaceKeys.all);
+
+      // Optimistically update to the new value
       queryClient.setQueryData(workspaceKeys.all, (old: Workspace[] = []) =>
-        old.map((w) => w.id === updatedWorkspace.id ? updatedWorkspace : w)
+        old.map((w) => w.id === updatedWorkspace.id ? { ...w, ...updatedWorkspace.data } : w)
       );
-      queryClient.setQueryData(workspaceKeys.detail(updatedWorkspace.id), updatedWorkspace);
+
+      // Return a context object with the snapshotted value
+      return { previousWorkspaces };
+    },
+    onError: (err, newWorkspace, context) => {
+      // If the mutation fails, use the context returned from onMutate to roll back
+      if (context?.previousWorkspaces) {
+        queryClient.setQueryData(workspaceKeys.all, context.previousWorkspaces);
+      }
+    },
+    onSettled: (updatedWorkspace) => {
+      // Always refetch after error or success to ensure we're in sync with the server
+      queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
+      if (updatedWorkspace) {
+        queryClient.setQueryData(workspaceKeys.detail(updatedWorkspace.id), updatedWorkspace);
+      }
     },
   });
 };

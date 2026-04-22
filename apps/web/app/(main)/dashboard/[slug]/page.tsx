@@ -1,70 +1,48 @@
 "use client"
-import { useWorkspaces } from '@/hooks/useWorkspaces';
+import { useWorkspaces, useCreateWorkspace, useUpdateWorkspace } from '@/hooks/useWorkspaces';
 import { useAuth } from '@/lib/auth-client';
 import { Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useRouter, useParams, useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import { Dashboard } from '@/components/pages/Dashboard';
-import { useCreateWorkspace, useUpdateWorkspace } from '@/hooks/useWorkspaces';
-import { authClient } from '@/lib/auth-client';
 import { generateBusinessPlan } from '@/lib/services/geminiService';
-import { Workspace } from '@/lib/types';
-import { useState } from 'react';
+import { Workspace, ViewType } from '@/lib/types';
 import { slugify } from '@branda/ui/lib/utils';
+import { authClient } from '@/lib/auth-client';
 
-
-export default function DashboardPage() {
+export default function WorkspaceDashboardPage() {
     const { user, isPending: isAuthLoading } = useAuth();
     const { data: workspaces = [], isLoading: isLoadingWorkspaces } = useWorkspaces();
+    const params = useParams();
+    const searchParams = useSearchParams();
     const router = useRouter();
+    const slug = params.slug as string;
 
-    useEffect(() => {
-        if (!isAuthLoading && !isLoadingWorkspaces && user) {
-            if (workspaces.length > 0) {
-                router.replace(`/dashboard/${workspaces[0]?.slug}`);
-            }
-        }
-    }, [workspaces, isAuthLoading, isLoadingWorkspaces, user, router]);
-
-    // If loading or we have workspaces (about to redirect), show loader
-    if (isAuthLoading || isLoadingWorkspaces || (user && workspaces.length > 0)) {
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-                <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
-            </div>
-        );
-    }
-
-    // If user is logged in but has NO workspaces, show the dashboard in "empty" mode
-    if (user && workspaces.length === 0) {
-        return (
-            <DashboardContent
-                user={{ name: user.name || '', email: user.email || '' }}
-                workspaces={[]}
-                currentWorkspaceId={null}
-            />
-        );
-    }
-
-    return null;
-}
-
-// Separate component for the dashboard content logic to reuse
-function DashboardContent({ user, workspaces, currentWorkspaceId: initialId }: { user: any, workspaces: Workspace[], currentWorkspaceId: string | null }) {
     const createWorkspaceMutation = useCreateWorkspace();
     const updateWorkspaceMutation = useUpdateWorkspace();
-    const router = useRouter();
 
-    const [currentWorkspaceId, setCurrentWorkspaceId] = useState<string | null>(initialId);
     const [isGenerating, setIsGenerating] = useState(false);
     const [generationError, setGenerationError] = useState<string | null>(null);
+    const [currentWorkspaceId, setCurrentWorkspaceId] = useState<string | null>(null);
+
+    // Sync currentWorkspaceId with the slug from URL
+    useEffect(() => {
+        if (workspaces.length > 0 && slug) {
+            const ws = workspaces.find(w => w.slug === slug);
+            if (ws) {
+                setCurrentWorkspaceId(ws.id);
+            } else if (slug === 'new') {
+                setCurrentWorkspaceId('new');
+            }
+        }
+    }, [workspaces, slug]);
 
     const handleSwitchWorkspace = (id: string) => {
         const ws = workspaces.find(w => w.id === id);
         if (ws) {
-            router.push(`/dashboard/${ws.slug}`);
+            router.push(`/dashboard/${ws.slug}?view=${searchParams.get('view') || 'brand'}`);
         } else if (id === 'new') {
-            setCurrentWorkspaceId('new');
+            router.push('/dashboard/new');
         }
     };
 
@@ -76,7 +54,7 @@ function DashboardContent({ user, workspaces, currentWorkspaceId: initialId }: {
     };
 
     const handleCreateNewWorkspace = () => {
-        setCurrentWorkspaceId('new');
+        router.push('/dashboard/new');
     };
 
     const handleGenerate = async (formData: { niche: string; businessName: string; details: string; country: string }) => {
@@ -85,7 +63,7 @@ function DashboardContent({ user, workspaces, currentWorkspaceId: initialId }: {
         try {
             const plan = await generateBusinessPlan(formData);
             const name = plan.brandIdentity.name || formData.businessName || 'New Brand';
-
+            
             const newWorkspace: Partial<Workspace> = {
                 id: crypto.randomUUID(),
                 name,
@@ -110,9 +88,19 @@ function DashboardContent({ user, workspaces, currentWorkspaceId: initialId }: {
         }
     };
 
+    if (isAuthLoading || isLoadingWorkspaces) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
+            </div>
+        );
+    }
+
+    if (!user) return null;
+
     return (
         <Dashboard
-            user={user}
+            user={{ name: user.name || '', email: user.email || '' }}
             workspaces={workspaces}
             currentWorkspaceId={currentWorkspaceId}
             onSwitchWorkspace={handleSwitchWorkspace}

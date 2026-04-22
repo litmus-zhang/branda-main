@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { cn } from "@branda/ui/lib/utils";
+import { Card } from '@branda/ui/components/card';
 
 interface TeamViewProps {
     workspace: Workspace;
@@ -71,14 +72,14 @@ export const TeamView: React.FC<TeamViewProps> = ({ workspace, onUpdateWorkspace
     };
 
     const RoleBadge = ({ role }: { role: string }) => {
-        let colors = "bg-slate-100 text-slate-800";
-        if (role === 'owner') colors = "bg-indigo-100 text-indigo-800";
-        if (role === 'admin') colors = "bg-purple-100 text-purple-800";
-        if (role === 'editor') colors = "bg-blue-100 text-blue-800";
-        if (role === 'viewer') colors = "bg-gray-100 text-gray-800";
+        let colors = "bg-muted text-muted-foreground border-border";
+        if (role === 'owner') colors = "bg-indigo-500/10 text-indigo-600 border-indigo-500/20";
+        if (role === 'admin') colors = "bg-purple-500/10 text-purple-600 border-purple-500/20";
+        if (role === 'editor') colors = "bg-blue-500/10 text-blue-600 border-blue-500/20";
+        if (role === 'viewer') colors = "bg-muted text-muted-foreground border-border";
 
         return (
-            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${colors}`}>
+            <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${colors}`}>
                 {role}
             </span>
         );
@@ -86,56 +87,71 @@ export const TeamView: React.FC<TeamViewProps> = ({ workspace, onUpdateWorkspace
 
     return (
         <div className="space-y-6">
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                <div className="flex justify-between items-center mb-6">
+            <Card className="p-8 border-border">
+                <div className="flex justify-between items-center mb-8">
                     <div>
-                        <h2 className="text-xl font-bold text-slate-900 flex items-center">
-                            <Users className="w-6 h-6 mr-2 text-primary-600" />
-                            Team & Collaborators
+                        <h2 className="text-2xl font-black text-foreground flex items-center tracking-tight">
+                            <Users className="w-6 h-6 mr-3 text-primary" />
+                            Team Management
                         </h2>
-                        <p className="text-slate-500 text-sm mt-1">Manage access to your workspace.</p>
+                        <p className="text-muted-foreground text-sm mt-1 font-medium italic opacity-70">Govern access and collaboration settings for this workspace.</p>
                     </div>
                 </div>
 
                 {/* Role Description Legend */}
-                <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 mb-6 text-sm text-slate-600">
-                    <h4 className="font-semibold text-slate-800 mb-2 flex items-center"><Info className="w-4 h-4 mr-1.5" /> Access Levels</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <div className="flex items-start"><span className="font-medium mr-2 text-indigo-700">Owner:</span> Full access, billing, and workspace deletion.</div>
-                        <div className="flex items-start"><span className="font-medium mr-2 text-purple-700">Admin:</span> Can invite members and manage integrations.</div>
-                        <div className="flex items-start"><span className="font-medium mr-2 text-blue-700">Editor:</span> Can edit content (Brand, Marketing, Systems).</div>
-                        <div className="flex items-start"><span className="font-medium mr-2 text-gray-700">Viewer:</span> Read-only access to all data.</div>
+                <div className="bg-muted/30 p-6 rounded-xl border border-border mb-10 shadow-inner">
+                    <h4 className="font-bold text-foreground mb-4 text-sm flex items-center tracking-wide uppercase">
+                        <Info className="w-4 h-4 mr-2 opacity-50" /> 
+                        Permission Hierarchy
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="flex items-start">
+                            <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 mr-3 shrink-0" />
+                            <p className="text-xs leading-relaxed text-muted-foreground"><span className="font-black text-foreground uppercase tracking-widest mr-2">Owner</span> Unrestricted access, billing control, and workspace deletion.</p>
+                        </div>
+                        <div className="flex items-start">
+                            <div className="w-1.5 h-1.5 rounded-full bg-purple-500 mt-1.5 mr-3 shrink-0" />
+                            <p className="text-xs leading-relaxed text-muted-foreground"><span className="font-black text-foreground uppercase tracking-widest mr-2">Admin</span> Can manage members, integrations, and workspace settings.</p>
+                        </div>
+                        <div className="flex items-start">
+                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 mr-3 shrink-0" />
+                            <p className="text-xs leading-relaxed text-muted-foreground"><span className="font-black text-foreground uppercase tracking-widest mr-2">Editor</span> Full write access to Brand, Marketing, and Systems engine.</p>
+                        </div>
+                        <div className="flex items-start">
+                            <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/50 mt-1.5 mr-3 shrink-0" />
+                            <p className="text-xs leading-relaxed text-muted-foreground"><span className="font-black text-foreground uppercase tracking-widest mr-2">Viewer</span> Zero-edit access. Ideal for external stakeholders or mentors.</p>
+                        </div>
                     </div>
                 </div>
 
                 {/* Invite Form */}
                 {canInvite && (
-                    <div className="bg-white p-6 rounded-lg border-2 border-dashed border-slate-200 mb-8 hover:border-slate-300 transition-colors">
-                        <h3 className="font-semibold text-slate-800 mb-4 flex items-center">
-                            <UserPlus className="w-5 h-5 mr-2 text-primary-600" />
-                            Invite New Member
+                    <div className="bg-muted/10 p-8 rounded-xl border-2 border-dashed border-border mb-12 hover:border-primary/40 transition-all duration-300 group">
+                        <h3 className="font-bold text-foreground mb-6 flex items-center uppercase tracking-[0.2em] text-xs">
+                            <UserPlus className="w-5 h-5 mr-3 text-primary opacity-60" />
+                            Invite Operator
                         </h3>
-                        <form onSubmit={handleSubmit(onInviteSubmit)} className="flex flex-col md:flex-row gap-4">
+                        <form onSubmit={handleSubmit(onInviteSubmit)} className="flex flex-col lg:flex-row gap-6">
                             <div className="flex-1">
-                                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Email Address</label>
+                                <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2 opacity-60">Identity / Email</label>
                                 <div className="relative">
-                                    <Mail className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
+                                    <Mail className="absolute left-3 top-3 w-4 h-4 text-muted-foreground/30" />
                                     <input
                                         {...register("email")}
                                         className={cn(
-                                            "w-full pl-9 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none transition-all",
-                                            errors.email ? "border-red-500 bg-red-50" : "border-slate-300"
+                                            "w-full pl-10 pr-4 py-2.5 bg-background border border-input rounded shadow-sm focus:ring-1 focus:ring-primary outline-none transition-all font-medium text-sm",
+                                            errors.email ? "border-destructive ring-destructive/20" : "hover:border-border"
                                         )}
-                                        placeholder="colleague@example.com"
+                                        placeholder="operator@company.com"
                                     />
                                 </div>
-                                {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>}
+                                {errors.email && <p className="text-xs font-bold text-destructive mt-2 uppercase tracking-wide">{errors.email.message}</p>}
                             </div>
-                            <div className="w-full md:w-48">
-                                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Role</label>
+                            <div className="w-full lg:w-48">
+                                <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2 opacity-60">Initial Role</label>
                                 <select
                                     {...register("role")}
-                                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none bg-white"
+                                    className="w-full px-4 py-2.5 border border-input rounded bg-background text-foreground text-sm font-bold focus:ring-1 focus:ring-primary outline-none cursor-pointer shadow-sm"
                                 >
                                     <option value="admin">Admin</option>
                                     <option value="editor">Editor</option>
@@ -143,14 +159,14 @@ export const TeamView: React.FC<TeamViewProps> = ({ workspace, onUpdateWorkspace
                                 </select>
                             </div>
                             <div className="flex items-end">
-                                <button type="submit" className="w-full md:w-auto px-6 py-2 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-lg transition-colors shadow-sm">
-                                    Send Invite
+                                <button type="submit" className="w-full lg:w-auto px-8 py-2.5 bg-primary text-primary-foreground font-black text-xs uppercase tracking-widest rounded shadow-lg shadow-primary/20 hover:bg-primary/90 hover:scale-[1.02] active:scale-95 transition-all">
+                                    Transmit Invitation
                                 </button>
                             </div>
                         </form>
                         {notification && (
-                            <div className={`mt-4 p-3 rounded-lg text-sm flex items-center ${notification.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
-                                {notification.type === 'success' && <Check className="w-4 h-4 mr-2" />}
+                            <div className={`mt-6 p-4 rounded border text-xs font-bold uppercase tracking-wider flex items-center animate-in fade-in slide-in-from-top-2 duration-300 ${notification.type === 'success' ? 'bg-green-500/10 text-green-600 border-green-500/20' : 'bg-destructive/10 text-destructive border-destructive/20'}`}>
+                                {notification.type === 'success' && <Check className="w-4 h-4 mr-3" />}
                                 {notification.message}
                             </div>
                         )}
@@ -159,50 +175,52 @@ export const TeamView: React.FC<TeamViewProps> = ({ workspace, onUpdateWorkspace
 
                 {/* Team List */}
                 <div>
-                    <h3 className="font-semibold text-slate-800 mb-4">Current Team</h3>
-                    <div className="overflow-hidden rounded-lg border border-slate-200">
+                    <h3 className="font-bold text-foreground mb-6 uppercase tracking-[0.2em] text-xs opacity-60">Active Task Force</h3>
+                    <div className="overflow-hidden rounded-xl border border-border shadow-inner bg-card">
                         <table className="w-full text-left">
-                            <thead className="bg-slate-50">
-                                <tr className="text-xs font-semibold text-slate-500 uppercase">
-                                    <th className="px-6 py-3">User</th>
-                                    <th className="px-6 py-3">Role</th>
-                                    <th className="px-6 py-3">Status</th>
-                                    <th className="px-6 py-3 text-right">Actions</th>
+                            <thead className="bg-muted/50">
+                                <tr className="text-[10px] font-black text-muted-foreground uppercase tracking-widest border-b border-border">
+                                    <th className="px-6 py-4">Collaborator</th>
+                                    <th className="px-6 py-4">Security Clearence</th>
+                                    <th className="px-6 py-4">Status</th>
+                                    <th className="px-6 py-4 text-right">Operations</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-100 bg-white">
+                            <tbody className="divide-y divide-border">
                                 {workspace.collaborators.map((collaborator) => (
-                                    <tr key={collaborator.id} className="hover:bg-slate-50">
-                                        <td className="px-6 py-4">
+                                    <tr key={collaborator.id} className="hover:bg-muted/30 transition-colors group">
+                                        <td className="px-6 py-5">
                                             <div className="flex items-center">
-                                                <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold mr-3 text-xs border border-slate-200">
+                                                <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-black mr-4 text-xs border border-primary/20 shadow-sm group-hover:scale-110 transition-transform">
                                                     {collaborator.email.charAt(0).toUpperCase()}
                                                 </div>
-                                                <span className="text-sm font-medium text-slate-900">{collaborator.email}</span>
-                                                {collaborator.email === currentUserEmail && (
-                                                    <span className="ml-2 text-xs text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">(You)</span>
-                                                )}
+                                                <div className="flex flex-col">
+                                                    <span className="text-sm font-bold text-foreground tracking-tight">{collaborator.email}</span>
+                                                    {collaborator.email === currentUserEmail && (
+                                                        <span className="text-[10px] font-black text-primary uppercase tracking-tighter mt-0.5">Primary Key (Self)</span>
+                                                    )}
+                                                </div>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td className="px-6 py-5">
                                             <RoleBadge role={collaborator.role} />
                                         </td>
-                                        <td className="px-6 py-4">
-                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${collaborator.status === 'active'
-                                                ? 'bg-green-100 text-green-800'
-                                                : 'bg-yellow-100 text-yellow-800'
+                                        <td className="px-6 py-5">
+                                            <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest border ${collaborator.status === 'active'
+                                                ? 'bg-green-500/10 text-green-600 border-green-500/10'
+                                                : 'bg-yellow-500/10 text-yellow-600 border-yellow-500/10'
                                                 }`}>
                                                 {collaborator.status}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 text-right">
+                                        <td className="px-6 py-5 text-right">
                                             {canInvite && collaborator.email !== currentUserEmail && collaborator.role !== 'owner' && (
                                                 <button
                                                     onClick={() => handleRemove(collaborator.id)}
-                                                    className="text-slate-400 hover:text-red-600 transition-colors p-1 hover:bg-red-50 rounded"
-                                                    title="Remove User"
+                                                    className="text-muted-foreground hover:text-destructive transition-all p-2 hover:bg-destructive/10 rounded-lg group/trash"
+                                                    title="Decommission User"
                                                 >
-                                                    <Trash2 className="w-4 h-4" />
+                                                    <Trash2 className="w-4 h-4 group-hover/trash:scale-110" />
                                                 </button>
                                             )}
                                         </td>
@@ -210,8 +228,8 @@ export const TeamView: React.FC<TeamViewProps> = ({ workspace, onUpdateWorkspace
                                 ))}
                                 {workspace.collaborators.length === 0 && (
                                     <tr>
-                                        <td colSpan={4} className="px-6 py-8 text-center text-slate-500 text-sm">
-                                            No other team members yet.
+                                        <td colSpan={4} className="px-6 py-12 text-center text-muted-foreground/40 text-xs font-bold uppercase tracking-[0.2em] italic">
+                                            No auxiliary units detected.
                                         </td>
                                     </tr>
                                 )}
@@ -219,7 +237,7 @@ export const TeamView: React.FC<TeamViewProps> = ({ workspace, onUpdateWorkspace
                         </table>
                     </div>
                 </div>
-            </div>
+            </Card>
         </div>
     );
 };

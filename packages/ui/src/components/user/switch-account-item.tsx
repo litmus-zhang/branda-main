@@ -5,8 +5,8 @@ import {
   useSetActiveSession
 } from "@better-auth-ui/react"
 
-import { DropdownMenuItem } from "@branda/components/ui/dropdown-menu"
-import { Spinner } from "@branda/components/ui/spinner"
+import { DropdownMenuItem } from "@branda/ui/components/dropdown-menu"
+import { Spinner } from "@branda/ui/components/spinner"
 import { UserView } from "./user-view"
 
 export type DeviceSession = NonNullable<

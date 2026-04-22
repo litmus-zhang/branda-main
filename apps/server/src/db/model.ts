@@ -27,7 +27,16 @@ export const models = {
       }),
       files: table.files,
       tickets: table.ticket,
-      workspaces: table.workspace,
+      workspaces: createInsertSchema(table.workspace, {
+        name: t.String(),
+        slug: t.String(),
+        ownerId: t.Optional(t.String()),
+        description: t.Optional(t.String()),
+        collaborators: t.Optional(t.Array(t.Any())),
+        createdAt: t.Optional(t.Date({ default: new Date().toISOString() })),
+        updatedAt: t.Optional(t.Date({ default: new Date().toISOString() })),
+        tier: t.Optional(t.String({ default: "Free" }))
+      }),
     },
     "insert",
   ),

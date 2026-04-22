@@ -19,17 +19,41 @@ export class OpenRouterProvider implements AIProvider {
     }
   }
 
-  async generateContent(prompt: string): Promise<any> {
+  async generateContent(prompt: string, schema?: any): Promise<any> {
     if (!this.client) throw new Error("OpenRouter API key not configured");
 
     const response = await this.client.chat.completions.create({
       model: "google/gemini-2.0-flash-001", // Or some other model available through OpenRouter
       messages: [{ role: "user", content: prompt }],
-      response_format: { type: "json_object" },
+      response_format: schema ? {
+        type: "json_schema",
+        json_schema: {
+          name: "business_plan",
+          schema: this.convertToStandardJsonSchema(schema)
+        }
+      } : { type: "json_object" },
     });
 
-    const content = response.choices[0].message.content;
+    const content = response.choices[0]?.message.content;
     if (!content) throw new Error("No response from OpenRouter");
     return JSON.parse(content);
+  }
+
+  private convertToStandardJsonSchema(schema: any): any {
+    if (!schema) return null;
+    const convert = (obj: any): any => {
+      if (typeof obj !== 'object' || obj === null) return obj;
+      const newObj: any = Array.isArray(obj) ? [] : {};
+      for (const key in obj) {
+        if (key === 'type' && typeof obj[key] === 'number') {
+           const types = ['unspecified', 'string', 'number', 'integer', 'boolean', 'array', 'object'];
+           newObj[key] = types[obj[key]] || 'object';
+        } else {
+          newObj[key] = convert(obj[key]);
+        }
+      }
+      return newObj;
+    };
+    return convert(schema);
   }
 }

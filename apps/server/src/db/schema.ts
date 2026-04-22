@@ -282,8 +282,9 @@ export const ticket = pgTable("ticket", {
 })
 
 export const workspace = pgTable("workspace", {
-  id: text("id").primaryKey(),
+  id: text("id").primaryKey().$defaultFn(() => createId()),
   name: text("name").notNull(),
+  slug: text("slug").notNull().unique(),
   plan: jsonb("plan").notNull(),
   integrations: jsonb("integrations").default([]).notNull(),
   collaborators: jsonb("collaborators").default([]).notNull(),
@@ -291,9 +292,9 @@ export const workspace = pgTable("workspace", {
   ownerId: text("owner_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+  createdAt: timestamp("created_at").$defaultFn(() => new Date()).notNull(),
   updatedAt: timestamp("updated_at")
-    .defaultNow()
+    .$defaultFn(() => new Date())
     .$onUpdate(() => new Date())
     .notNull(),
 })

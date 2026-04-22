@@ -27,8 +27,6 @@
     "@paralleldrive/cuid2": "^3.0.4",
     "@restatedev/restate-sdk": "^1.11.1",
     "@restatedev/restate-sdk-clients": "^1.11.1",
-
-
     "@sinclair/typebox": "^0.34.0",
     "@types/qrcode": "^1.5.6",
     "@verrou/core": "^0.5.1",

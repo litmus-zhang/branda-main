@@ -11,7 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuSubContent
-} from "@branda/components/ui/dropdown-menu"
+} from "@branda/ui/components/dropdown-menu"
 import { SwitchAccountItem } from "./switch-account-item"
 import { UserView } from "./user-view"
 

@@ -3,7 +3,7 @@
 import { useSession } from "@better-auth-ui/react"
 import type { User } from "better-auth"
 
-import { Skeleton } from "@branda/components/ui/skeleton"
+import { Skeleton } from "@branda/ui/components/skeleton"
 import { cn } from "@branda/ui/lib/utils"
 import { UserAvatar } from "./user-avatar"
 

@@ -1,157 +1,74 @@
-import React, { useState, useEffect } from 'react';
-import { Sparkles, Briefcase, Globe, PenTool, Star, Check, LogIn } from 'lucide-react';
+import React, { } from 'react';
+import { Sparkles, Star, Check, ChevronRight } from 'lucide-react';
 import { Footer } from "@branda/ui/components/footer"
+import { Header } from "@branda/ui/components/header"
 import { Button } from "@branda/ui/components/button";
-import { Input } from "@branda/ui/components/input";
-import { Textarea } from "@branda/ui/components/textarea";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardDescription } from "@branda/ui/components/card";
 import { Badge } from "@branda/ui/components/badge";
-import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@branda/ui/components/carousel";
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, type CarouselApi } from "@branda/ui/components/carousel";
 import { cn } from "@branda/ui/lib/utils";
-import { Logo } from '@branda/ui/components/logo';
 import Link from 'next/link';
 import { PRICING_TIERS, TESTIMONIALS } from 'stores/consts';
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { businessGenerateSchema, type BusinessGenerateValues } from "@/lib/schemas";
 
 
-interface LandingPageProps {
-  onGenerate: (data: { niche: string; businessName: string; details: string; country: string }) => void;
-  error: string | null;
-}
+export const LandingPage: React.FC = () => {
+  const [api, setApi] = React.useState<CarouselApi>();
 
+  React.useEffect(() => {
+    if (!api) return;
 
+    const intervalId = setInterval(() => {
+      api.scrollNext();
+    }, 4000);
 
-export const LandingPage: React.FC<LandingPageProps> = ({ onGenerate, error }) => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<BusinessGenerateValues>({
-    resolver: zodResolver(businessGenerateSchema),
-    defaultValues: {
-      niche: '',
-      businessName: '',
-      details: '',
-      country: ''
-    }
-  });
-
-  const onSubmit = (data: BusinessGenerateValues) => {
-    onGenerate({
-      ...data,
-      businessName: data.businessName || ''
-    });
-  };
+    return () => clearInterval(intervalId);
+  }, [api]);
 
   return (
     <div className="flex flex-col min-h-screen relative font-sans">
-      {/* Header */}
-      <header className="px-6 py-4 flex items-center justify-between bg-white border-b border-slate-200 z-10 sticky top-0 shadow-sm">
-        <Logo />
-        <div className="flex items-center gap-6">
-          <nav className="hidden md:flex gap-6 text-sm font-medium text-slate-600">
-            <a href="#features" className="hover:text-primary-600">Features</a>
-            <a href="#pricing" className="hover:text-primary-600">Pricing</a>
-            <a href="#testimonials" className="hover:text-primary-600">Testimonials</a>
-          </nav>
-          <Link href="/auth/sign-in">
-            <Button>
-              <LogIn />
-              Login
-            </Button>
-          </Link>
-        </div>
-      </header>
+      <Header />
 
       {/* Hero Section */}
-      <section className="flex flex-col md:flex-row min-h-[calc(100vh-73px)]">
-        <div className="flex-1 p-8 md:p-16 flex flex-col justify-center max-w-3xl mx-auto md:mx-0 z-10 bg-white">
-          <div className="inline-flex items-center px-3 py-1 rounded-full bg-primary-50 text-primary-700 text-sm font-medium mb-6 w-fit animate-fade-in-up">
+      <section className="flex flex-col md:flex-row min-h-[calc(100vh-73px)] overflow-hidden">
+        <div className="flex-1 p-8 md:p-16 flex flex-col justify-center max-w-4xl mx-auto md:mx-0 z-10 bg-white">
+          <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-8 w-fit animate-in fade-in slide-in-from-bottom-4 duration-700">
             <Sparkles className="w-4 h-4 mr-2" />
-            AI-Powered Business Builder
+            Empowering the next generation of founders
           </div>
-          <h1 className="text-4xl md:text-6xl font-extrabold text-slate-900 tracking-tight mb-6 leading-tight">
-            Launch your dream business <span className="text-primary-600">in seconds.</span>
+          <h1 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tight mb-8 leading-[1.1] animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
+            Your entire business, <br />
+            <span className="text-primary">Architected by AI.</span>
           </h1>
-          <p className="text-lg text-slate-600 mb-8 leading-relaxed max-w-lg">
-            From brand identity and marketing strategy to operational systems.
-            Tell us about your idea, and Branda will build your entire business toolkit instantly.
+          <p className="text-xl text-slate-600 mb-12 leading-relaxed max-w-xl animate-in fade-in slide-in-from-bottom-12 duration-700 delay-200">
+            Stop juggling spreadsheets and guessing your next move. Branda builds your brand identity, marketing strategy, and operational SOPs in seconds.
           </p>
 
-          {/* Form */}
-          <Card className="shadow-xl border-slate-100 p-0 overflow-hidden">
-            <CardContent className="p-6 md:p-8">
-              {error && (
-                <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-100">
-                  {error}
-                </div>
-              )}
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <label className="text-sm font-medium">Business Niche</label>
-                    <div className="relative">
-                      <Briefcase className="absolute left-3 top-2.5 w-4 h-4 text-slate-400 z-10" />
-                      <Input
-                        {...register("niche")}
-                        placeholder="e.g. Coffee Shop, SaaS..."
-                        className={cn("pl-9", errors.niche && "border-red-500 focus-visible:ring-red-500")}
-                      />
-                    </div>
-                    {errors.niche && <p className="text-xs text-red-500">{errors.niche.message}</p>}
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-sm font-medium ">Country</label>
-                    <div className="relative">
-                      <Globe className="absolute left-3 top-2.5 w-4 h-4 text-slate-400 z-10" />
-                      <Input
-                        {...register("country")}
-                        placeholder="e.g. USA, UK..."
-                        className={cn("pl-9", errors.country && "border-red-500 focus-visible:ring-red-500")}
-                      />
-                    </div>
-                    {errors.country && <p className="text-xs text-red-500">{errors.country.message}</p>}
-                  </div>
-                </div>
+          <div className="flex flex-col sm:flex-row gap-4 mb-16 animate-in fade-in slide-in-from-bottom-16 duration-700 delay-300">
+            <Button size="lg" className="" asChild>
+              <Link href="/auth/sign-up">
+                Start Building Free
+                <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </Button>
+            <Button variant="secondary" size="lg" className="" asChild>
+              <Link href="#features">Explore Features</Link>
+            </Button>
+          </div>
 
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium ">Business Name (Optional)</label>
-                  <div className="relative">
-                    <PenTool className="absolute left-3 top-2.5 w-4 h-4 text-slate-400 z-10" />
-                    <Input
-                      {...register("businessName")}
-                      placeholder="Have a name in mind?"
-                      className="pl-9"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium ">Key Details</label>
-                  <Textarea
-                    {...register("details")}
-                    rows={3}
-                    placeholder="Describe your unique value proposition, target audience, or specific requirements..."
-                    className={cn(errors.details && "border-red-500 focus-visible:ring-red-500")}
-                  />
-                  {errors.details && <p className="text-xs text-red-500">{errors.details.message}</p>}
-                </div>
-
-                <Button
-                  type="submit"
-                  size="lg"
-                  className="w-full"
-                // disabled={ }
-                >
-                  <Sparkles className="w-5 h-5 mr-2" />
-                  Generate My Business
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
-
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 pt-8 border-t border-slate-100 animate-in fade-in slide-in-from-bottom-20 duration-700 delay-400">
+            <div>
+              <p className="text-3xl font-bold text-slate-900 mb-1">30s</p>
+              <p className="text-sm text-slate-500">Generation time</p>
+            </div>
+            <div>
+              <p className="text-3xl font-bold text-slate-900 mb-1">2.4k+</p>
+              <p className="text-sm text-slate-500">Businesses launched</p>
+            </div>
+            <div className="hidden md:block">
+              <p className="text-3xl font-bold text-slate-900 mb-1">99%</p>
+              <p className="text-sm text-slate-500">Positive feedback</p>
+            </div>
+          </div>
         </div>
 
         {/* Visual/Testimonial Carousel Section */}
@@ -167,7 +84,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onGenerate, error }) =
           <div className="absolute inset-0 bg-gradient-to-r from-slate-50/50 via-transparent to-slate-50/50 z-10"></div>
 
           <div className="relative z-20 w-full max-w-lg px-6">
-            <Carousel className="w-full">
+            <Carousel
+              setApi={setApi}
+              opts={{ loop: true }}
+              className="w-full"
+            >
               <CarouselContent>
                 {TESTIMONIALS.map((testimonial, index) => (
                   <CarouselItem key={index}>

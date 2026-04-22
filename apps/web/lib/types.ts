@@ -64,6 +64,7 @@ export interface Collaborator {
 export interface Workspace {
   id: string;
   name: string;
+  slug: string;
   plan: BusinessPlan;
   integrations: Integration[];
   collaborators: Collaborator[];

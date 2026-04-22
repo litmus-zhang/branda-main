@@ -25,6 +25,13 @@ export const api = {
       body: JSON.stringify(body),
     });
   },
+  put: async <T>(endpoint: string, body: any, options: FetchOptions = {}): Promise<T> => {
+    return request<T>(endpoint, {
+      ...options,
+      method: 'PUT',
+      body: JSON.stringify(body),
+    });
+  },
   delete: async <T>(endpoint: string, options: FetchOptions = {}): Promise<T> => {
     return request<T>(endpoint, { ...options, method: 'DELETE' });
   }

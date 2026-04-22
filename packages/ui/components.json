@@ -13,8 +13,11 @@
   "aliases": {
     "components": "@branda/ui/components",
     "utils": "@branda/ui/lib/utils",
-    "hooks": "@branda/ui/hooks",
+    "ui": "@branda/ui/components",
     "lib": "@branda/ui/lib",
-    "ui": "@branda/ui/components"
+    "hooks": "@branda/ui/hooks"
+  },
+  "registries": {
+    "@ai-elements": "https://ai-sdk.dev/elements/api/registry/{name}.json"
   }
 }

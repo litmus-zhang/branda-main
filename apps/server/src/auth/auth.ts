@@ -27,8 +27,6 @@ export const auth = betterAuth({
   basePath: "/auth",
   trustedOrigins: [
     ...config.AUTH_CORS,
-    "*.coderina.org",
-    "https://*.coderina.org",
   ],
   emailVerification: {
     sendVerificationEmail: async ({ user, url, token }) => {
@@ -78,6 +76,7 @@ export const auth = betterAuth({
       prompt: "select_account",
       clientId: config.GOOGLE_CLIENT_ID,
       clientSecret: config.GOOGLE_CLIENT_SECRET,
+      // redirectUri: `${config.API_URL}/auth/callback/google`,
     },
   },
 

@@ -12,7 +12,7 @@ export class GeminiProvider implements AIProvider {
 
   async generateContent(prompt: string, schema?: any): Promise<any> {
     const result = await this.ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-2.5-flash-lite",
       contents: [{ role: "user", parts: [{ text: prompt }] }],
       config: {
         responseMimeType: "application/json",
