@@ -1,7 +1,7 @@
 import { Resend } from "resend"
 import { config } from "../config.js"
 
-const resend = new Resend(config.RESEND_API_KEY)
+const resend = config.RESEND_API_KEY ? new Resend(config.RESEND_API_KEY) : null
 
 export async function sendEmail({
   to,
@@ -29,7 +29,7 @@ export async function sendEmail({
     ...(template ? { template } : html ? { html } : {}),
   }
 
-  const { data, error } = await resend.emails.send(options as any)
+  const { data, error } = await resend!.emails.send(options as any)
 
   if (error) {
     return console.error({ error })

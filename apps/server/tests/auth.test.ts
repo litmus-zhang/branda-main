@@ -1,6 +1,5 @@
 import { describe, expect, it } from "bun:test"
 import * as pactum from "pactum"
-import { capturedToken } from "../src/auth.js"
 import { CreateUserAndVerify, userAuthPayload } from "./helpers/payload.js"
 
 describe("Auth Suite", () => {

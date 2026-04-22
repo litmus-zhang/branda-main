@@ -1,12 +1,13 @@
 import cluster from "node:cluster"
 import os from "node:os"
 import process from "node:process"
-import { config } from "./config.js"
+import { config, initConfig } from "./config.js"
 import { app } from "./server.js"
 import { posthog } from "./services/posthog.js"
 
 const signals = ["SIGINT", "SIGTERM"]
 
+await initConfig()
 for (const signal of signals) {
   process.on(signal, async () => {
     console.log(`Received ${signal}. Initiating graceful shutdown...`)

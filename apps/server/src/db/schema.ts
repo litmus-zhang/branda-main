@@ -3,7 +3,6 @@ import { relations } from "drizzle-orm"
 import {
   boolean,
   index,
-  integer,
   jsonb,
   pgTable,
   text,
@@ -198,88 +197,6 @@ export const invitation = pgTable(
     index("invitation_email_idx").on(table.email),
   ],
 )
-export const credentials = pgTable("credentials", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => createId()),
-  nin: text("nin").notNull(),
-  voters_card: text("voter_card").notNull(), // "passport.png"
-  status: text("status").default("pending").notNull(),
-  user_id: text("user_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
-  createdAt: timestamp("created_at")
-    .$defaultFn(() => new Date())
-    .notNull(),
-  updatedAt: timestamp("updated_at")
-    .$defaultFn(() => new Date())
-    .$onUpdate(() => new Date())
-    .notNull(),
-})
-export const events = pgTable("events", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => createId()),
-  name: text("name").notNull(),
-  description: text("description").notNull().$default(() => ""),
-  status: text("status").default("upcoming").notNull(),
-  event_format: text("event_format").default("physical").notNull(),
-  startDate: timestamp("start_date").notNull(),
-  endDate: timestamp("end_date").notNull(),
-  createdAt: timestamp("created_at")
-    .$defaultFn(() => new Date())
-    .notNull(),
-  updatedAt: timestamp("updated_at")
-    .$defaultFn(() => new Date())
-    .$onUpdate(() => new Date())
-    .notNull(),
-})
-
-export const files = pgTable("files", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => createId()),
-  key: text("key").notNull(),
-  filename: text("filename").notNull(), // "passport.png"
-  mime_type: text("mime_type").notNull(),
-  size: integer("size"),
-  bucket: text("bucket").notNull(),
-  uploaded_by: text("uploaded_by")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
-  createdAt: timestamp("created_at")
-    .$defaultFn(() => new Date())
-    .notNull(),
-  updatedAt: timestamp("updated_at")
-    .$defaultFn(() => new Date())
-    .$onUpdate(() => new Date())
-    .notNull(),
-})
-
-export const ticket = pgTable("ticket", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => createId()),
-  title: text("title").notNull(),
-  description: text("description").notNull(),
-  status: text("status").default("ISSUED").notNull(), // [ISSUED, CHECKED_IN, CANCELLED]
-  priority: text("priority").default("medium").notNull(),
-  checked_in: boolean("checked_in").default(false).notNull(),
-  ticket_code: text("ticket_code").notNull(),
-  user_id: text("user_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
-  event_id: text("event_id")
-    .notNull()
-    .references(() => events.id, { onDelete: "cascade" }),
-  createdAt: timestamp("created_at")
-    .$defaultFn(() => new Date())
-    .notNull(),
-  updatedAt: timestamp("updated_at")
-    .$defaultFn(() => new Date())
-    .$onUpdate(() => new Date())
-    .notNull(),
-})
 
 export const workspace = pgTable("workspace", {
   id: text("id").primaryKey().$defaultFn(() => createId()),
@@ -306,10 +223,6 @@ export const userRelations = relations(user, ({ many }) => ({
   teamMembers: many(teamMember),
   members: many(member),
   invitations: many(invitation),
-  credentials: many(credentials),
-  users_files: many(files),
-  tickets: many(ticket),
-  events: many(events),
   workspaces: many(workspace),
 }))
 
@@ -385,20 +298,7 @@ export const invitationRelations = relations(invitation, ({ one }) => ({
   }),
 }))
 
-export const ticketRelations = relations(ticket, ({ one }) => ({
-  user: one(user, {
-    fields: [ticket.user_id],
-    references: [user.id],
-  }),
-  event: one(events, {
-    fields: [ticket.event_id],
-    references: [events.id],
-  }),
-}))
 
-export const eventRelations = relations(events, ({ many }) => ({
-  tickets: many(ticket),
-}))
 
 export const workspaceRelations = relations(workspace, ({ one }) => ({
   owner: one(user, {
@@ -410,28 +310,11 @@ export const workspaceRelations = relations(workspace, ({ one }) => ({
 
 
 
-// export const mediaFilesRelations = relations(post_media_files, ({ one }) => ({
-//   post: one(posts, {
-//     fields: [post_media_files.post_id],
-//     references: [posts.id],
-//   }),
-// }))
-export const filesRelations = relations(files, ({ one }) => ({
-  users_files: one(user, {
-    fields: [files.uploaded_by],
-    references: [user.id],
-  }),
-}))
-
 export const table = {
   user,
   account,
   verification,
   session,
-  ticket,
-  ticketRelations,
-  events,
-  eventRelations,
   organization,
   organizationRelations,
   organizationRole,
@@ -447,8 +330,6 @@ export const table = {
   teamMember,
   teamMemberRelations,
   teamRelations,
-  credentials,
-  files,
   workspace,
   workspaceRelations,
 } as const

@@ -4,7 +4,7 @@ on:
   push:
     branches: [main, develop, testing]
   pull_request:
-    branches: [main, staging, develop, testing]
+    branches: [main, develop]
 
 jobs:
   cache-and-install:
@@ -41,11 +41,11 @@ jobs:
       postgres:
         image: postgres
         env:
-          POSTGRES_PASSWORD: test
-          POSTGRES_DB: test
-          POSTGRES_USER: test
+          POSTGRES_PASSWORD: root
+          POSTGRES_DB: branda
+          POSTGRES_USER: root
         ports:
-          - 6000:5432
+          - 5432:5432
     steps:
       - name: Checkout
         uses: actions/checkout@v4

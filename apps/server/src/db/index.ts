@@ -8,9 +8,6 @@ import { config } from "../config.ts"
 import { PAGE_SIZE } from "./constants.ts"
 import * as schema from "./schema.ts"
 
-export * from "./events/index.ts"
-export * from "./tickets/index.ts"
-
 type TableName = keyof typeof schema
 
 const queryClient = postgres(config.DATABASE_URL)
@@ -140,23 +137,19 @@ export async function deleteOne<T extends TableName>(
   }
 }
 
-export async function getUserMedia(userId: string) {
-  const data = await db.query.files.findMany({
-    where: eq(schema.files.uploaded_by, userId),
-    orderBy: [desc(schema.files.createdAt)],
-  })
-  return {
-    message: `Successfully retrieved all users media`,
-    data,
-  }
-}
 export async function getUserWorkspaces(userId: string) {
-  const data = await db.query.workspace.findMany({
-    where: eq(schema.workspace.ownerId, userId),
-    orderBy: [desc(schema.workspace.createdAt)],
-  })
-  return {
-    message: `Successfully retrieved all users workspaces`,
-    data,
+  try {
+    const data = await db.query.workspace.findMany({
+      where: eq(schema.workspace.ownerId, userId),
+      orderBy: [desc(schema.workspace.createdAt)],
+    })
+    return {
+      message: `Successfully retrieved all users workspaces`,
+      data,
+    }
+  }
+  catch (error) {
+    console.log({ error })
+    throw new Error(`Failed to retrieve workspaces`, { cause: error })
   }
 }

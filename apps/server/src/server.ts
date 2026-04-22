@@ -24,13 +24,11 @@ export const app = new Elysia()
     }),
   )
   .all("/restate/*", ({ request }) => restateHandler(request))
-
   .use(
     autoload({
       dir: join(import.meta.dir, "routes"),
     }),
   )
-
   .use(
     openapi({
       documentation: {
@@ -58,17 +56,17 @@ export const app = new Elysia()
   )
   .use(Logestic.preset("common"))
   .mount(auth.handler)
-  .get("/seed", async () => {
-    await seedDb()
-    return {
-      message: "Successfully seeded database",
-    }
-  })
-  .get("/clear", async () => {
-    await clearDb()
-    return {
-      message: "Successfully deleted database",
-    }
-  })
+// .get("/seed", async () => {
+//   await seedDb()
+//   return {
+//     message: "Successfully seeded database",
+//   }
+// })
+// .get("/clear", async () => {
+//   await clearDb()
+//   return {
+//     message: "Successfully deleted database",
+//   }
+// })
 
 export type ElysiaApp = typeof app

@@ -14,6 +14,7 @@
     "erd": "bun x @liam-hq/cli erd build --format drizzle --input src/db/schema.ts && sleep 3 && npx serve dist/"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.36.0",
     "@aws-sdk/client-s3": "^3.930.0",
     "@aws-sdk/s3-request-presigner": "^3.958.0",
     "@elysiajs/bearer": "^1.4.1",
@@ -21,9 +22,9 @@
     "@elysiajs/openapi": "^1.4.12",
     "@elysiajs/opentelemetry": "^1.4.10",
     "@elysiajs/server-timing": "^1.4.0",
-    "@anthropic-ai/sdk": "^0.36.0",
     "@faker-js/faker": "^10.1.0",
     "@google/genai": "^1.41.0",
+    "@infisical/sdk": "^5.0.1",
     "@paralleldrive/cuid2": "^3.0.4",
     "@restatedev/restate-sdk": "^1.11.1",
     "@restatedev/restate-sdk-clients": "^1.11.1",

@@ -13,7 +13,7 @@ let capturedToken = ""
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
-    provider: "pg", // or "mysql", "sqlite"
+    provider: "pg",
     schema,
   }),
   session: {
@@ -25,9 +25,7 @@ export const auth = betterAuth({
 
   // baseURL: "http://localhost:3000",
   basePath: "/auth",
-  trustedOrigins: [
-    ...config.AUTH_CORS,
-  ],
+  trustedOrigins: config.AUTH_CORS?.split(",") || [],
   emailVerification: {
     sendVerificationEmail: async ({ user, url, token }) => {
       const modifiedUrl = replaceLocalhostUrl(url, user?.role === "admin" ? "admin" : "user")
@@ -76,7 +74,6 @@ export const auth = betterAuth({
       prompt: "select_account",
       clientId: config.GOOGLE_CLIENT_ID,
       clientSecret: config.GOOGLE_CLIENT_SECRET,
-      // redirectUri: `${config.API_URL}/auth/callback/google`,
     },
   },
 

@@ -40,12 +40,10 @@ export default (app: ElysiaApp) => app.model({
   }: {
     body: NewWorkspace
     user: { id: string }
-  }) => {
-    return await insertOne("workspace", {
-      ...body,
-      ownerId,
-    })
-  }, {
+  }) => insertOne("workspace", {
+    ...body,
+    ownerId,
+  }), {
     body: t.Object(workspaceInsert as any),
     auth: true,
   })
