@@ -2,7 +2,7 @@
 @source "../../../apps/**/*.{ts,tsx}";
 @source "../../../components/**/*.{ts,tsx}";
 @source "../**/*.{ts,tsx}";
-@source "../node_modules/streamdown/dist/*.js";
+/* @source "../node_modules/streamdown/dist/*.js"; */
 
 @import "@daveyplate/better-auth-ui/css";
 @import "tw-animate-css";
