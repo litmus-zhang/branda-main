@@ -55,7 +55,7 @@ export const auth = betterAuth({
     requireEmailVerification: true,
     sendResetPassword: async ({ user, url, token }) => {
       // Send reset password email
-      console.log({ user, token, url })
+      console.log({ user, token, url }, user)
       const modifiedUrl = replaceLocalhostUrl(url, user.role === "admin" ? "admin" : "user")
       await sendEmail({
         to: [user.email],
