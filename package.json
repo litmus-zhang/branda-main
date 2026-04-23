@@ -19,8 +19,6 @@
   },
   "packageManager": "pnpm@10.8.0",
   "scripts": {
-    "preinstall": "npx only-allow pnpm",
-    "postinstall": "npx patch-package",
     "dev": "nx run-many -t dev ",
     "dev:web": "nx run-many -t dev --exclude=server,transactional,infra",
     "dev:api": "nx run-many -t dev --exclude=web,transactional,infra",
