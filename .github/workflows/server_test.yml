@@ -63,28 +63,28 @@ jobs:
         env:
           initialBuckets: branda-media
 
-    env:
-      DATABASE_URL: postgresql://root:root@localhost:5432/branda
-      BETTER_AUTH_SECRET: ${{ github.sha }}
-      BETTER_AUTH_URL: http://localhost:4000
-      RESEND_API_KEY: ${{  github.run_id }}
-      RESEND_FROM_EMAIL: ${{ github.run_id }}
-      S3_ACCESS_KEY: minioadmin
-      NODE_ENV: test
-      S3_ENDPOINT: http://localhost:9090
-      S3_SECRET_ACCESS_KEY: minioadmin
-      S3_BUCKET_NAME: engage-lagos-media
-      FRONTEND_URL: http://localhost:3000
-      GOOGLE_CLIENT_ID: ${{ github.run_id }}
-      GOOGLE_CLIENT_SECRET: ${{ github.run_id }}
-      FACEBOOK_CLIENT_ID: ${{ github.run_id }}
-      FACEBOOK_CLIENT_SECRET: ${{ github.run_id }}
-      RESTATE_INGRESS_URL: http://localhost:8080
-      RESTATE_ADMIN_URL: http://localhost:9070
-      RESTATE_PORT: 9080
-      RESTATE_PUBLIC_KEY: ${{ github.sha }}
-      PROJECT_CLIENT_ID: ${{ github.run_id }}
-      PROJECT_CLIENT_SECRET: ${{ github.run_id }}
+    # env:
+    #   DATABASE_URL: postgresql://root:root@localhost:5432/branda
+    #   BETTER_AUTH_SECRET: ${{ github.sha }}
+    #   BETTER_AUTH_URL: http://localhost:4000
+    #   RESEND_API_KEY: ${{  github.run_id }}
+    #   RESEND_FROM_EMAIL: ${{ github.run_id }}
+    #   S3_ACCESS_KEY: minioadmin
+    #   NODE_ENV: test
+    #   S3_ENDPOINT: http://localhost:9090
+    #   S3_SECRET_ACCESS_KEY: minioadmin
+    #   S3_BUCKET_NAME: engage-lagos-media
+    #   FRONTEND_URL: http://localhost:3000
+    #   GOOGLE_CLIENT_ID: ${{ github.run_id }}
+    #   GOOGLE_CLIENT_SECRET: ${{ github.run_id }}
+    #   FACEBOOK_CLIENT_ID: ${{ github.run_id }}
+    #   FACEBOOK_CLIENT_SECRET: ${{ github.run_id }}
+    #   RESTATE_INGRESS_URL: http://localhost:8080
+    #   RESTATE_ADMIN_URL: http://localhost:9070
+    #   RESTATE_PORT: 9080
+    #   RESTATE_PUBLIC_KEY: ${{ github.sha }}
+    #   PROJECT_CLIENT_ID: ${{ github.run_id }}
+    #   PROJECT_CLIENT_SECRET: ${{ github.run_id }}
 
     steps:
       - uses: actions/checkout@v4
@@ -94,13 +94,13 @@ jobs:
         run: bun install
         working-directory: ${{ github.workspace }}
 
-      # - name: Fetch secrets from Infisical
-      #   uses: Infisical/secrets-action@v1.0.9
-      #   with:
-      #     method: "oidc"
-      #     identity-id: "8c6a0b23-8fdb-480d-aeac-0bd94cb86d72"  # From Step 4
-      #     project-slug: "branda"      # Your Infisical project slug
-      #     env-slug: "test"                        # Your environment slug
+      - name: Fetch secrets from Infisical
+        uses: Infisical/secrets-action@v1.0.9
+        with:
+          method: "oidc"
+          identity-id: "4c15afc1-d148-4709-a098-248aa9d6ea0a"  # From Step 4
+          project-slug: "branda"      # Your Infisical project slug
+          env-slug: "test"                        # Your environment slug
           
       - name: Run migration
         env:
