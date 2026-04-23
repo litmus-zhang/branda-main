@@ -83,6 +83,8 @@ jobs:
       RESTATE_ADMIN_URL: http://localhost:9070
       RESTATE_PORT: 9080
       RESTATE_PUBLIC_KEY: ${{ github.sha }}
+      PROJECT_CLIENT_ID: ${{ github.run_id }}
+      PROJECT_CLIENT_SECRET: ${{ github.run_id }}
 
     steps:
       - uses: actions/checkout@v4
