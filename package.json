@@ -16,8 +16,8 @@
     }
   },
   "devDependencies": {
-    "@engage-lagos/eslint-config": "workspace:*",
-    "@engage-lagos/typescript-config": "workspace:*",
+    "@branda/eslint-config": "workspace:*",
+    "@branda/typescript-config": "workspace:*",
     "prettier": "^3.7.4",
     "turbo": "^2.6.3",
     "typescript": "5.7.3",
