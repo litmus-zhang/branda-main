@@ -7,7 +7,7 @@ import * as clients from "@restatedev/restate-sdk-clients";
 
 export const restateHandler = restate.createEndpointHandler({
     services: [aiService],
-    identityKeys: config.NODE_ENV === "prod" ? [config.RESTATE_PUBLIC_KEY ?? "publickeyv1_Sample"] : [],
+    identityKeys: config.NODE_ENV === "production" ? [config.RESTATE_PUBLIC_KEY ?? "publickeyv1_Sample"] : [],
     bidirectional: true,
 });
 
