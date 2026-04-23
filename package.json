@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "branda-app",
+  "name": "branda",
   "version": "0.1.0",
   "engines": {
     "node": ">=20",
@@ -8,44 +8,33 @@
   },
   "pnpm": {
     "overrides": {
-      "react": "^18.2.0",
-      "react-dom": "^18.2.0"
+      "shiki": "4.0.2",
+      "react": "19.2.0",
+      "react-dom": "19.2.0",
+      "next": "16.0.10"
     }
   },
   "devDependencies": {
-    "turbo": "^2.3.3",
-    "husky": "^8.0.0"
+    "husky": "^8.0.0",
+    "nx": "22.6.5"
   },
   "packageManager": "pnpm@10.8.0",
   "scripts": {
-    "preinstall": "npx only-allow pnpm",
-    "postinstall": "npx patch-package",
-
-    "dev": "turbo run dev",
-    "build": "turbo run build",
-
-    "start:api": "turbo run api#start --env-mode=loose",
-    "start:client": "turbo run client#start --env-mode=loose",
-
-    "dev:api": "turbo run api#dev --env-mode=loose",
-    "dev:client": "turbo run client#dev --env-mode=loose",
-
-    "build:api": "turbo run api#build --env-mode=loose",
-    "build:client": "turbo run client#build --env-mode=loose",
-
-    "test:api": "pnpm --filter api run test:e2e",
-    "test:api:ci": "pnpm --filter api run test:ci",
-    "test:client": "pnpm --filter client run test:e2e",
-
-    "format": "turbo run format",
-    "lint": "turbo run lint",
-
+    "dev": "nx run-many -t dev",
+    "dev:web": "nx run-many -t dev --exclude=server,transactional",
+    "dev:api": "nx run server:dev",
+    "dev:email": "nx run transactional:dev",
+    "build:api": "nx run server:build",
+    "build:admin": "nx run admin:build",
+    "build:web": "nx run web:build",
+    "start:api": "nx run server:start",
+    "start:admin": "nx run admin:start",
+    "start:web": "nx run web:start",
+    "format": "nx run format",
+    "lint": "nx run lint",
     "client:check:types": "pnpm --filter client run check:types",
     "client:lint": "pnpm --filter client run lint",
     "client:validate": "pnpm run client:check:types && pnpm run client:lint",
-
-    "codegen": "turbo run codegen",
-    "generate:oas": "turbo run generate:oas",
     "prepare": "husky install"
   }
 }

@@ -1,0 +1,61 @@
+name: Web App
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'apps/web/**'
+      - 'packages/**'
+      - ".github/workflows/web-app.yml"
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches: [develop, main]
+    paths:
+      - 'apps/web/**'
+      - 'packages/**'
+      - ".github/workflows/web-app.yml"
+
+permissions:
+  id-token: write  # Required for OIDC authentication
+  contents: read   # Required for checking out code
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        node-version: [22]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Fetch secrets from Infisical
+        uses: Infisical/secrets-action@v1.0.9
+        with:
+          method: "oidc"
+          identity-id: "4c15afc1-d148-4709-a098-248aa9d6ea0a"  # From Step 4
+          project-slug: "branda"      # Your Infisical project slug
+          env-slug: "test"    
+
+      - name: Build project
+        run: pnpm build
+        working-directory: apps/web
+
+      # - name: Prepare standalone build
+      #   run: |
+      #     cp -r apps/check-in/.next/static apps/check-in/.next/standalone/apps/check-in/.next/static
+      #     cp -r apps/check-in/public apps/check-in/.next/standalone/apps/check-in/public || true
+      
+  # deploy:

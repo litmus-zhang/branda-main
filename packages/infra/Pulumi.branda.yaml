@@ -1,0 +1,3 @@
+config:
+  infra:githubRepo: https://github.com/Dynage-engineering/branda-main
+  infra:infisicalProjectId: c708c22a-46fa-486e-b1b5-9682023a6b21

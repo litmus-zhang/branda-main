@@ -1,0 +1,9 @@
+dist
+node_modules
+.env
+.env.production
+locals3root
+minio_data
+postgres_data
+redis_data
+restate-data

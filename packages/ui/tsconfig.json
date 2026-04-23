@@ -1,0 +1,20 @@
+{
+  "extends": "@branda/typescript-config/react-library.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@branda/ui/*": [
+        "./src/*"
+      ]
+    }
+  },
+  "include": [
+    ".",
+    "src/components/forms/user-onboarding.tsx",
+    "../../apps/admin/components/admin-onboarding.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}
