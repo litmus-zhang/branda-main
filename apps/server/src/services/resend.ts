@@ -1,7 +1,9 @@
 import { Resend } from "resend"
-import { config } from "../config.js"
+import { config, initConfig } from "../config.js"
 
-const resend = config.RESEND_API_KEY ? new Resend(config.RESEND_API_KEY) : null
+await initConfig()
+
+const resend = new Resend(config.RESEND_API_KEY!)
 
 export async function sendEmail({
   to,

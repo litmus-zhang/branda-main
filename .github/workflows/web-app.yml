@@ -49,13 +49,19 @@ jobs:
           project-slug: "branda"      # Your Infisical project slug
           env-slug: "test"    
 
+        # - name: Install Playwright Browsers
+      #   run: npx playwright install --with-deps
+      #   working-directory: apps/web
+
+      # - name: Run E2E tests
+      #   run: pnpm test:e2e
+      #   working-directory: apps/web
       - name: Build project
         run: pnpm build
         working-directory: apps/web
 
-      # - name: Prepare standalone build
-      #   run: |
-      #     cp -r apps/check-in/.next/static apps/check-in/.next/standalone/apps/check-in/.next/static
-      #     cp -r apps/check-in/public apps/check-in/.next/standalone/apps/check-in/public || true
+    
+
+  
       
   # deploy:

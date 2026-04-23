@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "test:e2e": "playwright test",
     "lint": "next lint"
   },
   "dependencies": {
@@ -39,6 +40,7 @@
   "devDependencies": {
     "@branda/eslint-config": "workspace:*",
     "@branda/typescript-config": "workspace:*",
+    "@playwright/test": "^1.59.1",
     "@tailwindcss/postcss": "^4.1.11",
     "@types/node": "^22.14.0",
     "@types/react": "^19.0.8",
