@@ -19,7 +19,7 @@ describe("Auth Suite", () => {
           .expectStatus(expected)
       })
     })
-    describe("auth - Sign-In Validation", () => {
+    describe("auth - Sign-In Validation Checks", () => {
       it.each([
         ["missing email", { email: "", password: credentials.password }, 400],
         [
