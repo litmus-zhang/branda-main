@@ -1,7 +1,0 @@
-target:
-  - url: "apps/"
-  - url: "packages/"
-
-include:  ["brand-app"]
-
-reinit: "a-random-string"
