@@ -42,7 +42,6 @@ test.describe('Workspace Lifecycle', () => {
     await page.click('button:has-text("Generate")');
 
     // 5. Verify transition to the specific workspace slug
-    // We expect a slug like 'e2e-testing-corp'
     await expect(page).toHaveURL(/\/dashboard\/e2e-testing-corp/, { timeout: 30000 });
 
     // 6. Verify brand data is rendered
