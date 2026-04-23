@@ -39,7 +39,7 @@ export default function Providers({ children }: { children: ReactNode }) {
           magicLink
           multiSession
           redirectTo="/dashboard"
-          queryClient={queryClient}
+          // queryClient={queryClient}
           baseURL={url}
           socialProviders={["google"]}
           navigate={({ to, replace }) =>
