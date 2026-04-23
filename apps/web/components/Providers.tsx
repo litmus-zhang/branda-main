@@ -36,8 +36,8 @@ export default function Providers({ children }: { children: ReactNode }) {
           authClient={authClient}
           appearance={{ theme, setTheme }}
           deleteUser={{ enabled: true }}
-          magicLink
-          multiSession
+          // magicLink
+          // multiSession
           redirectTo="/dashboard"
           // queryClient={queryClient}
           baseURL={url}
