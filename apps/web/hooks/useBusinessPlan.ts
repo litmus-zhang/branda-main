@@ -22,10 +22,13 @@ export const useUpdateBusinessPlan = () => {
       workspaceId: string;
       section: PlanSection;
       data: Partial<BusinessPlan[keyof BusinessPlan]>;
-    }) =>
-      api.patch<BusinessPlan>(`/workspaces/${workspaceId}/plan/${section}`, { [section]: data }),
+    }) => {
+      const realSection = section === 'brand' ? 'brandIdentity' : section;
+      return api.patch<BusinessPlan>(`/workspaces/${workspaceId}/plan/${realSection}`, { [realSection]: data });
+    },
 
     onMutate: async ({ workspaceId, section, data }) => {
+      const realSection = section === 'brand' ? 'brandIdentity' : section;
       // Optimistic Update
       await queryClient.cancelQueries({ queryKey: workspaceKeys.all });
 
@@ -38,9 +41,9 @@ export const useUpdateBusinessPlan = () => {
               ...ws,
               plan: {
                 ...ws.plan,
-                [section]: {
-                  ...ws.plan[section], // TS might complain here but logic holds for JSONB partials
-                  ...data
+                [realSection]: {
+                  ...(ws.plan as any)[realSection], 
+                  ...(data as any)
                 }
               }
             };

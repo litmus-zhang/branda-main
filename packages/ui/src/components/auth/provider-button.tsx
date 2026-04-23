@@ -56,7 +56,11 @@ export function ProviderButton({
       onClick={() => signInSocial({ provider, callbackURL })}
       {...props}
     >
-      {pending ? <Spinner /> : <ProviderIcon />}
+      {pending ? (
+        <Spinner />
+      ) : (
+        ProviderIcon && (typeof ProviderIcon === "function" ? <ProviderIcon /> : ProviderIcon)
+      )}
 
       {label === "continueWith"
         ? localization.auth.continueWith.replace(

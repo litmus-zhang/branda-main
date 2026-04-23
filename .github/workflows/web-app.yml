@@ -1,0 +1,52 @@
+name: Web App
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'apps/web/**'
+      - 'packages/**'
+      - ".github/workflows/web-app.yml"
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches: [develop, main]
+    paths:
+      - 'apps/web/**'
+      - 'packages/**'
+      - ".github/workflows/web-app.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        node-version: [22]
+    env:
+      NEXT_PUBLIC_API_URL: http://localhost:4000
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build project
+        run: pnpm build
+        working-directory: apps/web
+
+      # - name: Prepare standalone build
+      #   run: |
+      #     cp -r apps/check-in/.next/static apps/check-in/.next/standalone/apps/check-in/.next/static
+      #     cp -r apps/check-in/public apps/check-in/.next/standalone/apps/check-in/public || true
+      
+  # deploy:

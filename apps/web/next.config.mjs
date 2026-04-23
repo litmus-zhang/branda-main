@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
+  // output: 'standalone',
   // Ensure that images and other static assets are handled correctly
   images: {
     unoptimized: true,
@@ -8,13 +8,15 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "i.postimg.cc",
       }
     ]
   },
-  transpilePackages: ["shiki"],
-  experimental: {
-    serverExternalPackages: ["shiki"],
-  },
+  transpilePackages: [],
+  serverExternalPackages: ["shiki", "opik"],
 };
 
 export default nextConfig;
