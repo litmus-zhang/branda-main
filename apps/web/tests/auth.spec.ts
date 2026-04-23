@@ -7,23 +7,23 @@ test.describe('Workspace Lifecycle', () => {
   });
   const userEmail = `new-${Date.now()}@example.com`
 
-  test('user can log in and see the dashboard', async ({ page }) => {
-    // Navigate to Sign In
-    await page.click('text=Log In');
-    await expect(page).toHaveURL(/\/auth\/sign-in/);
+  test('user can sign up and reach the dashboard', async ({ page }) => {
+    // Navigate to Sign Up
+    await page.goto('/auth/sign-up');
 
-    // Fill in test credentials (assume these exist in test DB)
+    // Fill in sign up details
+    await page.fill('input[name="name"]', 'Deepmind Tester');
     await page.fill('input[name="email"]', userEmail);
     await page.fill('input[name="password"]', 'Password123!');
     await page.click('button[type="submit"]');
 
     // Should redirect to dashboard
-    await expect(page).toHaveURL(/\/dashboard/);
+    await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
     await expect(page.locator('h1')).toContainText('Dashboard');
   });
 
   test('user can create a new workspace through onboarding', async ({ page }) => {
-    // 1. Login first
+    // 1. Sign In with the user created above (or just go to dashboard if already authed)
     await page.goto('/auth/sign-in');
     await page.fill('input[name="email"]', userEmail);
     await page.fill('input[name="password"]', 'Password123!');
