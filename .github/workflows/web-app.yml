@@ -15,6 +15,10 @@ on:
       - 'packages/**'
       - ".github/workflows/web-app.yml"
 
+permissions:
+  id-token: write  # Required for OIDC authentication
+  contents: read   # Required for checking out code
+
 jobs:
   build:
     runs-on: ubuntu-22.04
