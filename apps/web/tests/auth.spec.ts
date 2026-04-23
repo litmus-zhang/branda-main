@@ -5,7 +5,7 @@ test.describe('Workspace Lifecycle', () => {
     // Go to the landing page
     await page.goto('/');
   });
-  const userEmail = `new-${Date.now()}@example.com`
+  const userEmail = `new-${Date.now()}@example.co`
 
   test('user can sign up and reach the dashboard', async ({ page }) => {
     // Navigate to Sign Up
