@@ -44,7 +44,6 @@
     "lint": "nx run lint",
     "client:check:types": "pnpm --filter client run check:types",
     "client:lint": "pnpm --filter client run lint",
-    "client:validate": "pnpm run client:check:types && pnpm run client:lint",
-    "prepare": "husky install"
+    "client:validate": "pnpm run client:check:types && pnpm run client:lint"
   }
 }
