@@ -11,6 +11,10 @@ const nextConfig = {
       }
     ]
   },
+  transpilePackages: ["shiki"],
+  experimental: {
+    serverExternalPackages: ["shiki"],
+  },
 };
 
 export default nextConfig;

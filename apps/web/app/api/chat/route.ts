@@ -1,12 +1,25 @@
-import { BusinessPlan } from '@/lib/types';
 import { google } from '@ai-sdk/google';
 import { convertToModelMessages, streamText, type UIMessage } from 'ai';
+import { Opik } from "opik";
+import { BusinessPlan } from '@/lib/types';
+
+const opik = new Opik({
+  projectName: "branda-chat-ai",
+  apiKey: process.env.OPIK_API_KEY,
+  workspaceName: process.env.OPIK_WORKSPACE,
+});
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
   const { messages, workspaceContext } = await req.json() as { messages: UIMessage[], workspaceContext: BusinessPlan };
+
+  const trace = opik.trace({
+    name: "chatInteraction",
+    input: { messages, workspaceId: workspaceContext.id },
+    metadata: { workspaceContext } // Critical for hallucination detection
+  });
 
   const result = await streamText({
     model: "mistral/ministral-3b",
@@ -23,6 +36,19 @@ export async function POST(req: Request) {
     `,
     messages: await convertToModelMessages(messages),
     maxRetries: 2,
+    onFinish: ({ text, usage }) => {
+      trace.update({
+        output: { text },
+        metadata: {
+          prompt_tokens: usage.inputTokens,
+          completion_tokens: usage.outputTokens,
+          output_token_details: usage.outputTokenDetails,
+          total_tokens: usage.totalTokens,
+        },
+        
+      });
+      trace.end();
+    }
   });
 
   return result.toUIMessageStreamResponse();

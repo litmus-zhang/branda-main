@@ -1,6 +1,17 @@
+export interface AIUsage {
+  promptTokens: number;
+  completionTokens: number;
+  totalTokens: number;
+}
+
+export interface AIResponse {
+  content: any;
+  usage: AIUsage;
+}
+
 export interface AIProvider {
   name: string;
-  generateContent(prompt: string, schema?: any): Promise<any>;
+  generateContent(prompt: string, schema?: any): Promise<AIResponse>;
 }
 
 export interface AIPayload {

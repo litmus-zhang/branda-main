@@ -11,9 +11,9 @@ export interface BusinessPlan {
     toneOfVoice: string;
     usageGuidelines?: string; // New field for brand guide text
     socialAssets?: {
-        profileImage?: string;
-        bannerImage?: string;
-        thumbnailImage?: string;
+      profileImage?: string;
+      bannerImage?: string;
+      thumbnailImage?: string;
     };
   };
   marketing: {
@@ -31,9 +31,10 @@ export interface BusinessPlan {
     mockCustomers: { name: string; status: 'Lead' | 'Active' | 'Churned'; email: string }[];
   };
   funding?: {
-      ventureFunds: { name: string; focus: string; website: string }[];
-      grants: { name: string; amount: string; deadline: string; website: string }[];
+    ventureFunds: { name: string; focus: string; website: string }[];
+    grants: { name: string; amount: string; deadline: string; website: string }[];
   };
+  id?: string
 }
 
 export interface Integration {

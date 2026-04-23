@@ -2,11 +2,14 @@ import { betterAuth } from "better-auth/minimal"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { admin, bearer, emailOTP, openAPI, organization } from "better-auth/plugins"
 import { Elysia } from "elysia"
-import { config } from "../config.js"
+import { config, initConfig } from "../config.js"
 import { db } from "../db/index.js"
 import * as schema from "../db/schema.js"
 import { sendEmail } from "../services/resend.js"
 import { replaceLocalhostUrl, ResendNotificationTemplatesSubject } from "../services/utils.js"
+
+await initConfig()
+
 
 // eslint-disable-next-line import/no-mutable-exports
 let capturedToken = ""

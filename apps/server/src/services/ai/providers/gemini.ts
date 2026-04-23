@@ -11,7 +11,7 @@ export class GeminiProvider implements AIProvider {
   }
 
   async generateContent(prompt: string, schema?: any): Promise<any> {
-    const result = await this.ai.models.generateContent({
+    const response = await this.ai.models.generateContent({
       model: "gemini-2.5-flash-lite",
       contents: [{ role: "user", parts: [{ text: prompt }] }],
       config: {
@@ -20,8 +20,16 @@ export class GeminiProvider implements AIProvider {
       }
     });
 
-    const text = result.text;
+    const text = response.text;
     if (!text) throw new Error("No response from Gemini");
-    return JSON.parse(text);
+
+    return {
+      content: JSON.parse(text),
+      usage: {
+        promptTokens: response.usageMetadata?.promptTokenCount || 0,
+        completionTokens: response.usageMetadata?.candidatesTokenCount || 0,
+        totalTokens: response.usageMetadata?.totalTokenCount || 0
+      }
+    };
   }
 }

@@ -6,14 +6,17 @@ import { OpenAIProvider } from "./providers/openai.ts";
 import { AnthropicProvider } from "./providers/anthropic.ts";
 import { OpenRouterProvider } from "./providers/openrouter.ts";
 import { GeminiBusinessPlanSchema, normalizeBusinessPlan } from "./schema.ts";
-
-
-
+import { opik } from "../opik.ts";
 // Orchestrator Service
 export const aiService = restate.service({
   name: "aiService",
   handlers: {
     async generateBusinessPlan(ctx: restate.Context, data: AIPayload) {
+      const trace = opik.trace({
+        name: "generateBusinessPlan",
+        input: { niche: data.niche, country: data.country, details: data.details },
+      });
+
       const providers: AIProvider[] = [
         new GeminiProvider(),
         new OpenRouterProvider(),
@@ -37,9 +40,14 @@ export const aiService = restate.service({
       // Failover logic
       let lastError: unknown;
       for (const provider of providers) {
+        const span = trace.span({
+          name: `call-${provider.name}`,
+          input: { provider: provider.name, prompt },
+        });
+
+        const startTime = Date.now();
+
         try {
-          // Bound per-provider retries so we actually fail over instead of
-          // retrying one provider forever.
           const result = await ctx.run(
             `call-${provider.name}`,
             () => provider.generateContent(prompt, GeminiBusinessPlanSchema),
@@ -48,21 +56,77 @@ export const aiService = restate.service({
 
           if (result) {
             try {
-              const normalized = normalizeBusinessPlan(result);
+              const { content, usage } = result;
+              const normalized = normalizeBusinessPlan(content);
+
+              span.update({
+                output: normalized,
+                usage: {
+                  prompt_tokens: usage.promptTokens,
+                  completion_tokens: usage.completionTokens,
+                  total_tokens: usage.totalTokens,
+                },
+                metadata: { latency: Date.now() - startTime }
+              });
+              span.end();
+
+              trace.update({
+                output: normalized,
+                metadata: {
+                  prompt_tokens: usage.promptTokens,
+                  completion_tokens: usage.completionTokens,
+                  total_tokens: usage.totalTokens,
+                }
+              });
+
+              // --- QUICK QUALITY/HALLUCINATION CHECK ---
+              const isLowQuality = !normalized.brandIdentity.name || normalized.brandIdentity.mission.length < 20;
+
+              trace.score({
+                name: "hallucination_flag",
+                value: isLowQuality ? 1 : 0, // 1 means flagged
+                reason: isLowQuality ? "Response missing core brand identity or mission too short" : "Structural check passed"
+              });
+
+              trace.end();
+
               return normalized;
             } catch (normErr) {
               ctx.console.warn(`Provider ${provider.name} returned invalid structure, failing over`, normErr);
+              span.score({
+                name: "hallucination_flag",
+                value: 1,
+                reason: `Provider ${provider.name} returned invalid structure, failing over`,
+              });
+              span.end();
               lastError = normErr;
               continue; // Try next provider
             }
           }
         } catch (err) {
-          // Both transient (after retries exhausted → TerminalError) and
-          // terminal errors land here; try the next provider.
-          lastError = err;
           ctx.console.warn(`Provider ${provider.name} failed, failing over`, err);
+          span.update({
+            metadata: { error: (err as Error).message },
+            errorInfo: {
+              message: (err as Error).message,
+              traceback: (err as Error).stack || `Provider ${provider.name} failed, failing over`,
+              exceptionType: (err as Error).constructor.name,
+            }
+          });
+          span.end();
+          lastError = err;
         }
       }
+
+      trace.update({
+        metadata: { status: "FAILED_ALL_PROVIDERS" },
+        errorInfo: {
+          message: `All AI providers failed: ${(lastError as Error)?.message ?? "unknown"}`,
+          traceback: (lastError as Error)?.stack || "Error",
+          exceptionType: (lastError as Error)?.constructor.name || "Error",
+        }
+      });
+      trace.end();
 
       throw new TerminalError(
         `All AI providers failed: ${(lastError as Error)?.message ?? "unknown"}`
