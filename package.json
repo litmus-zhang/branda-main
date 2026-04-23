@@ -13,21 +13,15 @@
       "react": "19.2.0",
       "react-dom": "19.2.0",
       "next": "16.0.10"
-    },
-    "supportedArchitectures": {
-      "os": [
-        "darwin",
-        "linux"
-      ],
-      "cpu": [
-        "x64",
-        "arm64"
-      ]
     }
   },
   "devDependencies": {
-    "husky": "^8.0.0",
-    "nx": "22.6.5"
+    "@engage-lagos/eslint-config": "workspace:*",
+    "@engage-lagos/typescript-config": "workspace:*",
+    "prettier": "^3.7.4",
+    "turbo": "^2.6.3",
+    "typescript": "5.7.3",
+    "nx": "22.4.5"
   },
   "packageManager": "pnpm@10.8.0",
   "scripts": {
