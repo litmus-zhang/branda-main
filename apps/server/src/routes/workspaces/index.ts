@@ -60,6 +60,34 @@ export default (app: ElysiaApp) => app.model({
     }),
     auth: true,
   })
+  .patch("/:id/plan/:section", async ({
+    params: { id, section },
+    body,
+  }: {
+    params: { id: string, section: string }
+    body: any
+  }) => {
+    // Current workspace to get the whole plan
+    const ws = await getOneByID("workspace", id) as any
+    if (!ws) throw new Error("Workspace not found")
+    
+    // Patch specifically that section
+    const updatedPlan = {
+      ...ws.plan,
+      [section]: {
+        ...(ws.plan?.[section] || {}),
+        ...body
+      }
+    }
+
+    return updateOne("workspace", id, { plan: updatedPlan })
+  }, {
+    params: t.Object({
+      id: t.String(),
+      section: t.String()
+    }),
+    auth: true,
+  })
   .delete("/:id", ({ params: { id } }: { params: { id: string } }) => {
     return deleteOne("workspace", id)
   }, {

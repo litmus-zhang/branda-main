@@ -124,6 +124,19 @@ describe("Workspaces API", () => {
                 .expectBodyContains(newSlogan)
         })
 
+        it("PATCH /workspaces/:id/plan/:section - Specifically patch plan section", async () => {
+            const patchedMission = "Patched Brand Mission for E2E"
+            await pactum
+                .spec()
+                .patch("/workspaces/$S{workspaceId}/plan/brandIdentity")
+                .withBearerToken(user.token)
+                .withJson({
+                    mission: patchedMission
+                })
+                .expectStatus(200)
+                .expectBodyContains(patchedMission)
+        })
+
         it("DELETE /workspaces/:id - Delete workspace", async () => {
             await pactum
                 .spec()
