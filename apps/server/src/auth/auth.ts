@@ -26,9 +26,16 @@ export const auth = betterAuth({
     },
   },
 
-  // baseURL: "http://localhost:3000",
+  baseURL: config.BETTER_AUTH_URL || config.API_URL,
   basePath: "/auth",
-  trustedOrigins: config.AUTH_CORS?.split(",") || [],
+  trustedOrigins: [
+    ...(config.AUTH_CORS?.split(",") || []),
+    config.FRONTEND_URL,
+  ].filter(Boolean),
+  // advanced: {
+  //   // trustProxy: true,
+  //   crossOrigin: true,
+  // },
   emailVerification: {
     sendVerificationEmail: async ({ user, url, token }) => {
       const modifiedUrl = replaceLocalhostUrl(url, user?.role === "admin" ? "admin" : "user")
