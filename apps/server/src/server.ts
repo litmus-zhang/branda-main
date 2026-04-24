@@ -12,10 +12,15 @@ import { auth, OpenAPI } from "./auth/auth.js"
 import { clearDb, seedDb } from "./db/index.ts"
 
 import { restateHandler } from "./services/ai/index.ts"
+import { config } from "./config.ts"
 
 export const app = new Elysia()
   .use(bearer())
-  .use(cors())
+  .use(cors({
+    origin: [config.FRONTEND_URL, "https://branda-web.up.railway.app"].filter(Boolean),
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }))
   .use(serverTiming())
   .use(opentelemetry())
   .use(

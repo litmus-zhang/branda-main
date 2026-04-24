@@ -14,6 +14,12 @@ await initConfig()
 // eslint-disable-next-line import/no-mutable-exports
 let capturedToken = ""
 
+console.log("Auth Config:", {
+  baseURL: config.BETTER_AUTH_URL || config.API_URL,
+  FRONTEND_URL: config.FRONTEND_URL,
+  NODE_ENV: config.NODE_ENV
+});
+
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
@@ -31,6 +37,7 @@ export const auth = betterAuth({
   trustedOrigins: [
     ...(config.AUTH_CORS?.split(",") || []),
     config.FRONTEND_URL,
+    "https://branda-web.up.railway.app",
   ].filter(Boolean),
   advanced: {
     useSecureCookies: true,
