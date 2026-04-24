@@ -27,6 +27,7 @@ export const app = new Elysia()
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
   }))
+  .mount(auth.handler)
 
   .use(serverTiming())
   .use(opentelemetry())
@@ -66,7 +67,6 @@ export const app = new Elysia()
     }),
   )
   .use(Logestic.preset("common"))
-  .mount(auth.handler)
   .all("/restate/*", ({ request }) => restateHandler(request))
 
 // .get("/seed", async () => {
