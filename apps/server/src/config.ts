@@ -26,6 +26,8 @@ export const initConfig = async () => {
     config[s.secretKey] = s.secretValue;
   });
 
+  console.log({ config })
   return config;
 }
+console.log({ config })
 
