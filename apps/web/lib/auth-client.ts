@@ -6,6 +6,7 @@ export const authClient = createAuthClient({
     plugins: [
         emailOTPClient(),
     ],
+    basePath: "/auth",
 });
 
 
