@@ -1,3 +1,4 @@
+import { authClient } from "./auth-client";
 
 // Base URL for the Elysia API
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
@@ -38,7 +39,13 @@ export const api = {
 };
 
 async function request<T>(endpoint: string, options: FetchOptions): Promise<T> {
-  const { token, headers, ...rest } = options;
+  let { token, headers, ...rest } = options;
+
+  // Automatically fetch token from authClient if not provided
+  if (!token) {
+    const { data } = await authClient.getSession();
+    token = data?.session?.token;
+  }
 
   const config: RequestInit = {
     ...rest,

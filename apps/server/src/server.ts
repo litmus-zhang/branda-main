@@ -17,7 +17,13 @@ import { restateHandler } from "./services/ai/index.ts"
 export const app = new Elysia()
   .use(bearer())
   .use(cors({
-    origin: [config.FRONTEND_URL, ...config.AUTH_CORS, "https://branda-web.up.railway.app"].filter(Boolean),
+    origin: [
+      config.FRONTEND_URL,
+      ...(config.AUTH_CORS?.split(",") || []),
+      "https://branda-web.up.railway.app",
+      "https://branda.dynage.technology",
+      "https://www.branda.dynage.technology"
+    ].filter(Boolean),
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
   }))
