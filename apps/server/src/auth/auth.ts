@@ -25,12 +25,12 @@ export const auth = betterAuth({
     provider: "pg",
     schema,
   }),
-  // session: {
-  //   cookieCache: {
-  //     enabled: true,
-  //     maxAge: 5 * 60, // Cache duration in seconds
-  //   },
-  // },
+  session: {
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60, // Cache duration in seconds
+    },
+  },
 
   baseURL: config.BETTER_AUTH_URL || config.API_URL,
   basePath: "/auth",
@@ -104,7 +104,7 @@ export const auth = betterAuth({
 
   plugins: [
     openAPI(),
-    bearer(),
+    // bearer(),
     admin({
       defaultRole: "user",
     }),
