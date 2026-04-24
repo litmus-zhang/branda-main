@@ -55,7 +55,7 @@ export const app = new Elysia()
             description: "Local development server",
           },
           {
-            url: "https://api.branda.app",
+            url: "https://branda-api.dynage.technology",
             description: "Production server",
           },
         ],
