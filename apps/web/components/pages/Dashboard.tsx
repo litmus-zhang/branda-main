@@ -9,8 +9,7 @@ import { IntegrationsView } from '../views/IntegrationsView';
 import { TeamView } from '../views/TeamView';
 import { BrainstormingView } from '../views/BrainstormingView';
 import { FundingView } from '../views/FundingView';
-import { PlusCircle, Loader2, Menu, Lock, Briefcase, Globe, PenTool, Sparkles, Sun, Moon } from 'lucide-react';
-import { useTheme } from "next-themes";
+import { PlusCircle, Loader2, Menu, Lock, Briefcase, Globe, PenTool, Sparkles } from 'lucide-react';
 import { Button } from "@branda/ui/components/button";
 import { Input } from "@branda/ui/components/input";
 import { Textarea } from "@branda/ui/components/textarea";
@@ -53,7 +52,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const searchParams = useSearchParams();
   const pathname = usePathname();
   
-  const { theme, setTheme } = useTheme();
   const isMutating = useIsMutating();
   const [activeView, setActiveView] = useState<ViewType>((searchParams.get('view') as ViewType) || 'brand');
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -302,32 +300,21 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     <p className="text-xs text-muted-foreground mt-1.5 font-bold italic tracking-tight opacity-60 truncate max-w-[200px] md:max-w-md">“{currentWorkspace.plan.brandIdentity.slogan}”</p>
                   </div>
                 </div>
-        <div className="flex items-center gap-4">
-          <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/50 border border-border/50">
-            {isMutating > 0 ? (
-              <>
-                <Loader2 className="w-3 h-3 text-primary animate-spin" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-primary">Syncing</span>
-              </>
-            ) : (
-              <>
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500/80">Saved</span>
-              </>
-            )}
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="w-10 h-10 rounded-xl hover:bg-muted transition-all active:scale-90"
-          >
-            <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-amber-500" />
-            <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-blue-400" />
-            <span className="sr-only">Toggle theme</span>
-          </Button>
-        </div>
-
+                <div className="flex items-center gap-4">
+                  <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/50 border border-border/50">
+                    {isMutating > 0 ? (
+                      <>
+                        <Loader2 className="w-3 h-3 text-primary animate-spin" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-primary">Syncing</span>
+                      </>
+                    ) : (
+                      <>
+                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500/80">Saved</span>
+                      </>
+                    )}
+                  </div>
+                </div>
               </div>
 
               <nav className="flex space-x-1.5 bg-muted/30 p-1.5 rounded-xl border border-border/50 overflow-x-auto no-scrollbar shadow-inner">

@@ -4,6 +4,8 @@ import { Sparkles, Plus, LogOut, ChevronRight, X } from 'lucide-react';
 import { Logo } from '@branda/ui/components/logo';
 import { UserButton } from '@branda/ui/components/user/user-button';
 
+import { ThemeToggle } from './ThemeToggle';
+
 interface SidebarProps {
   workspaces: Workspace[];
   currentWorkspaceId: string | null;
@@ -77,8 +79,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
       </div>
 
-      <div className="p-6 border-t border-sidebar-border mt-auto bg-muted/5 backdrop-blur-sm">
-        <UserButton />
+      <div className="p-4 border-t border-sidebar-border mt-auto bg-muted/5 backdrop-blur-sm space-y-4">
+        <ThemeToggle />
+        <div className="px-2">
+          <UserButton />
+        </div>
       </div>
     </aside>
   );
