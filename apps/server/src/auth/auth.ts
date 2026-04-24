@@ -32,10 +32,6 @@ export const auth = betterAuth({
     ...(config.AUTH_CORS?.split(",") || []),
     config.FRONTEND_URL,
   ].filter(Boolean),
-  // advanced: {
-  //   // trustProxy: true,
-  //   crossOrigin: true,
-  // },
   emailVerification: {
     sendVerificationEmail: async ({ user, url, token }) => {
       const modifiedUrl = replaceLocalhostUrl(url, user?.role === "admin" ? "admin" : "user")
