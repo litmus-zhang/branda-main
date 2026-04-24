@@ -46,12 +46,12 @@ export const auth = betterAuth({
   //   useSecureCookies: true,
   //   crossTab: true,
   // },
-  advanced: {
-    crossSubDomainCookies: {
-      enabled: true,
-      domain: "dynage.technology", // root domain
-    },
-  },
+  // advanced: {
+  //   crossSubDomainCookies: {
+  //     enabled: true,
+  //     domain: "dynage.technology", // root domain
+  //   },
+  // },
   emailVerification: {
     sendVerificationEmail: async ({ user, url, token }) => {
       const modifiedUrl = replaceLocalhostUrl(url, "user")
