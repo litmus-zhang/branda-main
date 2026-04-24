@@ -32,9 +32,13 @@ export const auth = betterAuth({
     ...(config.AUTH_CORS?.split(",") || []),
     config.FRONTEND_URL,
   ].filter(Boolean),
+  advanced: {
+    useSecureCookies: true,
+    crossTab: true,
+  },
   emailVerification: {
     sendVerificationEmail: async ({ user, url, token }) => {
-      const modifiedUrl = replaceLocalhostUrl(url, user?.role === "admin" ? "admin" : "user")
+      const modifiedUrl = replaceLocalhostUrl(url, "user")
       capturedToken = token
       console.log("Verification token:", token)
       // console.log({ modifiedUrl })
@@ -58,8 +62,8 @@ export const auth = betterAuth({
     requireEmailVerification: true,
     sendResetPassword: async ({ user, url, token }) => {
       // Send reset password email
-      console.log({ user, token, url }, user)
-      const modifiedUrl = replaceLocalhostUrl(url, user.role === "admin" ? "admin" : "user")
+      console.log({ user, token, url })
+      const modifiedUrl = replaceLocalhostUrl(url, "user")
       await sendEmail({
         to: [user.email],
         subject: ResendNotificationTemplatesSubject.RESET_OTP,

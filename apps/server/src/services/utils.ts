@@ -10,9 +10,10 @@ export enum ResendNotificationTemplatesSubject {
 }
 
 export function replaceLocalhostUrl(url: string, actor_type: "admin" | "user" | "checkin" = "admin") {
-  const CLIENT_URL = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://event.coderina.org"
-  const CHECKIN_URL = process.env.NODE_ENV === "development" ? "http://localhost:3001" : "https://checkin.coderina.org"
-  const ADMIN_URL = process.env.NODE_ENV === "development" ? "http://localhost:3002" : "https://admin.coderina.org"
+  const { config } = require("../config.js");
+  const CLIENT_URL = config.FRONTEND_URL || "http://localhost:3000"
+  const CHECKIN_URL = config.CHECKIN_URL || "http://localhost:3001"
+  const ADMIN_URL = config.ADMIN_URL || "http://localhost:3002"
 
   const urlPrefix = actor_type === "checkin" ? CHECKIN_URL : actor_type === "user" ? CLIENT_URL : ADMIN_URL
 
