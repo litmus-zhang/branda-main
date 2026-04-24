@@ -13,7 +13,7 @@ export default function Providers({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { theme, setTheme } = useTheme()
 
-  const url = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:4000"
+  const url = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -32,7 +32,8 @@ export default function Providers({ children }: { children: ReactNode }) {
           // multiSession
           redirectTo={`/dashboard`}
           queryClient={queryClient}
-          // baseURL={url}
+
+          baseURL={url}
           socialProviders={["google"]}
           navigate={({ to, replace }) =>
             replace ? router.replace(to) : router.push(to)
