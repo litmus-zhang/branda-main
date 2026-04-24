@@ -38,11 +38,13 @@ export const auth = betterAuth({
     ...(config.AUTH_CORS?.split(",") || []),
     config.FRONTEND_URL,
     "https://branda-web.up.railway.app",
+    "https://branda.dynage.technology",
+    "https://www.branda.dynage.technology",
   ].filter(Boolean),
-  advanced: {
-    useSecureCookies: true,
-    crossTab: true,
-  },
+  // advanced: {
+  //   useSecureCookies: true,
+  //   crossTab: true,
+  // },
   emailVerification: {
     sendVerificationEmail: async ({ user, url, token }) => {
       const modifiedUrl = replaceLocalhostUrl(url, "user")

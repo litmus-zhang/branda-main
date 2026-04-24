@@ -16,18 +16,17 @@ import { restateHandler } from "./services/ai/index.ts"
 
 export const app = new Elysia()
   .use(bearer())
-  .use(cors())
-  // .use(cors({
-  //   origin: [
-  //     config.FRONTEND_URL,
-  //     ...(config.AUTH_CORS?.split(",") || []),
-  //     "https://branda-web.up.railway.app",
-  //     "https://branda.dynage.technology",
-  //     "https://www.branda.dynage.technology"
-  //   ].filter(Boolean),
-  //   credentials: true,
-  //   allowedHeaders: ["Content-Type", "Authorization"],
-  // }))
+  .use(cors({
+    origin: [
+      "https://branda.dynage.technology",
+      "https://www.branda.dynage.technology",
+      "https://branda-web.up.railway.app",
+      config.FRONTEND_URL,
+      ...(config.AUTH_CORS?.split(",") || []),
+    ].filter(Boolean),
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }))
 
   .use(serverTiming())
   .use(opentelemetry())
