@@ -12,7 +12,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ onCreateClick }) => {
     <div className="flex flex-col items-center justify-center min-h-[60vh] p-4 text-center animate-in fade-in duration-700">
       <div className="relative mb-8">
         <div className="absolute -inset-4 bg-primary-500/10 rounded-full blur-3xl animate-pulse" />
-        <div className="relative w-24 h-24 bg-white shadow-2xl rounded-3xl flex items-center justify-center border border-slate-100 rotate-6 hover:rotate-0 transition-transform duration-500">
+        <div className="relative w-24 h-24 bg-primary/30 shadow-2xl rounded-3xl flex items-center justify-center border border-slate-100 rotate-6 hover:rotate-0 transition-transform duration-500">
           <Rocket className="w-12 h-12 text-primary-600" />
         </div>
         <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-amber-100 shadow-lg rounded-xl flex items-center justify-center border border-amber-200 -rotate-12">
