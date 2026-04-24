@@ -52,7 +52,7 @@ async function request<T>(endpoint: string, options: FetchOptions): Promise<T> {
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
-      ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+      // ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
       ...headers,
     },
   };
