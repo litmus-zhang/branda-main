@@ -16,11 +16,7 @@ import { restateHandler } from "./services/ai/index.ts"
 
 export const app = new Elysia()
   .use(bearer())
-  .use(cors({
-    origin: ["*"],
-    credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization"],
-  }))
+  .use(cors())
   // .use(cors({
   //   origin: [
   //     config.FRONTEND_URL,
