@@ -42,6 +42,7 @@ async function request<T>(endpoint: string, options: FetchOptions): Promise<T> {
 
   const config: RequestInit = {
     ...rest,
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
       ...(token ? { 'Authorization': `Bearer ${token}` } : {}),

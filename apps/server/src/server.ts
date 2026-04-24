@@ -8,6 +8,7 @@ import { Elysia } from "elysia"
 import { autoload } from "elysia-autoload"
 import { healthcheckPlugin } from "elysia-healthcheck"
 import { Logestic } from "logestic"
+import { config } from "./config.js"
 import { auth, OpenAPI } from "./auth/auth.js"
 import { clearDb, seedDb } from "./db/index.ts"
 
@@ -15,7 +16,11 @@ import { restateHandler } from "./services/ai/index.ts"
 
 export const app = new Elysia()
   .use(bearer())
-  .use(cors())
+  .use(cors({
+    origin: [config.FRONTEND_URL, ...config.AUTH_CORS, "https://branda-web.up.railway.app"].filter(Boolean),
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }))
   .use(serverTiming())
   .use(opentelemetry())
   .use(
