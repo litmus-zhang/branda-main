@@ -3,6 +3,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../lib/api';
 import { BusinessPlan, Workspace } from '../lib/types';
 import { workspaceKeys } from './useWorkspaces';
+import { queryClient } from '@/lib/queryClient';
+
 
 
 // We fetch the plan as part of the Workspace object usually, 
@@ -11,7 +13,6 @@ import { workspaceKeys } from './useWorkspaces';
 type PlanSection = 'brand' | 'marketing' | 'systems' | 'crm' | 'funding';
 
 export const useUpdateBusinessPlan = () => {
-  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ({
@@ -42,7 +43,7 @@ export const useUpdateBusinessPlan = () => {
               plan: {
                 ...ws.plan,
                 [realSection]: {
-                  ...(ws.plan as any)[realSection], 
+                  ...(ws.plan as any)[realSection],
                   ...(data as any)
                 }
               }
