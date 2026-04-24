@@ -24,27 +24,27 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ onCreateClick }) => {
         Welcome to your <span className="text-primary-600">Growth Engine.</span>
       </h1>
 
-      <p className="text-slate-600 max-w-md mb-10 leading-relaxed">
+      <p className="text-primary-foreground/60 max-w-md mb-10 leading-relaxed">
         You haven't created any workspaces yet. Let's launch your first business idea and build something amazing together.
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl w-full mb-12">
         <Card className="bg-white/50 border-slate-100 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
-            <h3 className="font-bold text-slate-900 mb-1">Brand Identity</h3>
-            <p className="text-xs text-slate-500">Logos, colors, and tone.</p>
+            <h3 className="font-bold mb-1">Brand Identity</h3>
+            <p className="text-xs">Logos, colors, and tone.</p>
           </CardContent>
         </Card>
         <Card className="bg-white/50 border-slate-100 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
-            <h3 className="font-bold text-slate-900 mb-1">Marketing</h3>
-            <p className="text-xs text-slate-500">Strategy and channels.</p>
+            <h3 className="font-bold mb-1">Marketing</h3>
+            <p className="text-xs">Strategy and channels.</p>
           </CardContent>
         </Card>
         <Card className="bg-white/50 border-slate-100 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
-            <h3 className="font-bold text-slate-900 mb-1">Operations</h3>
-            <p className="text-xs text-slate-500">Systems and SOPs.</p>
+            <h3 className="font-bold mb-1">Operations</h3>
+            <p className="text-xs">Systems and SOPs.</p>
           </CardContent>
         </Card>
       </div>
