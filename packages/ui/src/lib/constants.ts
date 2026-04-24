@@ -1,7 +1,7 @@
-export const SupportEmail = "support@engagelagos.com"
-export const CompanyName = "Engage Lagos"
-export const partnershipEmail = "partnership@engagelagos.com"
-export const contactEmail = "hello@engagelagos.com"
+export const SupportEmail = "support@branda.app"
+export const CompanyName = "Branda"
+export const partnershipEmail = "partnership@branda.app"
+export const contactEmail = "hello@branda.app"
 
 
 export const landmarks = [
@@ -39,7 +39,7 @@ export const landmarks = [
     }
 ];
 
-export  const monuments = [
+export const monuments = [
     {
         id: 1,
         title: "The Three White Caps Chiefs",
