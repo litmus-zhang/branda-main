@@ -40,6 +40,7 @@ export const auth = betterAuth({
     "https://branda-web.up.railway.app",
     "https://branda.dynage.technology",
     "https://www.branda.dynage.technology",
+    ""
   ].filter(Boolean),
   // advanced: {
   //   useSecureCookies: true,
