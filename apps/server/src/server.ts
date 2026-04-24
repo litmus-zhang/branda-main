@@ -35,7 +35,6 @@ export const app = new Elysia()
       prefix: "/health",
     }),
   )
-  .all("/restate/*", ({ request }) => restateHandler(request))
   .use(
     autoload({
       dir: join(import.meta.dir, "routes"),
@@ -68,6 +67,8 @@ export const app = new Elysia()
   )
   .use(Logestic.preset("common"))
   .mount(auth.handler)
+  .all("/restate/*", ({ request }) => restateHandler(request))
+
 // .get("/seed", async () => {
 //   await seedDb()
 //   return {

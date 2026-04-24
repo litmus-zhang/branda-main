@@ -67,8 +67,6 @@ export const auth = betterAuth({
             verificationUrl: modifiedUrl,
           },
         },
-        // jsxTemplate: jsx(EmailVerificationTemplate, { verificationUrl: modifiedUrl }),
-        // html: `Click the link to verify your email: ${modifiedUrl}`,
       })
     },
     sendOnSignUp: true,
@@ -109,42 +107,7 @@ export const auth = betterAuth({
     admin({
       defaultRole: "user",
     }),
-    organization({
-      // allowUserToCreateOrganization: async (user) => {
-      //   // allow only admin users to create organizations
-      //   return user.role === "admin"
-      // },
-      // ac, // Must be defined in order for dynamic access control to work
-      // roles: {
-      //   owner,
-      //   adminRole,
-      //   member,
-      // },
-      sendInvitationEmail: async ({ id, role, email, organization, invitation, inviter }) => {
-        console.log({ id, role, email, organization, invitation, inviter })
-        await sendEmail({
-          to: [email],
-          subject: ResendNotificationTemplatesSubject.INVITATION,
-          template: {
-            id: "new-member-invitation",
-            variables: {
-              teamName: organization.name,
-              invitationLink: replaceLocalhostUrl(`${config.FRONTEND_URL}/auth/organization/invite-member?invitationId=${id}`, "user"),
-
-            },
-          },
-          // html: `You have been invited to join ${organization.name} as ${role}. Click the link to accept the invitation: ${replaceLocalhostUrl(`${config.FRONTEND_URL}/auth/organization/invite-member?invitationId=${id}`, "user")}`,
-        })
-      },
-      dynamicAccessControl: {
-        enabled: true,
-      },
-      teams: {
-        enabled: true,
-        // maximumTeams: 10, // Optional: limit teams per organization
-        allowRemovingAllTeams: false, // Optional: prevent removing the last team
-      },
-    }),
+   
     emailOTP({
       async sendVerificationOTP({ email, otp, type }) {
         if (type === "sign-in") {
