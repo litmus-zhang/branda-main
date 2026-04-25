@@ -174,10 +174,11 @@ export const authGuard = new Elysia({ name: "authGuard" })
       async resolve({ request, set }) {
         // Verify the session from cookies or Authorization header
         const session = await auth.api.getSession({
-          headers: request.headers,
+          headers: new Headers(request.headers),
         })
 
         if (!session) {
+          console.warn(`[AuthGuard] Unauthorized access attempt to ${request.url}. Authorization header present: ${!!request.headers.get("authorization")}`);
           set.status = 401
           throw new Error("Unauthorized")
         }
