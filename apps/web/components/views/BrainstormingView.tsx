@@ -21,8 +21,10 @@ import {
     PromptInputTextarea,
     PromptInputSubmit,
 } from "@branda/ui/components/ai-elements/prompt-input";
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, AlertCircle } from "lucide-react";
 import { useState } from "react";
+import { Shimmer } from "@branda/ui/components/ai-elements/shimmer";
+import { Spinner } from '@branda/ui/components/spinner';
 
 interface BrainstormingViewProps {
     plan: BusinessPlan;
@@ -30,7 +32,7 @@ interface BrainstormingViewProps {
 
 export const BrainstormingView: React.FC<BrainstormingViewProps> = ({ plan }) => {
     const [input, setInput] = useState("");
-    const { messages, status, sendMessage, } = useChat({
+    const { messages, status, sendMessage, error } = useChat({
         transport: new DefaultChatTransport({
             api: '/api/chat',
             body: {
@@ -76,6 +78,25 @@ export const BrainstormingView: React.FC<BrainstormingViewProps> = ({ plan }) =>
                                     </MessageContent>
                                 </Message>
                             ))
+                        )}
+                        {(status === "streaming" || status === 'submitted') && (
+                            <Message from="assistant">
+                                <MessageContent>
+                                    <div className="flex items-center gap-2">
+                                        <Spinner /><Shimmer> preparing response</Shimmer>
+                                    </div>
+                                </MessageContent>
+                            </Message>
+                        )}
+                        {error && (
+                            <Message from="assistant">
+                                <MessageContent className="bg-destructive/10 text-destructive border border-destructive/20 rounded-lg p-3">
+                                    <div className="flex items-center gap-2">
+                                        <AlertCircle className="size-4" />
+                                        <span className="text-sm font-medium">Sorry, something went wrong. Please try again.</span>
+                                    </div>
+                                </MessageContent>
+                            </Message>
                         )}
                     </ConversationContent>
                     <ConversationDownload messages={messages} />
