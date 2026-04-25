@@ -19,7 +19,10 @@ export const generateBusinessPlan = async (data: {
     details: string;
     country: string;
 }) => {
-    const rs = clients.connect({ url: config.RESTATE_URL });
+    const rs = clients.connect({
+        url: config.RESTATE_URL, 
+        headers: { Authorization: `Bearer ${config.RESTATE_AUTH_TOKEN}` },
+    });
 
     try {
         const plan = await rs.serviceClient(aiService).generateBusinessPlan(data);
