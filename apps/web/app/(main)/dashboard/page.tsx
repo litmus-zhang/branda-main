@@ -1,13 +1,12 @@
 "use client"
-import { useWorkspaces } from '@/hooks/useWorkspaces';
 import { useAuth } from '@/lib/auth-client';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { Dashboard } from '@/components/pages/Dashboard';
-import { useCreateWorkspace, useUpdateWorkspace } from '@/hooks/useWorkspaces';
+import { useCreateWorkspace, useUpdateWorkspace, useWorkspaces } from '@/hooks/useWorkspaces';
+import { useGeneratePlan } from '@/hooks/useAi';
 import { authClient } from '@/lib/auth-client';
-import { generateBusinessPlan } from '@/lib/services/geminiService';
 import { Workspace } from '@/lib/types';
 import { useState } from 'react';
 import { slugify } from '@branda/ui/lib/utils';
@@ -53,11 +52,10 @@ export default function DashboardPage() {
 function DashboardContent({ user, workspaces, currentWorkspaceId: initialId }: { user: any, workspaces: Workspace[], currentWorkspaceId: string | null }) {
     const createWorkspaceMutation = useCreateWorkspace();
     const updateWorkspaceMutation = useUpdateWorkspace();
+    const generatePlanMutation = useGeneratePlan();
     const router = useRouter();
 
     const [currentWorkspaceId, setCurrentWorkspaceId] = useState<string | null>(initialId);
-    const [isGenerating, setIsGenerating] = useState(false);
-    const [generationError, setGenerationError] = useState<string | null>(null);
 
     const handleSwitchWorkspace = (id: string) => {
         const ws = workspaces.find(w => w.id === id);
@@ -80,10 +78,8 @@ function DashboardContent({ user, workspaces, currentWorkspaceId: initialId }: {
     };
 
     const handleGenerate = async (formData: { niche: string; businessName: string; details: string; country: string }) => {
-        setIsGenerating(true);
-        setGenerationError(null);
         try {
-            const plan = await generateBusinessPlan(formData);
+            const plan = await generatePlanMutation.mutateAsync(formData);
             const name = plan.brandIdentity.name || formData.businessName || 'New Brand';
 
             const newWorkspace: Partial<Workspace> = {
@@ -104,9 +100,6 @@ function DashboardContent({ user, workspaces, currentWorkspaceId: initialId }: {
             });
         } catch (error) {
             console.error("Generation failed:", error);
-            setGenerationError("Failed to generate your business plan. Please try again.");
-        } finally {
-            setIsGenerating(false);
         }
     };
 
@@ -123,7 +116,7 @@ function DashboardContent({ user, workspaces, currentWorkspaceId: initialId }: {
                 router.push('/auth/sign-in');
             }}
             onGenerateNew={handleGenerate}
-            isGenerating={isGenerating}
+            isGenerating={generatePlanMutation.isPending}
         />
     );
 }

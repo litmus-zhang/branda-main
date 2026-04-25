@@ -1,12 +1,12 @@
 "use client"
 import { useWorkspaces, useCreateWorkspace, useUpdateWorkspace } from '@/hooks/useWorkspaces';
 import { useAuth } from '@/lib/auth-client';
+import { useGeneratePlan } from '@/hooks/useAi';
 import { Loader2 } from 'lucide-react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Dashboard } from '@/components/pages/Dashboard';
-import { generateBusinessPlan } from '@/lib/services/geminiService';
-import { Workspace, ViewType } from '@/lib/types';
+import { Workspace } from '@/lib/types';
 import { slugify } from '@branda/ui/lib/utils';
 import { authClient } from '@/lib/auth-client';
 
@@ -20,22 +20,27 @@ export default function WorkspaceDashboardPage() {
 
     const createWorkspaceMutation = useCreateWorkspace();
     const updateWorkspaceMutation = useUpdateWorkspace();
+    const generatePlanMutation = useGeneratePlan();
 
-    const [isGenerating, setIsGenerating] = useState(false);
-    const [generationError, setGenerationError] = useState<string | null>(null);
-    const [currentWorkspaceId, setCurrentWorkspaceId] = useState<string | null>(null);
+    const currentWorkspace = workspaces.find(w => w.slug === slug);
 
-    // Sync currentWorkspaceId with the slug from URL
     useEffect(() => {
-        if (workspaces.length > 0 && slug) {
-            const ws = workspaces.find(w => w.slug === slug);
-            if (ws) {
-                setCurrentWorkspaceId(ws.id);
-            } else if (slug === 'new') {
-                setCurrentWorkspaceId('new');
-            }
+        if (!isAuthLoading && !isLoadingWorkspaces && !user) {
+            router.push('/auth/sign-in');
         }
-    }, [workspaces, slug]);
+    }, [user, isAuthLoading, isLoadingWorkspaces, router]);
+
+    if (isAuthLoading || isLoadingWorkspaces) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
+            </div>
+        );
+    }
+
+    if (!user || !currentWorkspace) {
+        return null;
+    }
 
     const handleSwitchWorkspace = (id: string) => {
         const ws = workspaces.find(w => w.id === id);
@@ -58,12 +63,10 @@ export default function WorkspaceDashboardPage() {
     };
 
     const handleGenerate = async (formData: { niche: string; businessName: string; details: string; country: string }) => {
-        setIsGenerating(true);
-        setGenerationError(null);
         try {
-            const plan = await generateBusinessPlan(formData);
+            const plan = await generatePlanMutation.mutateAsync(formData);
             const name = plan.brandIdentity.name || formData.businessName || 'New Brand';
-            
+
             const newWorkspace: Partial<Workspace> = {
                 id: crypto.randomUUID(),
                 name,
@@ -82,27 +85,14 @@ export default function WorkspaceDashboardPage() {
             });
         } catch (error) {
             console.error("Generation failed:", error);
-            setGenerationError("Failed to generate your business plan. Please try again.");
-        } finally {
-            setIsGenerating(false);
         }
     };
-
-    if (isAuthLoading || isLoadingWorkspaces) {
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-                <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
-            </div>
-        );
-    }
-
-    if (!user) return null;
 
     return (
         <Dashboard
             user={{ name: user.name || '', email: user.email || '' }}
             workspaces={workspaces}
-            currentWorkspaceId={currentWorkspaceId}
+            currentWorkspaceId={currentWorkspace.id}
             onSwitchWorkspace={handleSwitchWorkspace}
             onCreateWorkspace={handleCreateNewWorkspace}
             onUpdateWorkspace={handleUpdateWorkspace}
@@ -111,7 +101,7 @@ export default function WorkspaceDashboardPage() {
                 router.push('/auth/sign-in');
             }}
             onGenerateNew={handleGenerate}
-            isGenerating={isGenerating}
+            isGenerating={generatePlanMutation.isPending}
         />
     );
 }
