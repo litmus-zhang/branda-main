@@ -1,17 +1,15 @@
 
 import { config } from "../../config.ts";
-import * as restate from "@restatedev/restate-sdk";
+import * as restate from "@restatedev/restate-sdk/fetch";
 import { aiService } from "./restate.ts";
 import * as clients from "@restatedev/restate-sdk-clients";
 
 
-export const restateHandler = restate.serve({
+export const restateHandler = restate.createEndpointHandler({
     services: [aiService],
     identityKeys: config.NODE_ENV === "production" ? [config.RESTATE_PUBLIC_KEY ?? "publickeyv1_Sample"] : [],
-    // bidirectional: true,
+    bidirectional: true,
 });
-
-// export const restateClient = clients.connect({ url: config.RESTATE_INGRESS_URL! });
 
 export const generateBusinessPlan = async (data: {
     niche: string;
