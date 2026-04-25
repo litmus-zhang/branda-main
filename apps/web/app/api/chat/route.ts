@@ -4,7 +4,7 @@ import { Opik } from "opik";
 import { BusinessPlan } from '@/lib/types';
 
 const opik = new Opik({
-  projectName: "branda-chat-ai",
+  projectName: "branda-chat-ai:" + process.env.NODE_ENV,
   apiKey: process.env.OPIK_API_KEY,
   workspaceName: process.env.OPIK_WORKSPACE,
 });
@@ -45,7 +45,7 @@ export async function POST(req: Request) {
           output_token_details: usage.outputTokenDetails,
           total_tokens: usage.totalTokens,
         },
-        
+
       });
       trace.end();
     }
