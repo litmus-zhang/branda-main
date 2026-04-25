@@ -2,7 +2,7 @@
 import { useAuth } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { Loader2 } from "lucide-react";
+import { LoadingScreen } from "@/components/LoadingScreen";
 
 /**
  * Auth Guard Layout for the (main) group.
@@ -25,14 +25,7 @@ export default function MainLayout({
 
     // Show a loading state while we verify the session
     if (isPending) {
-        return (
-            <div className="flex items-center justify-center min-h-screen bg-[#050505]">
-                <div className="flex flex-col items-center gap-4">
-                    <Loader2 className="w-10 h-10 animate-spin text-primary" />
-                    <p className="text-slate-400 text-sm font-medium animate-pulse">Verifying session...</p>
-                </div>
-            </div>
-        );
+        return <LoadingScreen message="Verifying session..." />;
     }
 
     // Secondary safety check: if not signed in, render nothing while redirecting

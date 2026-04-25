@@ -47,9 +47,9 @@ export const auth = betterAuth({
   //   crossTab: true,
   // },
   advanced: {
-    useSecureCookies: true,
+    useSecureCookies: config.NODE_ENV === "production" ? true : false,
     crossSubDomainCookies: {
-      enabled: true,
+      enabled: config.NODE_ENV === "production" ? true : false,
       domain: "dynage.technology", // root domain
     },
   },

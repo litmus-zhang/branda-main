@@ -3,26 +3,21 @@ import { useWorkspaces, useCreateWorkspace, useUpdateWorkspace } from '@/hooks/u
 import { useAuth } from '@/lib/auth-client';
 import { useGeneratePlan } from '@/hooks/useAi';
 import { LoadingScreen } from '@/components/LoadingScreen';
-import { useRouter, useParams, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { Dashboard } from '@/components/pages/Dashboard';
 import { Workspace } from '@/lib/types';
 import { slugify } from '@branda/ui/lib/utils';
 import { authClient } from '@/lib/auth-client';
 
-export default function WorkspaceDashboardPage() {
+export default function NewWorkspacePage() {
     const { user, isPending: isAuthLoading } = useAuth();
     const { data: workspaces = [], isLoading: isLoadingWorkspaces } = useWorkspaces();
-    const params = useParams();
-    const searchParams = useSearchParams();
     const router = useRouter();
-    const slug = params.slug as string;
 
     const createWorkspaceMutation = useCreateWorkspace();
     const updateWorkspaceMutation = useUpdateWorkspace();
     const generatePlanMutation = useGeneratePlan();
-
-    const currentWorkspace = workspaces.find(w => w.slug === slug);
 
     useEffect(() => {
         if (!isAuthLoading && !isLoadingWorkspaces && !user) {
@@ -31,19 +26,17 @@ export default function WorkspaceDashboardPage() {
     }, [user, isAuthLoading, isLoadingWorkspaces, router]);
 
     if (isAuthLoading || isLoadingWorkspaces) {
-        return <LoadingScreen message="Loading workspace..." />;
+        return <LoadingScreen message="Preparing architect..." />;
     }
 
-    if (!user || !currentWorkspace) {
+    if (!user) {
         return null;
     }
 
     const handleSwitchWorkspace = (id: string) => {
         const ws = workspaces.find(w => w.id === id);
         if (ws) {
-            router.push(`/dashboard/${ws.slug}?view=${searchParams.get('view') || 'brand'}`);
-        } else if (id === 'new') {
-            router.push('/dashboard/new');
+            router.push(`/dashboard/${ws.slug}`);
         }
     };
 
@@ -52,10 +45,6 @@ export default function WorkspaceDashboardPage() {
             id: updatedWorkspace.id,
             data: updatedWorkspace
         });
-    };
-
-    const handleCreateNewWorkspace = () => {
-        router.push('/dashboard/new');
     };
 
     const handleGenerate = async (formData: { niche: string; businessName: string; details: string; country: string }) => {
@@ -88,9 +77,9 @@ export default function WorkspaceDashboardPage() {
         <Dashboard
             user={{ name: user.name || '', email: user.email || '' }}
             workspaces={workspaces}
-            currentWorkspaceId={currentWorkspace.id}
+            currentWorkspaceId="new"
             onSwitchWorkspace={handleSwitchWorkspace}
-            onCreateWorkspace={handleCreateNewWorkspace}
+            onCreateWorkspace={() => router.push('/dashboard/new')}
             onUpdateWorkspace={handleUpdateWorkspace}
             onLogout={async () => {
                 await authClient.signOut();

@@ -9,7 +9,7 @@ import * as clients from "@restatedev/restate-sdk-clients";
 export const restateHandler = restate.createEndpointHandler({
     services: [aiService],
     identityKeys: config.NODE_ENV === "production" ? [config.RESTATE_PUBLIC_KEY ?? "publickeyv1_Sample"] : [],
-    // bidirectional: true,
+    // bidirectional: config.NODE_ENV === "production" ? false : true,
 });
 
 export const generateBusinessPlan = async (data: {

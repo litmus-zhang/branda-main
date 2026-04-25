@@ -1,6 +1,6 @@
 "use client"
 import { useAuth } from '@/lib/auth-client';
-import { Loader2 } from 'lucide-react';
+import { LoadingScreen } from '@/components/LoadingScreen';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { Dashboard } from '@/components/pages/Dashboard';
@@ -27,11 +27,7 @@ export default function DashboardPage() {
 
     // If loading or we have workspaces (about to redirect), show loader
     if (isAuthLoading || isLoadingWorkspaces || (user && workspaces.length > 0)) {
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-                <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
-            </div>
-        );
+        return <LoadingScreen message="Navigating to workspace..." />;
     }
 
     // If user is logged in but has NO workspaces, show the dashboard in "empty" mode
