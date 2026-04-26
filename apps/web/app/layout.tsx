@@ -41,6 +41,8 @@ const inter = Inter({
   variable: '--font-inter',
 });
 
+import Clarity from "@/components/Clarity"
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -51,6 +53,9 @@ export default function RootLayout({
       <body
         className={`${fontSans.variable} ${fontMono.variable} ${inter.variable}   font-sans antialiased  `}
       >
+        {process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID && (
+          <Clarity projectId={process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID} />
+        )}
         <Providers>
           <Toaster richColors theme="dark" position="top-right" />
           {children}
