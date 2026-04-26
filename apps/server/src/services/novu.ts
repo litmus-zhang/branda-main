@@ -77,20 +77,30 @@ export class NotificationService {
      */
     async identify(recipient: Recipient) {
         try {
-            const { result } = await this.novu.subscribers.retrieve(recipient.id);
-            if (!result) {
-                await this.novu.subscribers.create({
-                    subscriberId: recipient.id,
-                    email: recipient.email,
-                    firstName: recipient.firstName,
-                    lastName: recipient.lastName,
-                });
-            } else {
+            // Check if subscriber exists first
+            try {
+                await this.novu.subscribers.retrieve(recipient.id);
+
+                // If found, update the subscriber to ensure data is current
                 await this.novu.subscribers.patch({
                     email: recipient.email,
                     firstName: recipient.firstName,
                     lastName: recipient.lastName,
-                }, recipient.id,);
+                }, recipient.id);
+            } catch (error: any) {
+                // If the subscriber is not found (404), create them
+                // The Novu SDK throws an ErrorDto with statusCode 404 for missing subscribers
+                if (error.statusCode === 404) {
+                    await this.novu.subscribers.create({
+                        subscriberId: recipient.id,
+                        email: recipient.email,
+                        firstName: recipient.firstName,
+                        lastName: recipient.lastName,
+                    });
+                } else {
+                    // If it's a different error, re-throw to be caught by the outer block
+                    throw error;
+                }
             }
         } catch (error) {
             console.error(`[Novu] Failed to identify subscriber ${recipient.id}:`, error);
