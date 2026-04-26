@@ -24,9 +24,10 @@ import { EmptyState } from './EmptyState';
 import { Label } from '@branda/ui/components/label';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useIsMutating } from '@tanstack/react-query';
+import InboxComponent from '../Notification';
 
 interface DashboardProps {
-  user: { name: string; email: string };
+  user: { id: string; name: string; email: string };
   workspaces: Workspace[];
   currentWorkspaceId: string | null;
   onSwitchWorkspace: (id: string) => void;
@@ -301,6 +302,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
+                  <InboxComponent user={user} />
                   <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/50 border border-border/50">
                     {isMutating > 0 ? (
                       <>

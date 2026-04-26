@@ -5,8 +5,8 @@ import { Elysia } from "elysia"
 import { config, initConfig } from "../config.js"
 import { db } from "../db/index.js"
 import * as schema from "../db/schema.js"
-import { sendEmail } from "../services/resend.js"
-import { replaceLocalhostUrl, ResendNotificationTemplatesSubject } from "../services/utils.js"
+import { notificationService, NotificationWorkflow, sendEmail } from "../services/novu.js"
+import { replaceLocalhostUrl, NotificationSubject } from "../services/utils.js"
 
 await initConfig()
 
@@ -59,15 +59,9 @@ export const auth = betterAuth({
       capturedToken = token
       console.log("Verification token:", token)
       // console.log({ modifiedUrl })
-      return sendEmail({
-        to: [user.email],
-        subject: ResendNotificationTemplatesSubject.VERIFICATION,
-        template: {
-          id: "verify-email-1",
-          variables: {
-            verificationUrl: modifiedUrl,
-          },
-        },
+      await notificationService.trigger(NotificationWorkflow.EMAIL_VERIFICATION, { id: user.id, email: user.email }, {
+        // subject: NotificationSubject.VERIFICATION,
+        verificationUrl: modifiedUrl,
       })
     },
     sendOnSignUp: true,
@@ -79,18 +73,23 @@ export const auth = betterAuth({
       // Send reset password email
       console.log({ user, token, url })
       const modifiedUrl = replaceLocalhostUrl(url, "user")
-      await sendEmail({
-        to: [user.email],
-        subject: ResendNotificationTemplatesSubject.RESET_OTP,
-        template: {
-          id: "forgot-password",
-          variables: {
-            resetPasswordUrl: modifiedUrl,
 
-          },
-        },
-        // html: `Click the link to reset your email: ${modifiedUrl}`,
+      await notificationService.trigger(NotificationWorkflow.PASSWORD_RESET, { id: user.id, email: user.email, firstName: user.name }, {
+        resetUrl: modifiedUrl,
       })
+
+      // await sendEmail({
+      //   to: [user.email],
+      //   subject: NotificationSubject.RESET_OTP,
+      //   template: {
+      //     id: "forgot-password",
+      //     variables: {
+      //       resetPasswordUrl: modifiedUrl,
+
+      //     },
+      //   },
+      //   // html: `Click the link to reset your email: ${modifiedUrl}`,
+      // })
     },
 
   },
@@ -115,7 +114,7 @@ export const auth = betterAuth({
           // Send the OTP for sign in
           await sendEmail({
             to: [email],
-            subject: ResendNotificationTemplatesSubject.VERIFICATION_OTP,
+            subject: NotificationSubject.VERIFICATION_OTP,
             html: `Your OTP is: ${otp}`,
           })
         }
@@ -123,7 +122,7 @@ export const auth = betterAuth({
           // Send the OTP for email verification
           await sendEmail({
             to: [email],
-            subject: ResendNotificationTemplatesSubject.VERIFICATION,
+            subject: NotificationSubject.VERIFICATION,
             html: `Your OTP is: ${otp}`,
           })
         }
@@ -131,7 +130,7 @@ export const auth = betterAuth({
           // Send the OTP for password reset
           await sendEmail({
             to: [email],
-            subject: ResendNotificationTemplatesSubject.RESET_OTP,
+            subject: NotificationSubject.RESET_OTP,
             html: `Your OTP is: ${otp}`,
           })
         }
@@ -195,7 +194,7 @@ export const authGuard = new Elysia({ name: "authGuard" })
     // Auto-inject user/session in the request lifecycle
     const session = await auth.api.getSession({ headers: request.headers })
     if (session)
-      return { user: session.user, session: session.session, role: session.user.role }
+      return { user: session.user, session: session.session, role: session.user }
 
     // Optionally, leave undefined if not logged in
     return { user: null, session: null, role: null }

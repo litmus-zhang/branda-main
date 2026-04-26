@@ -17,7 +17,7 @@ export const NewMemberInviteEmailTemplate: React.FC<Readonly<EmailTemplateProps>
         </p>
         <div className="mb-4">
            <a  href={`${data.url}`}
-          className="bg-blue-500 text-white py-2 px-4 no-underline rounded font-bold rounded-lg mt-4 mb-8 inline-block"
+          className="bg- text-white py-2 px-4 no-underline rounded font-bold rounded-lg mt-4 mb-8 inline-block"
           >
             Accept Invitation
           </a>

@@ -28,6 +28,8 @@ export default function Providers({ children }: { children: ReactNode }) {
           authClient={authClient}
           appearance={{ theme, setTheme }}
           deleteUser={{ enabled: true }}
+
+
           // magicLink
           // multiSession
           redirectTo={`/dashboard`}

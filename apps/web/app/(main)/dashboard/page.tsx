@@ -34,7 +34,7 @@ export default function DashboardPage() {
     if (user && workspaces.length === 0) {
         return (
             <DashboardContent
-                user={{ name: user.name || '', email: user.email || '' }}
+                user={{ id: user.id, name: user.name || '', email: user.email || '' }}
                 workspaces={[]}
                 currentWorkspaceId={null}
             />

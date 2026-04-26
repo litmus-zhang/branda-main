@@ -1,7 +1,7 @@
 import { Logo } from "@branda/ui/components/logo";
 import { Bell, Calendar, MessageSquare } from "lucide-react";
 import Image from "next/image";
-// import BackgroundBoxesDemo from "@branda/ui/components/ui/boxes"
+import BackgroundBoxesDemo from "@branda/ui/components/ui/boxes"
 
 export default function AuthLayoutPage({
   children,
@@ -24,15 +24,19 @@ export default function AuthLayoutPage({
       {/* <div className="bg-muted relative hidden lg:block overflow-hidden">
         <BackgroundBoxesDemo />
       </div> */}
-      <div className="hidden lg:flex w-1/2 bg-primary relative">
+      <div className="hidden lg:flex w-1/2 bg-primary relative hidden lg:block overflow-hidden">
         <div className="absolute inset-0 bg-primary/20 z-10"></div>
-        <Image
+        {/* <Image
           alt="Community"
           className="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-60 z-0"
           src="https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80"
           fill
           referrerPolicy="no-referrer"
-        />
+        /> */}
+        {/* <div className="bg-muted relative hidden lg:block overflow-hidden"> */}
+        <BackgroundBoxesDemo />
+        {/* </div> */}
+
         <div className="relative z-20 flex flex-col justify-center p-12 text-white h-full">
           <h2 className="text-4xl font-bold mb-6">Your one-stop tool for running your business</h2>
           <p className="text-xl text-teal-50 mb-8">Manage your brand, SOP, and tools all in one place.</p>

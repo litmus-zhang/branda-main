@@ -86,7 +86,7 @@ export default function WorkspaceDashboardPage() {
 
     return (
         <Dashboard
-            user={{ name: user.name || '', email: user.email || '' }}
+            user={{ id: user.id, name: user.name || '', email: user.email || '' }}
             workspaces={workspaces}
             currentWorkspaceId={currentWorkspace.id}
             onSwitchWorkspace={handleSwitchWorkspace}

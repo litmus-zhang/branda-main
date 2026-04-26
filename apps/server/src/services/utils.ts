@@ -1,7 +1,7 @@
 import { format } from "date-fns"
 import QRCode from "qrcode"
 
-export enum ResendNotificationTemplatesSubject {
+export enum NotificationSubject {
   VERIFICATION_OTP = "Your Email Verification OTP",
   VERIFICATION = "Verify your email address",
   SIGN_IN_OTP = "Your Sign-in OTP",

@@ -1,8 +1,7 @@
 import * as React from "react";
-import { cn } from "@branda/ui/lib/utils";
 import { CompanyName, SupportEmail } from "@branda/ui/lib/constants";
-import { Navbar } from "@branda/ui/components/navbar";
-import { Footer } from "@branda/ui/components/footer";
+import { PageLayout } from "@branda/ui/components/ui/pageLayout";
+import { cn } from "@branda/ui/lib/utils";
 
 
 export interface TermsAndConditionsProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -19,9 +18,8 @@ export function TermsAndConditions({
   ...props
 }: TermsAndConditionsProps) {
   return (
-    <>
-      <Navbar />
-      <div className={cn("mx-auto max-w-4xl px-4 pt-24 py-12 sm:px-6 lg:px-8", className)} {...props}>
+    <PageLayout className={cn(className)} {...props}>
+
         <h1 className="mb-8 text-3xl font-bold tracking-tight sm:text-4xl">Terms and Conditions</h1>
         <p className="mb-6 text-sm text-muted-foreground">Last updated: {lastUpdated}</p>
 
@@ -76,8 +74,6 @@ export function TermsAndConditions({
             </p>
           </section>
         </div>
-      </div>
-      <Footer />
-    </>
+      </PageLayout>
   );
 }
