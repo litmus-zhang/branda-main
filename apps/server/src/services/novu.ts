@@ -77,7 +77,21 @@ export class NotificationService {
      */
     async identify(recipient: Recipient) {
         try {
-            await this.novu.subscribers.retrieve(recipient.id);
+            const { result } = await this.novu.subscribers.retrieve(recipient.id);
+            if (!result) {
+                await this.novu.subscribers.create({
+                    subscriberId: recipient.id,
+                    email: recipient.email,
+                    firstName: recipient.firstName,
+                    lastName: recipient.lastName,
+                });
+            } else {
+                await this.novu.subscribers.patch({
+                    email: recipient.email,
+                    firstName: recipient.firstName,
+                    lastName: recipient.lastName,
+                }, recipient.id,);
+            }
         } catch (error) {
             console.error(`[Novu] Failed to identify subscriber ${recipient.id}:`, error);
         }

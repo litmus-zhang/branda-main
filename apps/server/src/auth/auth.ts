@@ -59,7 +59,8 @@ export const auth = betterAuth({
       capturedToken = token
       console.log("Verification token:", token)
       // console.log({ modifiedUrl })
-      await notificationService.trigger(NotificationWorkflow.EMAIL_VERIFICATION, { id: user.id, email: user.email }, {
+      await notificationService.identify({ id: user.id, email: user.email, firstName: user.name || '', lastName: user.name || '' })
+      await notificationService.trigger(NotificationWorkflow.EMAIL_VERIFICATION, { id: user.id, email: user.email, firstName: user.name }, {
         // subject: NotificationSubject.VERIFICATION,
         verificationUrl: modifiedUrl,
       })
@@ -73,23 +74,11 @@ export const auth = betterAuth({
       // Send reset password email
       console.log({ user, token, url })
       const modifiedUrl = replaceLocalhostUrl(url, "user")
+      await notificationService.identify({ id: user.id, email: user.email, firstName: user.name || '', lastName: user.name || '' })
 
       await notificationService.trigger(NotificationWorkflow.PASSWORD_RESET, { id: user.id, email: user.email, firstName: user.name }, {
         resetUrl: modifiedUrl,
       })
-
-      // await sendEmail({
-      //   to: [user.email],
-      //   subject: NotificationSubject.RESET_OTP,
-      //   template: {
-      //     id: "forgot-password",
-      //     variables: {
-      //       resetPasswordUrl: modifiedUrl,
-
-      //     },
-      //   },
-      //   // html: `Click the link to reset your email: ${modifiedUrl}`,
-      // })
     },
 
   },
