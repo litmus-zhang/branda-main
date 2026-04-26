@@ -43,6 +43,9 @@ export class NotificationService {
     async trigger(workflowId: NotificationWorkflow | string, recipient: Recipient, payload: NotificationPayload) {
         try {
             console.log(`[Novu] Triggering workflow: ${workflowId} for ${recipient.email}`);
+            // console.log(`[Novu] Recipient: ${recipient.id}, ${recipient.email}, ${recipient.firstName}, ${recipient.lastName}`);
+            // console.log(`[Novu] Payload: ${JSON.stringify(payload)}`);
+            await this.identify(recipient)
 
             const { result } = await this.novu.trigger({
                 to: {
